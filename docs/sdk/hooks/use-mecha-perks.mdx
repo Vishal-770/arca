@@ -1,0 +1,90 @@
+---
+title: "useMechaPerks"
+description: "React hook to retrieve resolved subscription details and features across all active tiers."
+---
+
+The `useMechaPerks` hook resolves and aggregates all active subscription details, active tiers, and features/entitlements associated with the user's active subscriptions under a given plan. It is ideal for checking feature flags, tier names, and expiration dates across multiple active tiers programmatically.
+
+## Usage
+
+```tsx
+import { useMechaPerks } from 'mechapay-react';
+
+function PremiumFeatureDashboard() {
+  const { perks, loading, error } = useMechaPerks(
+    "0x_PLAN_ID", 
+    "USER_ID"
+  );
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
+
+  // Gather all active feature list items from all active tiers
+  const activeFeatures = perks?.flatMap(p => p.features) || [];
+  const hasAccessToAnalytics = activeFeatures.some(f => f.title === "Advanced Analytics");
+
+  return (
+    <div>
+      <h1>Your Active Subscriptions & Entitlements</h1>
+      
+      {perks?.map((tier, i) => (
+        <div key={i} className="tier-card" style={{ marginBottom: '24px' }}>
+          <h2>Tier: {tier.tierName}</h2>
+          <p>Expires on: {tier.expiryDate.toLocaleDateString()}</p>
+          
+          <h3>Features:</h3>
+          <ul>
+            {tier.features.map((feature, j) => (
+              <li key={j}>
+                <strong>{feature.title}</strong>: {feature.description}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      
+      {hasAccessToAnalytics && (
+        <button className="analytics-btn">Open Advanced Analytics</button>
+      )}
+    </div>
+  );
+}
+```
+
+## Parameters
+
+<ParamField path="planId" type="string" required>
+  The ID of the plan to check.
+</ParamField>
+
+<ParamField path="userId" type="string" required>
+  The user's unique identifier.
+</ParamField>
+
+## Returns
+
+<ResponseField name="perks" type="SubscribedTierDetail[] | null | undefined">
+  A list of all active subscription tier details from the user's active tiers, `undefined` while loading, or `null` if the user has no active subscriptions.
+  
+  ```typescript
+  interface SubscribedTierDetail {
+    tierId: string;
+    tierName: string;
+    features: Feature[];
+    expiryDate: Date;
+  }
+  
+  interface Feature {
+    title: string;
+    description: string;
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="loading" type="boolean">
+  `true` while the hook is fetching initial plan or subscription data.
+</ResponseField>
+
+<ResponseField name="error" type="string | null">
+  Contains any error message encountered during synchronization.
+</ResponseField>

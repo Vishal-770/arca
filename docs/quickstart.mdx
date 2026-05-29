@@ -1,0 +1,40 @@
+---
+title: "Quickstart"
+description: "Make your first request to the Mecha Pay API."
+---
+
+## Authentication
+
+All API endpoints are authenticated using an API key passed in the headers.
+
+```bash
+curl -X GET "https://mecha-pay.vercel.app/api/v1/wallet" \
+  -H "x-api-key: your_api_key_here"
+```
+
+## Base URL
+
+If you are testing locally, the base URL is:
+`https://mecha-pay.vercel.app/api/v1`
+
+In production, use:
+`https://mecha-pay.vercel.app/api/v1`
+
+## Response Format
+
+All responses follow a standard JSON format:
+
+```json
+{
+  "success": true,
+  "data": { ... }
+}
+```
+
+If an error occurs:
+
+```json
+{
+  "error": "Unauthorized"
+}
+```
