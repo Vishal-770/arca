@@ -24,16 +24,26 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
       {!exit && (
         <motion.div
           key="boot"
-          className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center gap-8"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8"
+          style={{ backgroundColor: "#000000" }}
           exit={{ y: "-100%" }}
           transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
         >
+          {/* Subtle radial glow matching landing page */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(59,130,246,0.06), transparent 70%)",
+            }}
+          />
+
           {/* Ring + Logo */}
           <div className="relative flex items-center justify-center" style={{ width: 120, height: 120 }}>
             {/* Outer glow ring */}
             <motion.div
               className="absolute inset-0 rounded-full"
-              style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.06)" }}
+              style={{ boxShadow: "0 0 0 1px rgba(59,130,246,0.12)" }}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -52,16 +62,16 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
                 cy="60"
                 r={r}
                 fill="none"
-                stroke="rgba(255,255,255,0.07)"
+                stroke="rgba(59,130,246,0.10)"
                 strokeWidth="1.5"
               />
-              {/* Animated fill */}
+              {/* Animated fill — blue accent matching landing page */}
               <motion.circle
                 cx="60"
                 cy="60"
                 r={r}
                 fill="none"
-                stroke="white"
+                stroke="#3b82f6"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeDasharray={circumference}
@@ -91,15 +101,18 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
 
           {/* Wordmark */}
           <motion.div
-            className="flex flex-col items-center gap-1.5"
+            className="relative z-10 flex flex-col items-center gap-1.5"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
           >
-            <span className="text-white text-lg font-semibold tracking-tight">
+            <span className="text-lg font-semibold tracking-tight" style={{ color: "#ffffff" }}>
               Arca
             </span>
-            <span className="text-white/30 text-xs tracking-widest uppercase font-medium">
+            <span
+              className="text-xs tracking-widest uppercase font-medium"
+              style={{ color: "rgba(59,130,246,0.6)" }}
+            >
               USDC Payment Protocol
             </span>
           </motion.div>
