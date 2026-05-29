@@ -1,8 +1,8 @@
-# Mecha Pay Protocol ⚡
+# Arca Protocol ⚡
 
 The production-grade, USDC-native membership infrastructure for Web3.
 
-Mecha Pay allows developers to integrate high-performance, predictable subscription payments into their applications with just a few lines of code. By combining Circle's Programmable Wallets, CCTP, and the Arc blockchain, we've built a membership experience that feels like Web2 but is powered by Web3.
+Arca allows developers to integrate high-performance, predictable subscription payments into their applications with just a few lines of code. By combining Circle's Programmable Wallets, CCTP, and the Arc blockchain, we've built a membership experience that feels like Web2 but is powered by Web3.
 
 ## 🔴 The Problem
 
@@ -12,12 +12,12 @@ Traditional Web3 payments are fragmented and manual. For businesses, managing me
 - **Data Silos**: Tracking subscription state (active/expired) requires complex, custom indexing logic.
 - **High Friction**: Bridging and paying across different chains takes multiple steps and minutes of waiting.
 
-## 🟢 The Mecha Solution
+## 🟢 The Arca Solution
 
-Mecha Pay provides a unified "One-Click Access" experience by leveraging cutting-edge infrastructure:
+Arca provides a unified "One-Click Access" experience by leveraging cutting-edge infrastructure:
 
 1.  **USDC-as-Gas (Arc Blockchain)**: Users pay for memberships and network fees entirely in USDC. No more worrying about native gas tokens.
-2.  **Cross-Chain Liquidity (Circle CCTP)**: Native integration with **Circle's Cross-Chain Transfer Protocol (CCTP)** allows users to bridge USDC directly into their Mecha membership wallet with zero slippage.
+2.  **Cross-Chain Liquidity (Circle CCTP)**: Native integration with **Circle's Cross-Chain Transfer Protocol (CCTP)** allows users to bridge USDC directly into their Arca membership wallet with zero slippage.
 3.  **Programmable Wallets (Circle SDK)**: Deep integration with Circle’s Developer-Controlled and User-Controlled wallets for secure, automated transaction execution.
 4.  **High-Fidelity Indexing**: A custom indexing engine that provides millisecond-accurate membership status.
 
@@ -25,19 +25,19 @@ Mecha Pay provides a unified "One-Click Access" experience by leveraging cutting
 
 ```mermaid
 graph TD
-    A[End User] -->|1. Bridge USDC via CCTP| B[Mecha Managed Wallet]
-    B -->|2. Authorize Subscription| C[Mecha React SDK]
-    C -->|3. Request Checkout| D[Mecha API Gateway]
+    A[End User] -->|1. Bridge USDC via CCTP| B[Arca Managed Wallet]
+    B -->|2. Authorize Subscription| C[Arca React SDK]
+    C -->|3. Request Checkout| D[Arca API Gateway]
     D -->|4. Create Challenge| E[Circle Programmable Wallets]
-    E -->|5. Sign & Broadcast| F[Arc Blockchain]
-    F -->|6. Emit Event| G[Mecha Indexer]
+    E -->|5. Sign & Broadcast| F[Arca Blockchain]
+    F -->|6. Emit Event| G[Arca Indexer]
     G -->|7. Sync State| C
     C -->|8. Grant Access| A
 ```
 
 ## ⚡ Arc Testnet: The USDC-Native Execution Layer
 
-Arc is the primary execution engine for Mecha Pay. Unlike traditional blockchains, Arc is purpose-built for financial applications:
+Arc is the primary execution engine for Arca. Unlike traditional blockchains, Arc is purpose-built for financial applications:
 
 - **USDC as Native Gas**: Arc uses USDC as its native currency. This means transaction fees are paid directly in USDC, eliminating the "Gas Problem" where users need a secondary token (like ETH or MATIC) to move their money.
 - **Sub-Second Finality**: Arc provides ultra-fast confirmation times, ensuring that subscription updates and bridges are processed almost instantly.
@@ -46,7 +46,7 @@ Arc is the primary execution engine for Mecha Pay. Unlike traditional blockchain
 
 ## 🌐 Supported Ecosystems (v0.1.12)
 
-Mecha Pay leverages Circle CCTP to enable seamless USDC bridging from major ecosystem testnets to the Arc execution layer.
+Arca leverages Circle CCTP to enable seamless USDC bridging from major ecosystem testnets to the Arc execution layer.
 
 ### **Bridging Sources & Execution Chains**
 - **Arc Testnet** (Primary Execution Layer)
@@ -77,16 +77,16 @@ Mecha Pay leverages Circle CCTP to enable seamless USDC bridging from major ecos
 ## 🔄 The Protocol Workflow
 
 ### 1. Plan Definition
-Merchants define their subscription tiers in the Mecha Dashboard.
+Merchants define their subscription tiers in the Arca Dashboard.
 
 ### 2. CCTP Liquidity Check
 The SDK checks the user's Arc balance. If empty, it initiates a **CCTP native bridge** from any supported source chain (e.g., Base Sepolia) to Arc.
 
 ### 3. Execution
-The Mecha Gateway triggers the `subscribe` function. Arc uses the bridged USDC to pay for transaction gas.
+The Arca Gateway triggers the `subscribe` function. Arc uses the bridged USDC to pay for transaction gas.
 
 ### 4. Indexing
-The Mecha Indexer picks up the transaction within 2 seconds, and the frontend instantly unlocks access.
+The Arca Indexer picks up the transaction within 2 seconds, and the frontend instantly unlocks access.
 
 ## 🛡️ Security & Trust
 
@@ -96,4 +96,4 @@ The Mecha Indexer picks up the transaction within 2 seconds, and the frontend in
 
 ---
 
-Built with ⚡ by the Mecha Protocol Team.
+Built with ⚡ by the Arca Protocol Team.
