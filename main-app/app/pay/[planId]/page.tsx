@@ -434,7 +434,7 @@ export default function PaymentPage() {
         <div className="flex items-center justify-between pb-6">
           <Link href="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
             <Zap className="h-4 w-4 text-foreground fill-foreground/10" />
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] font-sans text-foreground">Mecha Pay</span>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] font-sans text-foreground">Arca</span>
           </Link>
           <div className="flex items-center gap-4">
             {session && (
@@ -758,7 +758,7 @@ export default function PaymentPage() {
             <span>Circle W3S</span>
           </div>
           <p className="text-[9px] text-muted-foreground/40 uppercase tracking-widest">
-            Verified Mecha Payment Gateway
+            Verified Arca Payment Gateway
           </p>
         </div>
 

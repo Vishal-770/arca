@@ -290,7 +290,7 @@ export default function AdminDashboardPage() {
         </div>
         <h1 className="text-3xl font-black uppercase italic tracking-tighter mb-2">Access Restricted</h1>
         <p className="max-w-md text-sm text-muted-foreground font-bold leading-relaxed mb-8">
-          This manual override interface is exclusive to the **Mecha Pay Protocol Owner**. 
+          This manual override interface is exclusive to the **Arca Protocol Owner**. 
           Your connected EOA is not authorized to access governance functions.
         </p>
         <div className="flex flex-col gap-4 w-full max-w-sm">

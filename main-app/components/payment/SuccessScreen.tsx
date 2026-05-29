@@ -105,7 +105,7 @@ export default function SuccessScreen({
 
         <footer className="text-center pt-4">
           <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">
-            Mecha Pay Protocol Infrastructure &copy; 2026
+            Arca Protocol Infrastructure &copy; 2026
           </p>
         </footer>
       </div>

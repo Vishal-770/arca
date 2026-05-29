@@ -4,7 +4,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { arcTestnet } from "../lib/bridge_config";
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = process.env.MONGODB_DB || "mecha-pay";
+const MONGODB_DB = process.env.MONGODB_DB || "arca";
 const SUBSCRIPTION_GATEWAY_ADDRESS = "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2";
 const ARC_USDC_ADDRESS = "0x3600000000000000000000000000000000000000";
 const ARC_RPC_URL = "https://rpc.testnet.arc.network";

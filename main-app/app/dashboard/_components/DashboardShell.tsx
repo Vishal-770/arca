@@ -36,7 +36,6 @@ import {
   RefreshCw
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { ModeToggle } from "@/components/ModeToggle";
 import { cn } from "@/lib/utils";
 import { createPublicClient, http, formatUnits } from "viem";
 import { SUPPORTED_CHAINS } from "@/lib/bridge_config";
@@ -313,10 +312,10 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         
         {/* Mobile Header */}
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-border z-50 flex items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Mecha Pay" className="h-6 w-6 shadow-sm" />
-            <span className="font-black uppercase italic text-sm">Mecha Pay</span>
-          </div>
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img src="/logo.png" alt="Arca" className="h-6 w-6 dark:invert" />
+            <span className="font-black uppercase italic text-sm">Arca</span>
+          </Link>
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -345,27 +344,27 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex flex-col h-full p-6">
-            <div className="flex items-center gap-2 mb-10 px-2 mt-4 lg:mt-0">
-              <img src="/logo.png" alt="Mecha Pay" className="h-8 w-8" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground leading-none">Mecha Pay</span>
-                <span className="text-base font-black italic uppercase tracking-tighter">Command</span>
-              </div>
-            </div>
+            <Link href="/" className="flex items-center gap-2 mb-10 px-2 mt-4 lg:mt-0 hover:opacity-80 transition-opacity">
+              <img src="/logo.png" alt="Arca" className="h-8 w-8 dark:invert" />
+              <span className="text-lg font-black uppercase italic tracking-tighter">Arca</span>
+            </Link>
 
-            <nav className="flex flex-col gap-4 flex-1 overflow-y-auto no-scrollbar">
-              {navGroups.map((group) => (
+            <nav className="flex flex-col flex-1 overflow-y-auto no-scrollbar">
+              {navGroups.map((group, idx) => (
                 <div key={group.label}>
-                  <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-1">{group.label}</p>
-                  {group.items.map((item) => (
-                    <NavLink 
-                      key={item.href} 
-                      href={item.href} 
-                      label={item.label} 
-                      icon={item.icon} 
-                      onClick={() => setIsSidebarOpen(false)}
-                    />
-                  ))}
+                  {idx !== 0 && <div className="mx-4 my-2 border-t border-border/40" />}
+                  <div className="py-2">
+                    <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mb-1">{group.label}</p>
+                    {group.items.map((item) => (
+                      <NavLink 
+                        key={item.href} 
+                        href={item.href} 
+                        label={item.label} 
+                        icon={item.icon} 
+                        onClick={() => setIsSidebarOpen(false)}
+                      />
+                    ))}
+                  </div>
                 </div>
               ))}
             </nav>
@@ -384,22 +383,22 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         <div className="flex-1 flex flex-col min-w-0">
           
           {/* Desktop Top Bar */}
-          <header className="hidden lg:flex h-16 items-center justify-between px-8 bg-card/80 backdrop-blur-md border-b border-border sticky top-0 z-20">
-            <h2 className="text-base font-semibold text-foreground">
+          <header className="hidden lg:flex h-14 items-center justify-between px-6 bg-background border-b border-border sticky top-0 z-20">
+            <h2 className="text-sm font-bold text-foreground">
               {navItems.find(item => item.href === pathname || (item.href !== "/dashboard" && pathname.startsWith(item.href)))?.label || "Overview"}
             </h2>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {wallet && (
                 <a
                   href={`https://testnet.arcscan.app/address/${wallet.address}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border hover:bg-muted transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card border border-border hover:border-border/80 transition-colors"
                 >
-                  <div className="h-2 w-2 rounded-full bg-primary" />
-                  <span className="text-xs font-mono text-muted-foreground">{wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}</span>
-                  <ExternalLink size={11} className="text-muted-foreground/40" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span className="text-[11px] font-mono text-muted-foreground">{wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}</span>
+                  <ExternalLink size={10} className="text-muted-foreground/40" />
                 </a>
               )}
               <Button 
@@ -409,15 +408,15 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                   clearSession();
                   router.push("/login");
                 }}
-                className="h-9 w-9 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-all"
+                className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-all"
                 title="Sign out"
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
               </Button>
             </div>
           </header>
 
-          <main className="flex-1 p-6 lg:p-10 duration-700 mt-16 lg:mt-0 overflow-y-auto">
+          <main className="flex-1 p-5 lg:p-7 mt-16 lg:mt-0 overflow-y-auto bg-background">
             {children}
           </main>
         </div>

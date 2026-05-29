@@ -348,7 +348,7 @@ export default function WebhooksPage() {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between border-b border-border pb-6">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-2">
-            Mecha Pay · Developer
+            Arca · Developer
           </p>
           <h1 className="text-4xl font-bold tracking-tight">Webhooks</h1>
           <p className="mt-2 text-sm text-muted-foreground max-w-xl leading-relaxed">

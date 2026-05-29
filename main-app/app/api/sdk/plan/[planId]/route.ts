@@ -112,7 +112,7 @@ export async function GET(
     // In production, you would verify this against your database
     if (!apiKey || (!apiKey.startsWith("mp_live_") && !apiKey.startsWith("mp_test_"))) {
       return NextResponse.json(
-        { error: "Invalid or missing Mecha API Key", code: "UNAUTHORIZED" },
+        { error: "Invalid or missing Arca API Key", code: "UNAUTHORIZED" },
         { status: 401, headers: corsHeaders() }
       );
     }

@@ -47,7 +47,7 @@ export default function HeroCheckoutWidget() {
             <Sparkles className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-foreground leading-tight">Mecha Pay</h3>
+            <h3 className="text-sm font-bold text-foreground leading-tight">Arca</h3>
             <span className="text-[10px] text-muted-foreground font-semibold tracking-wide uppercase">Checkout Widget</span>
           </div>
         </div>

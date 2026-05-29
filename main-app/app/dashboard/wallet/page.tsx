@@ -425,7 +425,7 @@ export default function WalletPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Mecha Pay · ARC Testnet
+            Arca · ARC Testnet
           </p>
           <h2 className="mt-1 text-2xl font-bold text-foreground">My Wallet</h2>
         </div>

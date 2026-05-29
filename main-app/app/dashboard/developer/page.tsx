@@ -147,7 +147,7 @@ export default function DeveloperPage() {
           </p>
           <h1 className="text-4xl font-bold tracking-tight">API Keys</h1>
           <p className="mt-2 text-sm text-muted-foreground max-w-md">
-            Create and manage your API keys to authenticate with Mecha Pay services. Keys are securely hashed and never shown again once generated.
+            Create and manage your API keys to authenticate with Arca services. Keys are securely hashed and never shown again once generated.
           </p>
         </div>
 

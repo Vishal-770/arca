@@ -76,14 +76,15 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-              className="relative z-10 w-14 h-14 rounded-2xl overflow-hidden"
+              className="relative z-10 w-14 h-14"
             >
               <Image
                 src="/logo.png"
-                alt="Mecha Pay"
+                alt="Arca"
                 fill
-                className="object-cover"
+                className="object-contain invert"
                 priority
+                unoptimized
               />
             </motion.div>
           </div>
@@ -96,7 +97,7 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
           >
             <span className="text-white text-lg font-semibold tracking-tight">
-              Mecha Pay
+              Arca
             </span>
             <span className="text-white/30 text-xs tracking-widest uppercase font-medium">
               USDC Payment Protocol

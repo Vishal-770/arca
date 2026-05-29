@@ -102,7 +102,7 @@ export default function AppPreview() {
                {/* Image */}
                <Image 
                  src="/blue-demo-app.png" 
-                 alt="Mecha Pay Dashboard" 
+                 alt="Arca Dashboard" 
                  width={2560} 
                  height={1440} 
                  className="w-full object-cover rounded-[1.8rem] md:rounded-[2rem]"

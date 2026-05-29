@@ -511,7 +511,7 @@ export default function CreatePlanPage() {
       </div>
 
       <div className="mt-20 text-center opacity-35">
-        <p className="text-xs text-muted-foreground font-medium">Powered by Mecha Pay</p>
+        <p className="text-xs text-muted-foreground font-medium">Powered by Arca</p>
       </div>
     </section>
   );

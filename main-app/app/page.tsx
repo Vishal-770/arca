@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, LayoutGrid, Zap, Shield, Globe, Coins, Activity, Mail } from "lucide-react";
+import { ArrowUpRight, LayoutGrid, Zap, Shield, Globe, Coins, Activity, Mail, Github, Linkedin, Twitter, ChevronDown, ArrowRight } from "lucide-react";
 import Lenis from 'lenis';
 import { motion, AnimatePresence } from "framer-motion";
 import BootScreen from "@/components/BootScreen";
@@ -13,11 +13,113 @@ import { Terminal, AnimatedSpan, TypingAnimation } from "@/components/ui/termina
 import AppPreview from "@/components/AppPreview";
 import ApiShowcase from "@/components/ApiShowcase";
 
+const SubscriptionsIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="4" y="3" width="16" height="18" rx="3.5" strokeWidth="2.2" />
+    <line x1="8" y1="8" x2="16" y2="8" />
+    <line x1="8" y1="12" x2="13" y2="12" />
+    <circle cx="16" cy="16" r="3" fill="#050505" stroke="currentColor" strokeWidth="2.2" />
+  </svg>
+);
+
+const SettlementIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M3 8l9-5 9 5H3z" />
+    <line x1="6" y1="11" x2="6" y2="17" />
+    <line x1="12" y1="11" x2="12" y2="17" />
+    <line x1="18" y1="11" x2="18" y2="17" />
+    <line x1="4" y1="11" x2="20" y2="11" />
+    <line x1="3" y1="17" x2="21" y2="17" />
+    <path d="M4 17v2h16v-2" />
+  </svg>
+);
+
+const Soc2Icon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-6 w-6 text-[#3b82f6]"
+    {...props}
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <circle cx="12" cy="11" r="3" />
+    <path d="M12 14v-3" />
+  </svg>
+);
+
+const MicaIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-6 w-6 text-[#3b82f6]"
+    {...props}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20" />
+  </svg>
+);
+
+const BsaAmlIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-6 w-6 text-[#3b82f6]"
+    {...props}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2v20M2 12h20M5.8 5.8l12.4 12.4M5.8 18.2L18.2 5.8" />
+  </svg>
+);
+
+const GdprIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-6 w-6 text-[#3b82f6]"
+    {...props}
+  >
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
 
 export default function LandingPage() {
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [booted, setBooted] = useState(false);
+  const [activeDocTab, setActiveDocTab] = useState("Overview");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,10 +191,10 @@ export default function LandingPage() {
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="relative w-9 h-9 rounded-xl overflow-hidden">
-              <Image src="/logo.png" alt="Mecha Pay Logo" fill className="object-cover" />
+            <div className="relative w-9 h-9">
+              <Image src="/logo.png" alt="Arca Logo" fill className="object-contain dark:invert" unoptimized />
             </div>
-            <span className="text-xl font-bold tracking-tight text-[#ffffff]">Mecha Pay</span>
+            <span className="text-xl font-bold tracking-tight text-[#ffffff]">Arca</span>
           </div>
 
           <div className="flex items-center gap-3 lg:gap-5">
@@ -179,587 +281,292 @@ export default function LandingPage() {
         <AppPreview />
       </motion.div>
 
+      {/* Global Coverage & Real-time Analytics Section */}
+      <section className="relative w-full bg-[#000000] py-20 px-6 sm:px-12 lg:px-20 z-20 border-t border-white/5 overflow-hidden">
+        {/* Subtle radial glow background to blend with other sections */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,#3b82f608,transparent_70%)] pointer-events-none" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 relative z-10">
+          
+          {/* Global Coverage Card */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 min-h-[320px] bg-transparent">
+            <div className="flex flex-col flex-1 max-w-sm">
+              <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Global Coverage</span>
+              <h3 className="text-3xl sm:text-[2.25rem] font-normal tracking-tight text-white mt-4 leading-tight font-serif">A truly global<br className="hidden sm:block" /> infrastructure.</h3>
+              <p className="text-zinc-400 text-sm mt-3 leading-relaxed font-normal">Local presence. Global reach. Built to support businesses and users everywhere.</p>
+              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
+                <span>View all regions</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+              </Link>
+            </div>
+            
+            {/* Minimalist Globe Image */}
+            <div className="relative w-full max-w-[200px] h-[200px] flex items-center justify-center opacity-90 select-none pointer-events-none shrink-0">
+              <Image src="/globle.png" alt="Global Coverage" fill className="object-contain" />
+            </div>
+          </div>
+
+          {/* Real-time Analytics Card */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 min-h-[320px] bg-transparent">
+            <div className="flex flex-col flex-1 max-w-sm">
+              <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Real-time Analytics</span>
+              <h3 className="text-3xl sm:text-[2.25rem] font-normal tracking-tight text-white mt-4 leading-tight font-serif">Data that moves<br className="hidden sm:block" /> at the speed of<br className="hidden sm:block" /> your business.</h3>
+              <p className="text-zinc-400 text-sm mt-3 leading-relaxed font-normal">Real-time insights into payments, subscriptions, settlements, and revenue performance.</p>
+              <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
+                <span>Explore analytics</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+              </Link>
+            </div>
+            
+            {/* Visual Analytics Dashboard Card (Flat) */}
+            <div className="flex flex-col gap-4 w-full max-w-[240px] shrink-0 select-none bg-transparent">
+              
+              {/* Volume Chart Card */}
+              <div className="flex flex-col">
+                <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-wider">Total volume (USD)</span>
+                <span className="text-2xl font-bold tracking-tight text-white mt-1">$24,530,890</span>
+                <span className="text-[9px] font-bold text-[#10b981] mt-1 flex items-center gap-0.5">
+                  ↑ 18.4% <span className="text-zinc-500 font-medium">vs last month</span>
+                </span>
+                
+                {/* Green Line Chart Path */}
+                <svg className="w-full h-12 stroke-[#10b981] fill-none mt-3" viewBox="0 0 160 50">
+                  <defs>
+                    <linearGradient id="chart-glow-green" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.1" />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5 L 160 50 L 0 50 Z" fill="url(#chart-glow-green)" strokeWidth="0" />
+                </svg>
+              </div>
+              
+              <div className="h-[1px] bg-white/5" />
+              
+              {/* Circular Success Rate Card */}
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col">
+                  <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-wider">Success rate</span>
+                  <span className="text-lg font-bold tracking-tight text-white mt-0.5">98.72%</span>
+                  <span className="text-[9px] font-bold text-[#10b981] mt-1 flex items-center gap-0.5">
+                    ↑ 0.45% <span className="text-zinc-500 font-medium">vs last month</span>
+                  </span>
+                </div>
+                
+                <div className="relative h-12 w-12 flex items-center justify-center shrink-0">
+                  <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3.5" />
+                    <circle cx="18" cy="18" r="16" fill="none" stroke="#003b8f" strokeWidth="3.5" strokeDasharray="100" strokeDashoffset="2" strokeLinecap="round" />
+                    <circle cx="18" cy="18" r="16" fill="none" stroke="#3b82f6" strokeWidth="3.5" strokeDasharray="100" strokeDashoffset="12.8" strokeLinecap="round" />
+                    <circle cx="18" cy="18" r="16" fill="none" stroke="#10b981" strokeWidth="3.5" strokeDasharray="100" strokeDashoffset="50" strokeLinecap="round" />
+                  </svg>
+                  <span className="text-[8px] font-bold text-zinc-500">98%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Documentation Showcase Section */}
+      <section className="relative w-full bg-[#000000] py-20 px-6 sm:px-12 lg:px-20 z-20 border-t border-white/5 overflow-hidden">
+        {/* Architectural Grid Background to blend with other sections */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+          
+          {/* Left text column */}
+          <div className="flex flex-col lg:col-span-4">
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Documentation</span>
+            <h3 className="text-4xl sm:text-[2.5rem] font-normal tracking-tight text-white mt-4 leading-tight font-serif">Everything you need.<br/>All in one place.</h3>
+            <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">From quickstarts to deep technical guides, our docs help you build with confidence.</p>
+            <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
+              <span>Go to documentation</span>
+              <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+            </Link>
+          </div>
+          
+          {/* Right interactive panel column (Flat) */}
+          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-12 bg-transparent">
+            {/* Sidebar tabs */}
+            <div className="sm:col-span-4 p-4 flex sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible no-scrollbar">
+              {[
+                { id: "Overview", label: "Overview" },
+                { id: "Quickstart", label: "Quickstart" },
+                { id: "API Reference", label: "API Reference" },
+                { id: "Guides", label: "Guides" },
+                { id: "SDKs", label: "SDKs" },
+                { id: "Webhooks", label: "Webhooks" },
+                { id: "Changelog", label: "Changelog" }
+              ].map((tab) => {
+                const isActive = activeDocTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveDocTab(tab.id)}
+                    className={`flex items-center gap-2.5 px-4 py-3 text-xs font-semibold rounded-xl text-left transition-all shrink-0 sm:shrink ${
+                      isActive 
+                        ? "bg-white/5 text-[#3b82f6] pl-3.5" 
+                        : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            
+            {/* Detail panel */}
+            <div className="sm:col-span-8 p-8 flex flex-col justify-between min-h-[340px] bg-transparent">
+              {(() => {
+                const currentTab = [
+                  {
+                    id: "Overview",
+                    title: "Overview",
+                    desc: "ARCA provides the financial infrastructure APIs you need to build scalable, compliant, and reliable commerce experiences.",
+                    cards: [
+                      { title: "Subscriptions API", desc: "Manage plans, customers, and billing workflows.", icon: SubscriptionsIcon },
+                      { title: "Settlement API", desc: "Move money globally with stablecoin rails.", icon: SettlementIcon }
+                    ]
+                  },
+                  {
+                    id: "Quickstart",
+                    title: "Quickstart",
+                    desc: "Deploy your first payment button and provision a merchant wallet in less than five minutes with our quickstart template.",
+                    cards: [
+                      { title: "React Starter", desc: "Clone the Next.js starter repository.", icon: Zap },
+                      { title: "Deploy Script", desc: "One-click deployment script to Vercel.", icon: ArrowUpRight }
+                    ]
+                  },
+                  {
+                    id: "API Reference",
+                    title: "API Reference",
+                    desc: "Deep dive into our robust JSON REST APIs for programmatically triggering transfers, managing plans, and auditing webhooks.",
+                    cards: [
+                      { title: "REST Endpoints", desc: "Explore secure POST and GET endpoints.", icon: LayoutGrid },
+                      { title: "Auth Header", desc: "Read about Bearer token security schemes.", icon: Shield }
+                    ]
+                  },
+                  {
+                    id: "Guides",
+                    title: "Guides",
+                    desc: "Step-by-step walkthroughs to design custom subscriber onboarding flows, trial periods, and tier upgrades.",
+                    cards: [
+                      { title: "Tier Upgrades", desc: "Implement prorated billing mechanics.", icon: Globe },
+                      { title: "Trial Flows", desc: "Configure zero-upfront trial periods.", icon: Activity }
+                    ]
+                  },
+                  {
+                    id: "SDKs",
+                    title: "SDKs",
+                    desc: "Pre-packaged TypeScript, Go, and Python libraries to abstract wallet operations, gas relays, and event validations.",
+                    cards: [
+                      { title: "TypeScript SDK", desc: "Import direct browser client wrappers.", icon: Mail },
+                      { title: "Go Library", desc: "Integrate high-speed server execution.", icon: Zap }
+                    ]
+                  },
+                  {
+                    id: "Webhooks",
+                    title: "Webhooks",
+                    desc: "Subscribe to transaction-state change events and instantly deliver updates to your database upon successful bridge settlement.",
+                    cards: [
+                      { title: "Webhook Events", desc: "Listen for charge.succeeded and bridge.completed.", icon: Globe },
+                      { title: "Payload Validation", desc: "Verify cryptographic SHA-256 signatures.", icon: Shield }
+                    ]
+                  },
+                  {
+                    id: "Changelog",
+                    title: "Changelog",
+                    desc: "Track the latest protocol upgrades, new chain integrations, and security patches for our relayer nodes.",
+                    cards: [
+                      { title: "v2.4 Release", desc: "Multi-party computation enhancements.", icon: Shield },
+                      { title: "Sei Support", desc: "Seamless Sei Network testnet bridging.", icon: Zap }
+                    ]
+                  }
+                ].find(t => t.id === activeDocTab) || {
+                  title: "Overview",
+                  desc: "ARCA provides the financial infrastructure APIs you need.",
+                  cards: []
+                };
+                
+                return (
+                  <div className="flex flex-col gap-6 animate-in fade-in duration-300">
+                    <div>
+                      <h4 className="text-xl font-bold tracking-tight text-white">{currentTab.title}</h4>
+                      <p className="text-zinc-400 text-xs font-medium leading-relaxed mt-2.5 max-w-xl">{currentTab.desc}</p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                      {currentTab.cards.map((card, i) => {
+                        const IconComponent = card.icon;
+                        return (
+                          <div key={i} className="p-5 rounded-2xl bg-[#050505] border border-white/5 flex gap-4 hover:bg-[#0a0a0f] transition-all items-center">
+                            <div className="h-12 w-12 rounded-2xl bg-[#3b82f6]/10 flex items-center justify-center text-[#3b82f6] shrink-0">
+                              <IconComponent className="h-6 w-6 stroke-[2.2]" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-bold text-white">{card.title}</span>
+                              <span className="text-zinc-400 text-xs font-medium leading-normal mt-1">{card.desc}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Trust & Compliance Section */}
       <section id="compliance" className="relative w-full bg-[#000000] py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden border-t border-[#ffffff]/10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,#3b82f608,transparent_70%)] pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto flex flex-col gap-16 relative z-10">
-          
-          <motion.div
-            className="flex flex-col items-center text-center gap-4 max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
-              <span className="text-[#3b82f6] text-xs font-semibold tracking-wide">Enterprise Gated Security</span>
-            </div>
-            <h2 className="text-4xl lg:text-6xl font-bold tracking-tighter text-[#ffffff] leading-tight">
-              Regulatory Compliance <br/>& <span className="text-zinc-500">Institutional Trust</span>
-            </h2>
-            <p className="text-zinc-400 font-medium leading-relaxed text-base sm:text-lg mt-2">
-              Mecha Pay is engineered to align with global regulatory frameworks, ensuring a fully compliant stablecoin payment stream.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full relative">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
             
-            {/* Custom CSS Animations for high-fidelity professional SVG elements */}
-            <style jsx global>{`
-              @keyframes scanline {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(115px); }
-              }
-              @keyframes flow {
-                to { stroke-dashoffset: -24; }
-              }
-              @keyframes flow-reverse {
-                to { stroke-dashoffset: 24; }
-              }
-              @keyframes clean-tx-flow {
-                0% { transform: translate(40px, 90px); opacity: 0; }
-                5% { opacity: 1; }
-                20% { transform: translate(184px, 90px); opacity: 1; }
-                35% { transform: translate(184px, 90px); opacity: 1; }
-                55% { transform: translate(380px, 50px); opacity: 1; }
-                60% { transform: translate(380px, 50px); opacity: 0; }
-                100% { transform: translate(380px, 50px); opacity: 0; }
-              }
-              @keyframes flagged-tx-flow {
-                0% { transform: translate(40px, 90px); opacity: 0; fill: #3b82f6; }
-                50% { transform: translate(40px, 90px); opacity: 0; fill: #3b82f6; }
-                55% { transform: translate(40px, 90px); opacity: 1; fill: #3b82f6; }
-                70% { transform: translate(184px, 90px); opacity: 1; fill: #3b82f6; }
-                78% { transform: translate(184px, 90px); opacity: 1; fill: #ef4444; }
-                92% { transform: translate(380px, 130px); opacity: 1; fill: #ef4444; }
-                98% { transform: translate(380px, 130px); opacity: 0; fill: #ef4444; }
-                100% { transform: translate(380px, 130px); opacity: 0; fill: #ef4444; }
-              }
-              @keyframes ofac-db-glow {
-                0%, 12% { stroke: #27272a; fill: #050508; }
-                15%, 25% { stroke: #3b82f6; fill: #0c101c; }
-                28%, 62% { stroke: #27272a; fill: #050508; }
-                65%, 75% { stroke: #ef4444; fill: #1c0c0c; }
-                78%, 100% { stroke: #27272a; fill: #050508; }
-              }
-              @keyframes uneu-db-glow {
-                0%, 12% { stroke: #27272a; fill: #050508; }
-                15%, 25% { stroke: #3b82f6; fill: #0c101c; }
-                28%, 100% { stroke: #27272a; fill: #050508; }
-              }
-              @keyframes ofac-db-text {
-                0%, 12% { fill: #71717a; }
-                15%, 25% { fill: #3b82f6; }
-                28%, 62% { fill: #71717a; }
-                65%, 75% { fill: #ef4444; }
-                78%, 100% { fill: #71717a; }
-              }
-              @keyframes uneu-db-text {
-                0%, 12% { fill: #71717a; }
-                15%, 25% { fill: #3b82f6; }
-                28%, 100% { fill: #71717a; }
-              }
-              @keyframes ofac-link-glow {
-                0%, 12% { stroke: #27272a; opacity: 0.3; }
-                15%, 25% { stroke: #3b82f6; opacity: 1; }
-                28%, 62% { stroke: #27272a; opacity: 0.3; }
-                65%, 75% { stroke: #ef4444; opacity: 1; }
-                78%, 100% { stroke: #27272a; opacity: 0.3; }
-              }
-              @keyframes uneu-link-glow {
-                0%, 12% { stroke: #27272a; opacity: 0.3; }
-                15%, 25% { stroke: #3b82f6; opacity: 1; }
-                28%, 100% { stroke: #27272a; opacity: 0.3; }
-              }
-              @keyframes rpc-gateway-border {
-                0%, 62% { stroke: #27272a; }
-                65%, 75% { stroke: #ef4444; }
-                78%, 100% { stroke: #27272a; }
-              }
-              @keyframes gate-scanner-sweep {
-                0%, 15% { transform: translateY(0px); opacity: 0.2; }
-                16%, 24% { opacity: 1; }
-                25%, 65% { transform: translateY(30px); opacity: 0.2; }
-                66%, 74% { opacity: 1; }
-                75%, 100% { transform: translateY(0px); opacity: 0.2; }
-              }
-              @keyframes scan-circle-pulse {
-                0%, 15% { r: 2px; stroke: #27272a; fill: #27272a; }
-                18%, 22% { r: 4px; stroke: #3b82f6; fill: #3b82f6; }
-                25%, 65% { r: 2px; stroke: #27272a; fill: #27272a; }
-                68%, 72% { r: 4px; stroke: #ef4444; fill: #ef4444; }
-                75%, 100% { r: 2px; stroke: #27272a; fill: #27272a; }
-              }
-              @keyframes merchant-pulse {
-                0%, 34% { r: 5px; opacity: 0; stroke: #10b981; }
-                38% { r: 12px; opacity: 0.8; stroke: #10b981; }
-                44%, 100% { r: 20px; opacity: 0; stroke: #10b981; }
-              }
-              @keyframes sink-pulse {
-                0%, 82% { stroke: #ef4444; opacity: 0.3; }
-                85% { stroke: #ef4444; opacity: 1; }
-                92%, 100% { stroke: #ef4444; opacity: 0.3; }
-              }
-              @keyframes hud-text-monitoring {
-                0%, 12% { opacity: 1; }
-                15%, 25% { opacity: 0; }
-                28%, 62% { opacity: 1; }
-                65%, 75% { opacity: 0; }
-                78%, 92% { opacity: 0; }
-                95%, 100% { opacity: 1; }
-              }
-              @keyframes hud-text-checking {
-                0%, 12% { opacity: 0; }
-                15%, 25% { opacity: 1; fill: #3b82f6; }
-                28%, 62% { opacity: 0; }
-                65%, 75% { opacity: 1; fill: #3b82f6; }
-                78%, 100% { opacity: 0; }
-              }
-              @keyframes hud-text-approved {
-                0%, 25% { opacity: 0; }
-                28%, 62% { opacity: 1; fill: #10b981; }
-                65%, 100% { opacity: 0; }
-              }
-              @keyframes hud-text-blocked {
-                0%, 75% { opacity: 0; }
-                78%, 92% { opacity: 1; fill: #ef4444; }
-                95%, 100% { opacity: 0; }
-              }
-              @keyframes hud-text-blocked-label {
-                0%, 75% { fill: #27272a; opacity: 0.4; }
-                78%, 92% { fill: #ef4444; opacity: 1; }
-                95%, 100% { fill: #27272a; opacity: 0.4; }
-              }
-              @keyframes rotate-gear {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-              }
-              @keyframes rotate-gear-reverse {
-                from { transform: rotate(360deg); }
-                to { transform: rotate(0deg); }
-              }
-              @keyframes matrix-fade {
-                0%, 100% { opacity: 0.5; }
-                50% { opacity: 1; }
-              }
-            `}</style>
-
-            {/* BSA & AML Gating */}
-            <motion.div
-              className="group relative p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-primary/20 transition-all duration-500 flex flex-col justify-between min-h-[380px] md:col-span-2 lg:col-span-2 overflow-hidden"
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="flex flex-col gap-6 w-full relative z-10">
-                {/* Top Row: Info & Stats */}
-                <div className="flex flex-col lg:flex-row justify-between gap-6 items-start lg:items-center pb-6 border-b border-[#ffffff]/5">
-                  <div className="flex-1">
-                    <div className="h-10 w-10 rounded-xl bg-[#ffffff]/5 border border-[#ffffff]/10 flex items-center justify-center mb-4 group-hover:border-primary/20 transition-colors">
-                      <Coins className="h-5 w-5 text-zinc-400 group-hover:text-primary transition-colors" />
+            {/* Left Content column */}
+            <div className="flex flex-col lg:col-span-4 max-w-md">
+              <span className="text-zinc-500 text-xs font-bold uppercase tracking-[0.18em] mb-4">Enterprise Trust</span>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-white leading-[1.1] font-serif">
+                Security. Compliance.<br/>Reliability. Built-in.
+              </h2>
+              <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">
+                ARCA meets the highest standards of security and compliance so you can build with confidence.
+              </p>
+              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
+                <span>View security</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+              </Link>
+            </div>
+            
+            {/* Right Horizontal Layout column */}
+            <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-0 w-full relative">
+              {[
+                { name: "SOC 2 Type II", desc: "MPC Insulated", icon: Soc2Icon },
+                { name: "EU MiCA", desc: "Circle USDC Rails", icon: MicaIcon },
+                { name: "BSA / AML", desc: "OFAC Filtered", icon: BsaAmlIcon },
+                { name: "GDPR Compliant", desc: "Zero PII Ledger", icon: GdprIcon },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div 
+                    key={idx} 
+                    className={`flex flex-col items-center text-center px-4 ${
+                      idx !== 0 ? "md:border-l md:border-white/10" : ""
+                    }`}
+                  >
+                    <div className="h-14 w-14 rounded-full border border-white/10 flex items-center justify-center bg-white/5 hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/5 transition-all duration-300 mb-5">
+                      <Icon className="h-6 w-6 text-[#3b82f6] stroke-[2px]" />
                     </div>
-                    <h4 className="text-xl font-bold text-foreground mb-2 tracking-tight">BSA / AML Gating</h4>
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-2xl">
-                      Integrates seamlessly with RPC-level sanction filters and OFAC screening tools, protecting merchants from interacting with flagged wallets.
-                    </p>
+                    <span className="text-white font-bold text-sm tracking-tight">{item.name}</span>
+                    <span className="text-zinc-500 text-xs font-semibold mt-1">{item.desc}</span>
                   </div>
-                  
-                  <div className="flex gap-6 shrink-0 mt-2 lg:mt-0">
-                    <div className="flex flex-col border-l border-zinc-850 pl-4">
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Sanction DB</span>
-                      <span className="text-sm font-semibold text-foreground mt-0.5">OFAC / EU / UN</span>
-                    </div>
-                    <div className="flex flex-col border-l border-zinc-850 pl-4">
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Latency</span>
-                      <span className="text-sm font-semibold text-primary mt-0.5">&lt; 12ms</span>
-                    </div>
-                  </div>
-                </div>
+                );
+              })}
+            </div>
 
-                {/* Bottom Row: Full-width Cryptographic Gating Mesh */}
-                <div className="w-full">
-                  <svg className="w-full h-[210px] rounded-2xl bg-[#08080c] border border-[#ffffff]/5" viewBox="0 0 480 180">
-                    {/* Technical grid background */}
-                    <g stroke="rgba(255, 255, 255, 0.015)" strokeWidth="0.5">
-                      <line x1="0" y1="45" x2="480" y2="45" />
-                      <line x1="0" y1="90" x2="480" y2="90" />
-                      <line x1="0" y1="135" x2="480" y2="135" />
-                      <line x1="60" y1="0" x2="60" y2="180" />
-                      <line x1="120" y1="0" x2="120" y2="180" />
-                      <line x1="184" y1="0" x2="184" y2="180" />
-                      <line x1="240" y1="0" x2="240" y2="180" />
-                      <line x1="300" y1="0" x2="300" y2="180" />
-                      <line x1="380" y1="0" x2="380" y2="180" />
-                    </g>
-
-                    {/* Connection paths */}
-                    {/* Sender to RPC Gateway */}
-                    <line x1="40" y1="90" x2="184" y2="90" fill="none" stroke="#27272a" strokeWidth="1" strokeDasharray="3,3" />
-                    
-                    {/* Clean route: RPC Gateway to Merchant */}
-                    <path d="M 184 90 Q 282 50 380 50" fill="none" stroke="#27272a" strokeWidth="1" strokeDasharray="3,3" />
-
-                    {/* Flagged/Blocked route: RPC Gateway to Isolation Sink */}
-                    <path d="M 184 90 Q 282 130 380 130" fill="none" stroke="#ef4444" strokeWidth="1.2" strokeDasharray="3,3" opacity="0.3" />
-
-                    {/* Dynamic query lines from Gateway to databases */}
-                    <line x1="184" y1="70" x2="184" y2="38" stroke="#27272a" strokeWidth="1" strokeDasharray="2,2" style={{ animation: 'ofac-link-glow 8s infinite' }} />
-                    <line x1="184" y1="110" x2="184" y2="142" stroke="#27272a" strokeWidth="1" strokeDasharray="2,2" style={{ animation: 'uneu-link-glow 8s infinite' }} />
-
-                    {/* Sender Wallet Node */}
-                    <g>
-                      <circle cx="40" cy="90" r="6" fill="#050508" stroke="#27272a" strokeWidth="1.5" />
-                      <circle cx="40" cy="90" r="2.5" fill="#3b82f6" />
-                      <text x="40" y="106" fill="#71717a" fontSize="6.5" textAnchor="middle" fontFamily="monospace" fontWeight="bold">SENDER</text>
-                    </g>
-
-                    {/* RPC Gateway Shield Router */}
-                    <g>
-                      <rect x="166" y="70" width="36" height="40" rx="3.5" fill="#050508" stroke="#27272a" strokeWidth="1.5" style={{ animation: 'rpc-gateway-border 8s infinite' }} />
-                      
-                      {/* Sweep scan bar */}
-                      <line x1="168" y1="73" x2="200" y2="73" stroke="#3b82f6" strokeWidth="1" opacity="0.6" style={{ animation: 'gate-scanner-sweep 8s infinite' }} />
-                      
-                      {/* Active hub dot */}
-                      <circle cx="184" cy="90" style={{ animation: 'scan-circle-pulse 8s infinite' }} />
-                      
-                      <text x="184" y="122" fill="#71717a" fontSize="6.5" textAnchor="middle" fontFamily="monospace" fontWeight="bold">RPC GATEWAY</text>
-                    </g>
-
-                    {/* Database 1: OFAC Sanctions List */}
-                    <g>
-                      <rect x="162" y="22" width="44" height="16" rx="2" stroke="#27272a" strokeWidth="1" fill="#050508" style={{ animation: 'ofac-db-glow 8s infinite' }} />
-                      <text x="184" y="32" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="monospace" style={{ animation: 'ofac-db-text 8s infinite' }}>OFAC</text>
-                    </g>
-
-                    {/* Database 2: UN/EU Sanctions List */}
-                    <g>
-                      <rect x="162" y="142" width="44" height="16" rx="2" stroke="#27272a" strokeWidth="1" fill="#050508" style={{ animation: 'uneu-db-glow 8s infinite' }} />
-                      <text x="184" y="152" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="monospace" style={{ animation: 'uneu-db-text 8s infinite' }}>UN/EU</text>
-                    </g>
-
-                    {/* Destination: Merchant Wallet */}
-                    <g>
-                      <circle cx="380" cy="50" style={{ animation: 'merchant-pulse 8s infinite' }} fill="none" strokeWidth="1" />
-                      <circle cx="380" cy="50" r="5" fill="#050508" stroke="#10b981" strokeWidth="1.5" />
-                      <circle cx="380" cy="50" r="2" fill="#10b981" />
-                      <text x="380" y="36" fill="#10b981" fontSize="6.5" textAnchor="middle" fontFamily="monospace" fontWeight="bold">MERCHANT</text>
-                    </g>
-
-                    {/* Destination: Isolation Sink */}
-                    <g>
-                      <rect x="345" y="115" width="70" height="30" rx="4.5" fill="#050508" stroke="#ef4444" strokeWidth="1" strokeDasharray="3,2" style={{ animation: 'sink-pulse 8s infinite' }} />
-                      <text x="380" y="110" fill="#ef4444" fontSize="6.5" textAnchor="middle" fontFamily="monospace" fontWeight="bold">ISOLATION SINK</text>
-                      <text x="380" y="133" fontSize="8" fontWeight="bold" textAnchor="middle" fontFamily="monospace" style={{ animation: 'hud-text-blocked-label 8s infinite' }}>BLOCKED</text>
-                    </g>
-
-                    {/* Animated flows (Clean + Flagged cycles) */}
-                    {/* Clean flow circle */}
-                    <circle cx="0" cy="0" r="2.2" fill="#3b82f6" style={{ animation: 'clean-tx-flow 8s infinite' }} />
-
-                    {/* Flagged/Blocked flow circle */}
-                    <circle cx="0" cy="0" r="2.2" style={{ animation: 'flagged-tx-flow 8s infinite' }} />
-
-                    {/* Live Dynamic HUD Status Labels */}
-                    <text x="10" y="20" fill="#71717a" fontSize="6.5" fontFamily="monospace">REALTIME RPC-LEVEL GATING...</text>
-
-                    <text x="10" y="166" fontSize="6.5" fontFamily="monospace" style={{ animation: 'hud-text-monitoring 8s infinite' }}>
-                      REALTIME RPC: SYSTEM MONITORING
-                    </text>
-                    <text x="10" y="166" fontSize="6.5" fontFamily="monospace" style={{ animation: 'hud-text-checking 8s infinite' }}>
-                      REALTIME RPC: QUERYING SANCTIONS LIST...
-                    </text>
-                    <text x="10" y="166" fontSize="6.5" fontFamily="monospace" style={{ animation: 'hud-text-approved 8s infinite' }}>
-                      REALTIME RPC: 0x71C.. COMPLIANT (&lt; 12ms)
-                    </text>
-                    <text x="10" y="166" fontSize="6.5" fontFamily="monospace" style={{ animation: 'hud-text-blocked 8s infinite' }}>
-                      REALTIME RPC: WALLET BLOCKED (OFAC SDN HIT)
-                    </text>
-                  </svg>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* MiCA Ready */}
-            <motion.div
-              className="group relative p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-primary/20 transition-all duration-500 flex flex-col justify-between min-h-[380px] md:col-span-1 lg:col-span-1 overflow-hidden"
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            >
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                  <div className="h-10 w-10 rounded-xl bg-[#ffffff]/5 border border-[#ffffff]/10 flex items-center justify-center mb-6 group-hover:border-primary/20 transition-colors">
-                    <Shield className="h-5 w-5 text-zinc-400 group-hover:text-primary transition-colors" />
-                  </div>
-                  <h4 className="text-xl font-bold text-foreground mb-3 tracking-tight">MiCA Compliant</h4>
-                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                    Leverages native Circle USDC, fully backed and regulated under the EU's Markets in Crypto-Assets regulation.
-                  </p>
-                </div>
-
-                {/* Elegant Concentric Regulatory Star Ring SVG */}
-                <div className="mt-8 flex flex-col items-center justify-center py-10 px-4 rounded-2xl bg-[#08080c] border border-[#ffffff]/5 relative overflow-hidden group-hover:border-primary/10 transition-all duration-500">
-                  <svg className="w-40 h-40" viewBox="0 0 120 120">
-                    {/* Orbit Rings / Ticks */}
-                    <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="0.5" />
-                    <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.75" strokeDasharray="1,3" />
-                    <circle cx="60" cy="60" r="32" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.5" />
-
-                    {/* Orbiting star group rotating smoothly */}
-                    <g className="origin-center" style={{ transformOrigin: '60px 60px', animation: 'rotateStar 32s linear infinite' }}>
-                      {[...Array(12)].map((_, i) => {
-                        const angle = (i * 30 * Math.PI) / 180;
-                        const x = 60 + 40 * Math.cos(angle);
-                        const y = 60 + 40 * Math.sin(angle);
-                        return (
-                          <polygon 
-                            key={i} 
-                            points="60,58.5 60.5,59.5 61.5,59.5 60.7,60.2 61.1,61.3 60,60.7 58.9,61.3 59.3,60.2 58.5,59.5 59.5,59.5" 
-                            fill="#a1a1aa" 
-                            className="opacity-70"
-                            transform={`translate(${x - 60}, ${y - 60}) scale(0.45)`} 
-                          />
-                        );
-                      })}
-                    </g>
-                    
-                    {/* Center shield emblem - minimal, sharp, flat */}
-                    <g>
-                      {/* Shield Background */}
-                      <path d="M 60 44 L 74 44 L 74 60 Q 74 74 60 80 Q 46 74 46 60 L 46 44 Z" fill="#08080c" stroke="#27272a" strokeWidth="1.5" />
-                      
-                      {/* Stylized key inside shield */}
-                      <circle cx="60" cy="53" r="2.5" fill="none" stroke="#3b82f6" strokeWidth="1" />
-                      <rect x="59.5" y="55.5" width="1" height="9" fill="#3b82f6" />
-                      <rect x="60.5" y="59" width="2" height="1" fill="#3b82f6" />
-                      <rect x="60.5" y="62" width="2" height="1" fill="#3b82f6" />
-                    </g>
-                    
-                    {/* Technical text ring */}
-                    <path id="textPath" d="M 60 92 A 32 32 0 0 1 60 28 A 32 32 0 0 1 60 92" fill="none" />
-                    <text fontSize="4.2" fontFamily="monospace" fill="#71717a" letterSpacing="0.8">
-                      <textPath href="#textPath" startOffset="0%">REGULATED // EU MICA COMPLIANT // USDC NATIVE //</textPath>
-                    </text>
-                  </svg>
-                  <span className="text-[10px] font-bold text-zinc-400 tracking-widest mt-2 uppercase">MiCA Gated Stream</span>
-                  <span className="text-[9px] text-zinc-500 font-semibold mt-1">100% Cash-Backed Stablecoins</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* GDPR & Privacy First */}
-            <motion.div
-              className="group relative p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-primary/20 transition-all duration-500 flex flex-col justify-between min-h-[380px] md:col-span-1 lg:col-span-1 overflow-hidden"
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            >
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div>
-                  <div className="h-10 w-10 rounded-xl bg-[#ffffff]/5 border border-[#ffffff]/10 flex items-center justify-center mb-6 group-hover:border-primary/20 transition-colors">
-                    <Globe className="h-5 w-5 text-zinc-400 group-hover:text-primary transition-colors" />
-                  </div>
-                  <h4 className="text-xl font-bold text-foreground mb-3 tracking-tight">GDPR & Data Privacy</h4>
-                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                    No personally identifiable information (PII) is stored on the ledger. Cryptographic session keys authorize payouts.
-                  </p>
-                </div>
-
-                {/* ZK-Session / Data Privacy Pipeline SVG */}
-                <div className="mt-8 py-8 px-4 rounded-2xl bg-[#08080c] border border-[#ffffff]/5 relative overflow-hidden group-hover:border-primary/10 transition-all duration-500">
-                  <svg className="w-full h-36" viewBox="0 0 200 120">
-                    {/* Inputs panel (Left) */}
-                    <g transform="translate(10, 15)">
-                      <rect x="0" y="0" width="50" height="12" rx="2" fill="#050508" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.5" />
-                      <text x="25" y="8" fill="#71717a" fontSize="5.5" textAnchor="middle" fontFamily="monospace">email_raw</text>
-                      
-                      <rect x="0" y="24" width="50" height="12" rx="2" fill="#050508" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.5" />
-                      <text x="25" y="32" fill="#71717a" fontSize="5.5" textAnchor="middle" fontFamily="monospace">ip_address</text>
-                      
-                      <rect x="0" y="48" width="50" height="12" rx="2" fill="#050508" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.5" />
-                      <text x="25" y="56" fill="#71717a" fontSize="5.5" textAnchor="middle" fontFamily="monospace">cust_name</text>
-                    </g>
-
-                    {/* Convergence paths to ZK Gate */}
-                    <path d="M 60 21 Q 82 21 100 52" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="0.75" strokeDasharray="2,2" />
-                    <path d="M 60 45 Q 82 45 100 52" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="0.75" strokeDasharray="2,2" />
-                    <path d="M 60 69 Q 82 69 100 52" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="0.75" strokeDasharray="2,2" />
-
-                    {/* Minimal flow dots on left paths */}
-                    <path d="M 60 21 Q 82 21 100 52" fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,12" style={{ animation: 'flow 4s linear infinite' }} />
-                    <path d="M 60 45 Q 82 45 100 52" fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,12" style={{ animation: 'flow 3s linear infinite', animationDelay: '1s' }} />
-                    <path d="M 60 69 Q 82 69 100 52" fill="none" stroke="#a1a1aa" strokeWidth="1" strokeDasharray="3,12" style={{ animation: 'flow 5s linear infinite', animationDelay: '0.5s' }} />
-
-                    {/* Massive ZK Cryptographic Shield Gate (Center) */}
-                    <g transform="translate(100, 52)">
-                      <g style={{ transformOrigin: '0px 0px', animation: 'rotate-gear 16s linear infinite' }}>
-                        <circle cx="0" cy="0" r="14" fill="none" stroke="#27272a" strokeWidth="0.75" strokeDasharray="3,4" />
-                      </g>
-                      
-                      <circle cx="0" cy="0" r="8" fill="#050508" stroke="#10b981" strokeWidth="1.2" />
-                      <text x="0" y="2" fill="#10b981" fontSize="6" fontWeight="bold" textAnchor="middle" fontFamily="monospace">ZK</text>
-                    </g>
-
-                    {/* Encrypted Anonymized output stream */}
-                    <path d="M 112 52 L 140 52" fill="none" stroke="#27272a" strokeWidth="1" strokeDasharray="3,6" style={{ animation: 'flow 2s linear infinite' }} />
-
-                    {/* Cryptographic Session Key Block (Right) */}
-                    <g transform="translate(140, 22)">
-                      <rect x="0" y="0" width="52" height="42" rx="3.5" fill="#050508" stroke="#27272a" strokeWidth="1" />
-                      
-                      {/* Static minimal texts */}
-                      <rect x="4" y="5" width="44" height="8" rx="1.5" fill="#0a0a0f" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.5" />
-                      <text x="26" y="10.5" fill="#10b981" fontSize="4.5" fontWeight="bold" textAnchor="middle" fontFamily="monospace">SESSION_KEY</text>
-                      
-                      {/* Live obfuscated hex hashes */}
-                      <text x="6" y="23" fill="#71717a" fontSize="5" fontFamily="monospace" style={{ animation: 'matrix-fade 2s infinite' }}>0x9e8a...02cd</text>
-                      <text x="6" y="30" fill="#71717a" fontSize="5" fontFamily="monospace" style={{ animation: 'matrix-fade 3s infinite', animationDelay: '0.5s' }}>AES_256_GCM</text>
-                      <text x="6" y="37" fill="#10b981" fontSize="4.5" fontWeight="bold" fontFamily="monospace">ANONYMOUS</text>
-                    </g>
-                  </svg>
-                  <div className="text-[9px] font-bold text-center text-zinc-500 uppercase tracking-widest mt-1">Zero PII Data Minimization Active</div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* SOC 2 Type II */}
-            <motion.div
-              className="group relative p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-primary/20 transition-all duration-500 flex flex-col justify-between min-h-[380px] md:col-span-2 lg:col-span-2 overflow-hidden"
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-            >
-              <div className="flex flex-col gap-6 w-full relative z-10">
-                {/* Top Row: Info & Stats */}
-                <div className="flex flex-col lg:flex-row justify-between gap-6 items-start lg:items-center pb-6 border-b border-[#ffffff]/5">
-                  <div className="flex-1">
-                    <div className="h-10 w-10 rounded-xl bg-[#ffffff]/5 border border-[#ffffff]/10 flex items-center justify-center mb-4 group-hover:border-primary/20 transition-colors">
-                      <Zap className="h-5 w-5 text-zinc-400 group-hover:text-primary transition-colors" />
-                    </div>
-                    <h4 className="text-xl font-bold text-foreground mb-2 tracking-tight">SOC 2 Type II Insulated</h4>
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-2xl">
-                      Operates using Circle's non-custodial wallet infrastructure, audited to SOC 2 Type II security standards for safe private key segment storage.
-                    </p>
-                  </div>
-                  
-                  <div className="flex gap-6 shrink-0 mt-2 lg:mt-0">
-                    <div className="flex flex-col border-l border-zinc-850 pl-4">
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Key Custody</span>
-                      <span className="text-sm font-semibold text-foreground mt-0.5">MPC Non-Custodial</span>
-                    </div>
-                    <div className="flex flex-col border-l border-zinc-850 pl-4">
-                      <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Auditor Status</span>
-                      <span className="text-sm font-semibold text-emerald-500 mt-0.5">SOC 2 Certified</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom Row: Balanced Dual-Panel UI */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 w-full">
-                  {/* Left Panel: Verified Controls Checklist */}
-                  <div className="md:col-span-2 p-4 rounded-2xl bg-[#08080c] border border-[#ffffff]/5 flex flex-col gap-2.5 h-[210px] justify-between">
-                    <div className="flex items-center justify-between text-[9px] text-zinc-500 border-b border-[#ffffff]/5 pb-2">
-                      <span>VERIFIED SECURITY CONTROLS</span>
-                      <span className="text-emerald-500 font-bold uppercase">COMPLIANT</span>
-                    </div>
-                    <div className="flex flex-col gap-2 text-xs text-zinc-400 font-medium">
-                      <div className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 opacity-60"></span>
-                        <span>FIPS 140-2 Level 3 Hardware</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 opacity-60"></span>
-                        <span>MPC Threshold Cryptography</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 opacity-60"></span>
-                        <span>Zero Knowledge Session Gating</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 opacity-60"></span>
-                        <span>Continuous Security Audits</span>
-                      </div>
-                    </div>
-                    <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-semibold border-t border-[#ffffff]/5 pt-2">
-                      Audit cycle: Continuous real-time gating
-                    </div>
-                  </div>
-
-                  {/* Right Panel: Animated MPC HSM Key Distribution SVG */}
-                  <div className="md:col-span-3">
-                    <svg className="w-full h-[210px] rounded-2xl bg-[#08080c] border border-[#ffffff]/5" viewBox="0 0 320 180">
-                      {/* Technical Grid background */}
-                      <g stroke="rgba(255, 255, 255, 0.015)" strokeWidth="0.5">
-                        <line x1="0" y1="45" x2="320" y2="45" />
-                        <line x1="0" y1="90" x2="320" y2="90" />
-                        <line x1="0" y1="135" x2="320" y2="135" />
-                        <line x1="100" y1="0" x2="100" y2="180" />
-                        <line x1="200" y1="0" x2="200" y2="180" />
-                      </g>
-
-                      {/* Cryptographic connection paths */}
-                      <path d="M 95 40 C 160 40, 160 90, 230 90" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="1" />
-                      <path d="M 95 90 L 230 90" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="1" />
-                      <path d="M 95 140 C 160 140, 160 90, 230 90" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="1" />
-
-                      {/* Animated cryptographic key segment flows */}
-                      <path d="M 95 40 C 160 40, 160 90, 230 90" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="3,12" style={{ animation: 'flow 2.5s linear infinite' }} opacity="0.6" />
-                      <path d="M 95 90 L 230 90" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="3,12" style={{ animation: 'flow 3s linear infinite', animationDelay: '0.5s' }} opacity="0.6" />
-                      <path d="M 95 140 C 160 140, 160 90, 230 90" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="3,12" style={{ animation: 'flow 3.5s linear infinite', animationDelay: '1s' }} opacity="0.6" />
-
-                      {/* Enclave 1: Circle HSM */}
-                      <g transform="translate(15, 20)">
-                        <rect x="0" y="0" width="80" height="36" rx="4" fill="#050508" stroke="#27272a" strokeWidth="1" />
-                        <text x="40" y="15" fill="#ffffff" fontSize="7.5" fontWeight="bold" textAnchor="middle" fontFamily="monospace">CIRCLE HSM</text>
-                        <text x="40" y="26" fill="#71717a" fontSize="6" textAnchor="middle" fontFamily="monospace">SHARD A // FIPS</text>
-                        <circle cx="8" cy="8" r="1.5" fill="#3b82f6" opacity="0.8" />
-                      </g>
-
-                      {/* Enclave 2: User Device TEE */}
-                      <g transform="translate(15, 72)">
-                        <rect x="0" y="0" width="80" height="36" rx="4" fill="#050508" stroke="#27272a" strokeWidth="1" />
-                        <text x="40" y="15" fill="#ffffff" fontSize="7.5" fontWeight="bold" textAnchor="middle" fontFamily="monospace">USER DEVICE</text>
-                        <text x="40" y="26" fill="#71717a" fontSize="6" textAnchor="middle" fontFamily="monospace">SHARD B // TEE</text>
-                        <circle cx="8" cy="8" r="1.5" fill="#3b82f6" opacity="0.8" />
-                      </g>
-
-                      {/* Enclave 3: Co-Signer Node */}
-                      <g transform="translate(15, 124)">
-                        <rect x="0" y="0" width="80" height="36" rx="4" fill="#050508" stroke="#27272a" strokeWidth="1" />
-                        <text x="40" y="15" fill="#ffffff" fontSize="7.5" fontWeight="bold" textAnchor="middle" fontFamily="monospace">CO-SIGNER</text>
-                        <text x="40" y="26" fill="#71717a" fontSize="6" textAnchor="middle" fontFamily="monospace">SHARD C // SECURE</text>
-                        <circle cx="8" cy="8" r="1.5" fill="#3b82f6" opacity="0.8" />
-                      </g>
-
-                      {/* Central Vault combining MPC credentials */}
-                      <g transform="translate(230, 55)">
-                        <rect x="0" y="0" width="75" height="70" rx="6" fill="#050508" stroke="#10b981" strokeWidth="1.5" />
-                        
-                        {/* Combination dial locks outline */}
-                        <g style={{ transformOrigin: '37.5px 35px', animation: 'rotate-gear 12s linear infinite' }}>
-                          <circle cx="37.5" cy="35" r="16" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.75" strokeDasharray="2,3" />
-                        </g>
-                        <g style={{ transformOrigin: '37.5px 35px', animation: 'rotate-gear-reverse 8s linear infinite' }}>
-                          <circle cx="37.5" cy="35" r="10" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.75" strokeDasharray="1,2" />
-                        </g>
-
-                        <circle cx="37.5" cy="35" r="5" fill="#08080c" stroke="#10b981" strokeWidth="1" />
-
-                        <text x="37.5" y="12" fill="#10b981" fontSize="6" fontWeight="bold" textAnchor="middle" fontFamily="monospace">AUTHORIZED</text>
-                        <text x="37.5" y="58" fill="#a1a1aa" fontSize="6" textAnchor="middle" fontFamily="monospace">2/3 SIGNED</text>
-                        <text x="37.5" y="65" fill="#71717a" fontSize="5" textAnchor="middle" fontFamily="monospace">MPC REBUILT</text>
-                      </g>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -786,7 +593,7 @@ export default function LandingPage() {
               <span className="text-[#3b82f6]">Zero Waste.</span>
             </h2>
             <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
-              Traditional payment rails eat into your margins with hidden fees and expensive gas costs. Mecha Pay redefines protocol economics.
+              Traditional payment rails eat into your margins with hidden fees and expensive gas costs. Arca redefines protocol economics.
             </p>
           </motion.div>
 
@@ -869,7 +676,7 @@ export default function LandingPage() {
             USDC-Native. <br/><span className="text-[#3b82f6]">Arc-Powered.</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
-            Mecha Pay is the membership infrastructure for the Arc network. By combining Circle&apos;s Programmable Wallets with CCTP bridging, we&apos;ve eliminated gas complexity, allowing users to pay entirely in USDC while developers enjoy sub-second finality.
+            Arca is the membership infrastructure for the Arc network. By combining Circle&apos;s Programmable Wallets with CCTP bridging, we&apos;ve eliminated gas complexity, allowing users to pay entirely in USDC while developers enjoy sub-second finality.
           </p>
           <div className="grid grid-cols-2 gap-8 mt-4 lg:mt-8">
              <div className="flex flex-col gap-2 border-l border-[#ffffff]/10 pl-4 lg:pl-6">
@@ -949,7 +756,7 @@ export default function LandingPage() {
           >
           <Terminal className="bg-[#050505] border border-[#ffffff]/10 shadow-2xl h-[520px] w-full max-w-3xl">
             <TypingAnimation delay={500} duration={30} className="text-zinc-500 text-xs sm:text-sm font-mono">
-              &gt; npm install mechapay-react
+              &gt; npm install arca-react
             </TypingAnimation>
             <AnimatedSpan delay={1500} className="text-[#3b82f6] text-xs sm:text-sm font-mono mt-2 block">
               ✔ Package installed successfully
@@ -960,13 +767,13 @@ export default function LandingPage() {
             </TypingAnimation>
             
             <AnimatedSpan delay={3500} className="text-zinc-300 text-xs sm:text-sm font-mono mt-2 block whitespace-pre-wrap leading-relaxed">
-              <span className="text-[#ff7b72]">import</span> {'{'} <span className="text-[#d2a8ff]">MechaPricingTable</span> {'}'} <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">&apos;mechapay-react&apos;</span>;
+              <span className="text-[#ff7b72]">import</span> {'{'} <span className="text-[#d2a8ff]">ArcaPricingTable</span> {'}'} <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">&apos;arca-react&apos;</span>;
               <br/><br/>
               <span className="text-[#ff7b72]">export default function</span> <span className="text-[#d2a8ff]">Page</span>() {'{'}
               <br/>
               {'  '}<span className="text-[#ff7b72]">return</span> (
               <br/>
-              {'    '}&lt;<span className="text-[#7ee787]">MechaPricingTable</span> 
+              {'    '}&lt;<span className="text-[#7ee787]">ArcaPricingTable</span> 
               <br/>
               {'      '}planId=<span className="text-[#a5d6ff]">&quot;0x123...&quot;</span> 
               <br/>
@@ -995,7 +802,7 @@ export default function LandingPage() {
             One-Click Payments. <br/><span className="text-[#3b82f6]">Integrates in Seconds.</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
-            Mecha Pay offers a zero-friction, pre-built checkout widget for your client application. Drop in a single React component to accept USDC subscriptions instantly, with automatic wallet provisioning, passkey security, native bridging, and real-time access gating.
+            Arca offers a zero-friction, pre-built checkout widget for your client application. Drop in a single React component to accept USDC subscriptions instantly, with automatic wallet provisioning, passkey security, native bridging, and real-time access gating.
           </p>
           <div className="flex gap-4 mt-6">
             <Link href="/docs" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-[#3b82f6] text-sm font-bold text-[#ffffff] hover:opacity-90 transition-opacity">
@@ -1034,7 +841,7 @@ export default function LandingPage() {
             Bridge USDC <br/><span className="text-zinc-500">Across Every Chain</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl max-w-3xl mt-4">
-            Mecha Pay integrates natively with Circle CCTP to provide seamless, secure, and instant USDC transfers across 15+ testnet ecosystems. No wrappers, no compromises.
+            Arca integrates natively with Circle CCTP to provide seamless, secure, and instant USDC transfers across 15+ testnet ecosystems. No wrappers, no compromises.
           </p>
         </motion.div>
 
@@ -1047,7 +854,7 @@ export default function LandingPage() {
         >
           {[
             { name: "Arc Testnet", icon: "/arc-logo.png" },
-            { name: "Base Sepolia", icon: "https://avatars.githubusercontent.com/u/108554348?s=200&v=4" },
+            { name: "Base Sepolia", icon: "/base-sepolia.png" },
             { name: "Arbitrum Sepolia", icon: "https://ethglobal.storage/static/faucet/arbitrum-sepolia.png" },
             { name: "Avalanche Fuji", icon: "/avalanche-logo.png" },
             { name: "ETH Sepolia", icon: "/seoplia-logo.png" },
@@ -1090,72 +897,170 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-
-
       {/* Footer */}
-      <footer className="relative w-full bg-[#000000] pt-32 pb-12 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden border-t border-[#ffffff]/10">
-        {/* Massive Background Text Trend */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none select-none z-0">
-           <h1 className="text-[15vw] font-black tracking-tighter text-[#ffffff]/5 whitespace-nowrap">MECHA PAY</h1>
-        </div>
+      <footer className="relative w-full bg-[#000000] pt-24 pb-12 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
         
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-20">
+        {/* Subtle background glow to blend with the rest of the page */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#3b82f604,transparent_50%)] pointer-events-none" />
+        
+        {/* Abstract thin curved network arcs in the background - matching the uploaded image */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 lg:opacity-60 overflow-hidden">
+          <svg className="absolute w-[200%] h-[200%] lg:w-[150%] lg:h-[150%] top-[-30%] left-[-25%] stroke-white/[0.04] fill-none" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 500 C 300 200, 700 250, 1000 150" strokeWidth="0.75" />
+            <path d="M 0 420 C 400 100, 600 350, 1000 100" strokeWidth="0.75" />
+            <path d="M 0 350 C 250 50, 800 200, 1000 300" strokeWidth="0.75" />
+            <path d="M 0 280 C 500 450, 700 50, 1000 220" strokeWidth="0.75" />
             
-            <div className="flex flex-col gap-6 lg:col-span-5 pr-0 lg:pr-12">
-              <div className="flex items-center gap-3">
-                <Image src="/logo.png" alt="Mecha Pay Logo" width={32} height={32} className="rounded-lg shadow-lg" />
-                <span className="text-2xl font-bold tracking-tight text-[#ffffff]">Mecha Pay</span>
-              </div>
-              <p className="text-zinc-400 font-medium leading-relaxed text-sm max-w-sm">
-                The production-grade, USDC-native membership infrastructure for Web3. Built on Arc Testnet with Circle CCTP.
+            {/* Small glowing dots placed precisely on key intersection points */}
+            <circle cx="280" cy="355" r="1.5" className="fill-white/40 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+            <circle cx="510" cy="275" r="2" className="fill-[#3b82f6]/60 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+            <circle cx="740" cy="205" r="1.5" className="fill-white/30" />
+            <circle cx="890" cy="245" r="2" className="fill-white/50" />
+          </svg>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          
+          {/* Top Block: Brand Statement & CTA buttons */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 pb-16 relative">
+            <div className="flex flex-col max-w-xl">
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-medium tracking-tight text-white mb-4 leading-[1.1] font-sans">
+                The future of commerce<br className="hidden sm:block" /> runs on <span className="font-extrabold tracking-tighter italic uppercase text-white">ARCA</span>.
+              </h2>
+              <p className="text-zinc-400 text-sm font-medium leading-relaxed max-w-md">
+                Join the companies building the next generation of global, programmable commerce.
               </p>
-              <div className="flex items-center gap-4 mt-2">
-                <Link href="#" className="h-10 w-10 flex items-center justify-center rounded-full border border-[#ffffff]/10 bg-[#ffffff]/5 text-zinc-400 hover:text-[#ffffff] hover:bg-[#3b82f6] hover:border-[#3b82f6] transition-all duration-300">
-                  <Mail className="h-4 w-4" />
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/login" className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold text-black hover:bg-zinc-200 transition-all duration-300 shadow-md">
+                Start building
+              </Link>
+              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex h-11 items-center justify-center rounded-lg border border-white/20 px-6 text-sm font-semibold text-white hover:bg-white/5 transition-all duration-300">
+                Explore Docs
+              </Link>
+            </div>
+          </div>
+
+          {/* Middle Grid: Brand column, multi-columns of links & newsletter sign-up */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 py-16 border-t border-white/5 relative">
+            
+            {/* Brand/Tagline Column */}
+            <div className="flex flex-col gap-4 lg:col-span-3 pr-0 lg:pr-6">
+              <div className="flex items-center gap-2.5">
+                <Image src="/logo.png" alt="Arca Logo" width={28} height={28} className="dark:invert" unoptimized />
+                <span className="text-xl font-bold tracking-tight text-white uppercase italic">ARCA</span>
+              </div>
+              <p className="text-zinc-500 text-[10px] font-bold tracking-[0.18em] uppercase leading-relaxed max-w-xs mt-1">
+                The Reserve Network For<br />Programmable Commerce
+              </p>
+            </div>
+
+            {/* Link Columns Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 lg:col-span-6">
+              
+              {/* Platform Column */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Platform</h4>
+                <div className="flex flex-col gap-3">
+                  <Link href="/dashboard" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Subscriptions</Link>
+                  <Link href="/dashboard/wallet" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Settlement</Link>
+                  <Link href="/dashboard/autopay" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Treasury</Link>
+                  <Link href="/dashboard/smart-bridge" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Orchestration</Link>
+                  <Link href="#pricing" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Pricing</Link>
+                </div>
+              </div>
+
+              {/* Developers Column */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Developers</h4>
+                <div className="flex flex-col gap-3">
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Documentation</Link>
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">API Reference</Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">SDKs</Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Changelog</Link>
+                  <Link href="https://testnet.arcscan.net" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Status</Link>
+                </div>
+              </div>
+
+              {/* Resources Column */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Resources</h4>
+                <div className="flex flex-col gap-3">
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Guides</Link>
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Blog</Link>
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Case Studies</Link>
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Help Center</Link>
+                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Events</Link>
+                </div>
+              </div>
+
+              {/* Company Column */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Company</h4>
+                <div className="flex flex-col gap-3">
+                  <Link href="#features" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">About</Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Careers</Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Partners</Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Security</Link>
+                  <Link href="#features" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Contact</Link>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Newsletter Column */}
+            <div className="flex flex-col gap-4 lg:col-span-3">
+              <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Stay updated</h4>
+              <p className="text-zinc-400 text-xs font-medium leading-relaxed">
+                Get updates on new products, features, and more.
+              </p>
+              <div className="relative flex items-center w-full bg-white/5 hover:bg-white/10 transition-all duration-300 border border-white/10 rounded-lg overflow-hidden focus-within:border-white/30 focus-within:ring-1 focus-within:ring-white/10 mt-1">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  className="w-full bg-transparent px-4 py-3 text-xs font-medium text-white placeholder-zinc-500 outline-none"
+                />
+                <button className="flex h-8 w-8 items-center justify-center rounded-md bg-white text-black hover:bg-zinc-200 transition-colors mr-1 shrink-0">
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+              
+              {/* Social Media Link Grid */}
+              <div className="flex items-center gap-5 mt-2">
+                <Link href="https://twitter.com" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
+                  <Twitter className="h-4 w-4" />
+                </Link>
+                <Link href="https://linkedin.com" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
+                  <Linkedin className="h-4 w-4" />
+                </Link>
+                <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
+                  <Github className="h-4 w-4" />
                 </Link>
               </div>
             </div>
 
-            <div className="flex flex-col gap-6 lg:col-span-2 lg:col-start-7">
-              <h4 className="text-[#ffffff] font-semibold text-sm tracking-wide">Product</h4>
-              <div className="flex flex-col gap-4">
-                <Link href="#features" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Features</Link>
-                <Link href="/dashboard/marketplace" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Marketplace</Link>
-                <Link href="/dashboard/plans/create" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Create Plan</Link>
-                <Link href="https://mecha-pay.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">API Reference</Link>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6 lg:col-span-2">
-              <h4 className="text-[#ffffff] font-semibold text-sm tracking-wide">Platform</h4>
-              <div className="flex flex-col gap-4">
-                <Link href="/dashboard/bridge" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Bridge</Link>
-                <Link href="/dashboard/wallet" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Wallet</Link>
-                <Link href="/dashboard/developer" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Developer</Link>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6 lg:col-span-2">
-              <h4 className="text-[#ffffff] font-semibold text-sm tracking-wide">Resources</h4>
-              <div className="flex flex-col gap-4">
-                <Link href="https://mecha-pay.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Documentation</Link>
-                <Link href="https://github.com/Vishal-770/mecha-pay" target="_blank" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">GitHub</Link>
-                <Link href="https://testnet.arcscan.net" target="_blank" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">ArcScan</Link>
-                <Link href="https://testnet.arcscan.app/address/0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2" target="_blank" className="text-zinc-400 text-sm font-medium hover:text-[#ffffff] hover:translate-x-1 transition-all">Contract</Link>
-              </div>
-            </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[#ffffff]/10 gap-6">
-            <span className="text-zinc-500 text-sm font-medium">
-              © 2026 Mecha Pay Protocol. All rights reserved.
-            </span>
-            <div className="flex items-center gap-8">
-              <span className="text-zinc-500 text-sm font-medium hover:text-zinc-300 transition-colors cursor-not-allowed">Terms</span>
-              <span className="text-zinc-500 text-sm font-medium hover:text-zinc-300 transition-colors cursor-not-allowed">Privacy</span>
+          {/* Bottom Copyright & Selector Bar */}
+          <div className="relative pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 z-10 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
+              <span className="text-zinc-500 text-xs font-medium">
+                © 2026 ARCA. All rights reserved.
+              </span>
+              <div className="flex items-center gap-6">
+                <Link href="#" className="text-zinc-500 hover:text-zinc-300 text-xs font-medium transition-colors">Privacy</Link>
+                <Link href="#" className="text-zinc-500 hover:text-zinc-300 text-xs font-medium transition-colors">Terms</Link>
+                <Link href="#" className="text-zinc-500 hover:text-zinc-300 text-xs font-medium transition-colors">Security</Link>
+              </div>
             </div>
+            
+            <button className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-xs font-medium transition-colors">
+              <Globe className="h-3.5 w-3.5" />
+              <span>English</span>
+              <ChevronDown className="h-3 w-3" />
+            </button>
           </div>
+
         </div>
       </footer>
 

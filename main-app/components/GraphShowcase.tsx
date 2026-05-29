@@ -77,7 +77,7 @@ export default function GraphShowcase() {
             {/* Floating Indexer Badge */}
             <div className="absolute -top-6 -left-6 px-6 py-4 bg-[#000000] border border-[#ffffff]/10 rounded-2xl shadow-2xl flex items-center gap-3">
                <Database className="w-4 h-4 text-[#3b82f6]" />
-               <span className="text-[10px] font-black uppercase tracking-widest text-[#ffffff] italic">Mecha Pay Subgraph</span>
+               <span className="text-[10px] font-black uppercase tracking-widest text-[#ffffff] italic">Arca Subgraph</span>
             </div>
           </div>
 
@@ -111,7 +111,7 @@ export default function GraphShowcase() {
 
             <div className="mt-8">
               <Link 
-                href="https://thegraph.com/studio/subgraph/mecha-pay" 
+                href="https://thegraph.com/studio/subgraph/arca" 
                 target="_blank"
                 className="inline-flex h-14 px-10 items-center justify-center rounded-xl bg-[#3b82f6] text-[#ffffff] font-black text-xs uppercase tracking-widest transition-all hover:opacity-90 group/btn"
               >

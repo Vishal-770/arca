@@ -271,27 +271,27 @@ export default function MyPlanDetailPage() {
 Install the package and drop in the dynamic pricing table integrated with Plan ID \`${planId}\`.
 
 \`\`\`bash
-npm install mechapay-react
+npm install arca-react
 \`\`\`
 
 \`\`\`tsx
 // App.tsx
-import { MechaProvider } from 'mechapay-react';
+import { ArcaProvider } from 'arca-react';
 
 function App() {
   return (
-    <MechaProvider apiKey="mp_live_your_api_key">
+    <ArcaProvider apiKey="mp_live_your_api_key">
       <YourPricingPage />
-    </MechaProvider>
+    </ArcaProvider>
   );
 }
 
 // PricingPage.tsx
-import { MechaPricingTable } from 'mechapay-react';
+import { ArcaPricingTable } from 'arca-react';
 
 function YourPricingPage() {
   return (
-    <MechaPricingTable 
+    <ArcaPricingTable 
       planId="${planId}" 
       userId="user_unique_id"
       appearance={{
@@ -314,14 +314,14 @@ function YourPricingPage() {
 Inspect active subscriptions, resolve active feature/perk permissions, and local cycle expiration dates on-chain.
 
 \`\`\`tsx
-import { useMecha, useMechaPerks } from 'mechapay-react';
+import { useArca, useArcaPerks } from 'arca-react';
 
 function PremiumFeature() {
   const PLAN_ID = "${planId}";
   const USER_ID = "user_unique_id";
 
-  const { status, remainingSeconds, loading: statusLoading } = useMecha(PLAN_ID, USER_ID);
-  const { perks, loading: perksLoading } = useMechaPerks(PLAN_ID, USER_ID);
+  const { status, remainingSeconds, loading: statusLoading } = useArca(PLAN_ID, USER_ID);
+  const { perks, loading: perksLoading } = useArcaPerks(PLAN_ID, USER_ID);
 
   if (statusLoading || perksLoading) return <div>Checking status...</div>;
   if (status !== 'ACTIVE') return <div>Access Denied - Please Subscribe</div>;
@@ -760,7 +760,7 @@ function PremiumFeature() {
       </div>
 
       <div className="pt-20 text-center opacity-20">
-        <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.4em]">Mecha Pay Merchant OS v1.1.0 • Settlement Infrastructure</p>
+        <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.4em]">Arca Merchant OS v1.1.0 • Settlement Infrastructure</p>
       </div>
 
     </div>

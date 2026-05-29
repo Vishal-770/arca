@@ -28,8 +28,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mecha Pay",
-  description: "Mecha Pay Payment Protocol",
+  title: "Arca",
+  description: "Arca Payment Protocol",
 };
 
 import Providers from "@/components/Providers";

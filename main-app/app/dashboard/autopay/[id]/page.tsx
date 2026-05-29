@@ -203,7 +203,7 @@ export default function AutoPayDetailPage() {
 
       const signature = await smartAccount.signTypedData({
         domain: {
-          name: "MechaPay Subscription Gateway",
+          name: "Arca Subscription Gateway",
           version: "1",
           chainId: 5042002, // Arc Testnet
           verifyingContract: SUBSCRIPTION_GATEWAY_ADDRESS as `0x${string}`,

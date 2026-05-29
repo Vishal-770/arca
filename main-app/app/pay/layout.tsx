@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PaymentProvider } from "@/context/PaymentContext";
 
 export const metadata: Metadata = {
-  title: "Checkout - Mecha Pay",
+  title: "Checkout - Arca",
   description: "Complete your subscription payment",
 };
 

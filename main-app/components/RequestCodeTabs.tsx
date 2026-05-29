@@ -14,7 +14,7 @@ interface RequestCodeTabsProps {
 }
 
 export function RequestCodeTabs({ bashCode }: RequestCodeTabsProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://local.mechapay.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://local.arca.com";
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -26,7 +26,7 @@ export function RequestCodeTabs({ bashCode }: RequestCodeTabsProps) {
   const highlightStyle = (isDark ? vscDarkPlus : vs) as any;
 
   // Substitute the base URL into the raw bash code to fix the original cURL tab as well
-  const runtimeBashCode = bashCode.replace(/https:\/\/pay\.mechapay\.com/g, baseUrl);
+  const runtimeBashCode = bashCode.replace(/https:\/\/pay\.arca\.com/g, baseUrl);
 
   const { url, method, headers } = useMemo(() => {
     let extractedMethod = "GET";
