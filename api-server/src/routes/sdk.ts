@@ -133,7 +133,11 @@ router.get("/plan/:planId", async (req: ExpressRequest, res: ExpressResponse) =>
     // 3. Fetch Plan Metadata from IPFS
     let metadata: PlanMetadata | null = null;
     try {
-      const response = await fetch(ipfsHashToHttpUrl(planData.plan.ipfsHash));
+      const response = (await fetch(ipfsHashToHttpUrl(planData.plan.ipfsHash))) as {
+        ok: boolean;
+        status: number;
+        json: () => Promise<unknown>;
+      };
       metadata = response.ok ? ((await response.json()) as PlanMetadata) : null;
     } catch (err) {
       console.warn("Failed to fetch plan metadata from IPFS:", err);
