@@ -2,18 +2,18 @@
   "$schema": "https://mintlify.com/docs.json",
   "name": "Arca",
   "logo": {
-    "dark": "/logo/logo.png",
-    "light": "/logo/logo.png"
+    "dark": "/logo.png",
+    "light": "/logo.png"
   },
-  "favicon": "/logo/logo.png",
+  "favicon": "/logo.png",
   "theme": "maple",
   "appearance": {
     "default": "dark"
   },
   "colors": {
-    "primary": "#00FFC2",
-    "light": "#5EEAD4",
-    "dark": "#0D9488"
+    "primary": "#2563EB",
+    "light": "#60A5FA",
+    "dark": "#1E3A8A"
   },
   "navbar": {
     "links": [
@@ -29,7 +29,7 @@
     "primary": {
       "type": "button",
       "label": "Launch App",
-      "href": "https://arca.vercel.app/dashboard"
+      "href": "https://arca7.vercel.app/dashboard"
     }
   },
   "footer": {
