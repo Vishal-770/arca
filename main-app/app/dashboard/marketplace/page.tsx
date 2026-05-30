@@ -190,19 +190,26 @@ export default function MarketplacePage() {
   // Fetch subscriptions
   useEffect(() => {
     const fetchUserSubs = async () => {
-      if (!wallet?.address) return;
+      if (!wallet?.address || !wallet?.userToken) return;
       try {
-        const res = await fetch(`/api/subscription/list?subscriber=${wallet.address}`);
+        const res = await fetch(
+          `/api/subscription/my-subscriptions?subscriber=${wallet.address}&userToken=${wallet.userToken}`
+        );
         if (!res.ok) return;
-        const data = (await res.json()) as { subscriptions?: UserSubscription[] };
-        const active = data.subscriptions?.filter((s) => s.active).map((s) => s.planId) ?? [];
+        const data = (await res.json()) as {
+          subscriptions?: { plan: { id: string }; status: string }[];
+        };
+        const active =
+          data.subscriptions
+            ?.filter((s) => s.status === "ACTIVE")
+            .map((s) => s.plan.id) ?? [];
         setUserSubs(active);
       } catch (err) {
         console.error("Failed to load user subscriptions", err);
       }
     };
     fetchUserSubs();
-  }, [wallet?.address]);
+  }, [wallet?.address, wallet?.userToken]);
 
   useEffect(() => {
     let mounted = true;

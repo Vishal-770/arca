@@ -1,12 +1,12 @@
-# mechapay-react
+# arcapay-react
 
-The professional, high-fidelity React SDK for the **Mecha Protocol**. Build stunning, production-ready subscription interfaces with custom-tailored styling, real-time blockchain synchronization, and zero third-party animation overhead.
+The professional, high-fidelity React SDK for the **Arca Protocol**. Build stunning, production-ready subscription interfaces with custom-tailored styling, real-time blockchain synchronization, and zero third-party animation overhead.
 
 ## 🚀 Features
 
-- **Provider Pattern**: Centralized API key management with `MechaProvider`.
-- **Live Hooks**: Real-time membership tracking with `useMecha`.
-- **Perk-Gated Interfaces**: Resolve bought tier names, active features, and local expiration dates with `useMechaPerks`.
+- **Provider Pattern**: Centralized API key management with `ArcaProvider`.
+- **Live Hooks**: Real-time membership tracking with `useArca`.
+- **Perk-Gated Interfaces**: Resolve bought tier names, active features, and local expiration dates with `useArcaPerks`.
 - **Smart Transitions**: Automatic Contextual upgrade/downgrade button states based on prices (no rigid plan lockouts).
 - **Double-Subscription Block**: Blocks double-purchases of the same tier at the UI level.
 - **Extreme Customizability**: Inject custom button labels, style custom classes (`classNames`), and replace rendering completely using custom slot renderers (`renderHeader`, `renderFooter`, `renderTierButton`).
@@ -15,7 +15,7 @@ The professional, high-fidelity React SDK for the **Mecha Protocol**. Build stun
 ## 📦 Installation
 
 ```bash
-npm install mechapay-react
+npm install arcapay-react
 ```
 
 ## 🛠️ Quick Start
@@ -23,13 +23,13 @@ npm install mechapay-react
 ### 1. Wrap your Application
 
 ```tsx
-import { MechaProvider } from 'mechapay-react';
+import { ArcaProvider } from 'arcapay-react';
 
 function App() {
   return (
-    <MechaProvider apiKey="mp_live_your_api_key_here">
+    <ArcaProvider apiKey="mp_live_your_api_key_here">
       <MyRoutes />
-    </MechaProvider>
+    </ArcaProvider>
   );
 }
 ```
@@ -37,11 +37,11 @@ function App() {
 ### 2. Add the Pricing Table
 
 ```tsx
-import { MechaPricingTable } from 'mechapay-react';
+import { ArcaPricingTable } from 'arcapay-react';
 
 function PricingPage() {
   return (
-    <MechaPricingTable 
+    <ArcaPricingTable 
       planId="0x..." 
       userId="user_123" 
       appearance={{
@@ -60,15 +60,15 @@ function PricingPage() {
 
 ## 🛡️ Hooks & Feature Gating
 
-### `useMecha` (Active Status & Countdown)
+### `useArca` (Active Status & Countdown)
 
 The primary hook to inspect the overall membership status, remaining time, and list of all active/bought tier IDs.
 
 ```tsx
-import { useMecha } from 'mechapay-react';
+import { useArca } from 'arcapay-react';
 
 function PremiumFeature() {
-  const { status, remainingSeconds, tierIds, loading } = useMecha(PLAN_ID, USER_ID);
+  const { status, remainingSeconds, tierIds, loading } = useArca(PLAN_ID, USER_ID);
 
   if (loading) return <div>Syncing status...</div>;
   if (status !== 'ACTIVE') return <div>Access Denied</div>;
@@ -82,15 +82,15 @@ function PremiumFeature() {
 }
 ```
 
-### `useMechaPerks` (Subscribed Perks & Features)
+### `useArcaPerks` (Subscribed Perks & Features)
 
 Fetches active plan details, listing subscribed tiers, their respective features, and custom expiration dates. 
 
 ```tsx
-import { useMechaPerks } from 'mechapay-react';
+import { useArcaPerks } from 'arcapay-react';
 
 function ActiveUserPerks() {
-  const { perks, loading } = useMechaPerks(PLAN_ID, USER_ID);
+  const { perks, loading } = useArcaPerks(PLAN_ID, USER_ID);
 
   if (loading) return <div>Syncing perks...</div>;
   if (!perks) return <div>No active plans or perks.</div>;
@@ -124,7 +124,7 @@ function ActiveUserPerks() {
 Override the default CTA texts easily:
 
 ```tsx
-<MechaPricingTable 
+<ArcaPricingTable 
   planId="0x..." 
   userId="user_123"
   customLabels={{
@@ -141,7 +141,7 @@ Override the default CTA texts easily:
 Map your own tailwind classes or custom stylesheets to specific components inside the pricing table:
 
 ```tsx
-<MechaPricingTable 
+<ArcaPricingTable 
   planId="0x..." 
   userId="user_123"
   classNames={{
@@ -153,10 +153,10 @@ Map your own tailwind classes or custom stylesheets to specific components insid
 
 ### 3. Slot Renderers (`renderHeader`, `renderFooter`, `renderTierButton`)
 
-Replace specific sections of the layout completely while preserving internal loading states and purchase mechanics.
+Replace specific sections of the layout completely while preserving internal loading states and purchase arcanics.
 
 ```tsx
-<MechaPricingTable 
+<ArcaPricingTable 
   planId="0x..." 
   userId="user_123"
   renderTierButton={(tier, state, handleSelect) => (
@@ -175,4 +175,4 @@ Replace specific sections of the layout completely while preserving internal loa
 
 ## 📄 License
 
-MIT © [Mecha Pay](https://mecha-pay.vercel.app)
+MIT © [Arca Pay](https://arca-pay.vercel.app)

@@ -1,9 +1,9 @@
 "use client";
 
-import { MechaProvider, MechaPricingTable } from "mechapay-react";
+import { ArcaProvider, ArcaPricingTable } from "arca-sdk";
 
-const PLAN_ID = process.env.NEXT_PUBLIC_MECHA_PLAN_ID || "";
-const API_KEY = process.env.NEXT_PUBLIC_MECHA_API_KEY || "";
+const PLAN_ID = process.env.NEXT_PUBLIC_ARCA_PLAN_ID || "";
+const API_KEY = process.env.NEXT_PUBLIC_ARCA_API_KEY || "";
 
 export function BillingSection({ userId }: { userId: string }) {
   type PlanLike = { name?: string };
@@ -32,9 +32,9 @@ export function BillingSection({ userId }: { userId: string }) {
   );
 
   return (
-    <MechaProvider apiKey={API_KEY}>
+    <ArcaProvider apiKey={API_KEY}>
       <div className="w-full max-w-4xl mx-auto py-12 px-4 sm:px-6">
-        <MechaPricingTable
+        <ArcaPricingTable
           planId={PLAN_ID}
           userId={userId}
           recommendedTierId="1"
@@ -58,6 +58,6 @@ export function BillingSection({ userId }: { userId: string }) {
           renderHeader={customRenderHeader}
         />
       </div>
-    </MechaProvider>
+    </ArcaProvider>
   );
 }

@@ -1,16 +1,16 @@
 {
-  "name": "mechapay-react",
+  "name": "arca-sdk",
   "version": "0.1.15",
   "license": "MIT",
   "keywords": [
-    "mecha",
+    "arca",
     "payments",
     "web3",
     "subscriptions",
     "react",
     "sdk"
   ],
-  "description": "Mecha Pay React SDK for building high-performance subscription interfaces.",
+  "description": "Arca Protocol React SDK for building high-performance subscription interfaces.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -19,9 +19,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Vishal-770/mecha-pay.git"
+    "url": "git+https://github.com/Vishal-770/arca.git"
   },
-  "homepage": "https://github.com/Vishal-770/mecha-pay/tree/main/packages/mecha-react#readme",
+  "homepage": "https://github.com/Vishal-770/arca/tree/main/packages/arca-react#readme",
   "files": [
     "dist",
     "README.md"

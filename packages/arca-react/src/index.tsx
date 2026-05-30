@@ -37,7 +37,7 @@ export interface SubscribedTierDetail {
   expiryDate: Date;
 }
 
-export interface MechaAppearance {
+export interface ArcaAppearance {
   theme?: "light" | "dark";
   variables?: {
     colorPrimary?: string;
@@ -59,11 +59,11 @@ export interface MechaAppearance {
   };
 }
 
-export interface MechaConfig {
+export interface ArcaConfig {
   apiKey: string;
 }
 
-export interface MechaLabels {
+export interface ArcaLabels {
   activeSubscription?: string;      // Default: "Current Plan"
   upgrade?: string;                 // Default: "Upgrade"
   downgrade?: string;               // Default: "Downgrade"
@@ -73,7 +73,7 @@ export interface MechaLabels {
   subscriptionActiveHeader?: string; // Default: "Subscription Active · {{countdown}} Left"
 }
 
-export interface MechaClassNames {
+export interface ArcaClassNames {
   container?: string;
   grid?: string;
   card?: string;
@@ -90,48 +90,48 @@ export interface MechaClassNames {
 }
 
 /* ── Context ── */
-interface MechaContextType {
+interface ArcaContextType {
   apiKey: string;
   portalUrl: string;
   isConfigured: boolean;
 }
 
-const MechaContext = createContext<MechaContextType | null>(null);
+const ArcaContext = createContext<ArcaContextType | null>(null);
 
-export interface MechaProviderProps {
+export interface ArcaProviderProps {
   apiKey: string;
   children: React.ReactNode;
 }
 
 /**
- * MechaProvider
- * Wraps your application to provide Mecha configuration to all components and hooks.
+ * ArcaProvider
+ * Wraps your application to provide Arca configuration to all components and hooks.
  */
-export const MechaProvider = ({ 
+export const ArcaProvider = ({ 
   apiKey, 
   children 
-}: MechaProviderProps) => {
-  const portalUrl = "https://mecha-pay.vercel.app";
+}: ArcaProviderProps) => {
+  const portalUrl = "https://arca-pay.vercel.app";
   const value = useMemo(() => ({
     apiKey,
     portalUrl,
     isConfigured: !!apiKey
   }), [apiKey]);
 
-  return <MechaContext.Provider value={value}>{children}</MechaContext.Provider>;
+  return <ArcaContext.Provider value={value}>{children}</ArcaContext.Provider>;
 };
 
-const useMechaConfig = () => {
-  const context = useContext(MechaContext);
+const useArcaConfig = () => {
+  const context = useContext(ArcaContext);
   if (!context) {
-    throw new Error("Mecha components must be used within a MechaProvider");
+    throw new Error("Arca components must be used within a ArcaProvider");
   }
   return context;
 };
 
 /* ── Hooks ── */
 
-export interface MechaSubscription {
+export interface ArcaSubscription {
   status: "ACTIVE" | "EXPIRED" | "NONE";
   remainingSeconds: number;
   tierId?: string;    // Primary active tier ID (backward compatibility)
@@ -141,12 +141,12 @@ export interface MechaSubscription {
 }
 
 /**
- * useMecha
+ * useArca
  * The primary hook to check a user's subscription status, active tier IDs, and remaining time.
  */
-export const useMecha = (planId: string, userId?: string) => {
-  const { apiKey, portalUrl } = useMechaConfig();
-  const [subscription, setSubscription] = useState<MechaSubscription>({
+export const useArca = (planId: string, userId?: string) => {
+  const { apiKey, portalUrl } = useArcaConfig();
+  const [subscription, setSubscription] = useState<ArcaSubscription>({
     status: "NONE",
     remainingSeconds: 0,
     tierIds: [],
@@ -242,22 +242,22 @@ function formatCountdown(seconds: number) {
 
 /* ── Pricing Table Component ── */
 
-export interface MechaPricingTableProps {
+export interface ArcaPricingTableProps {
   planId: string;
   userId?: string;
   redirectUrl?: string;
-  appearance?: MechaAppearance;
+  appearance?: ArcaAppearance;
   className?: string;
   style?: React.CSSProperties;
   hideBranding?: boolean;
   recommendedTierId?: string;
   
   // Customization Overrides
-  customLabels?: MechaLabels;
-  classNames?: MechaClassNames;
+  customLabels?: ArcaLabels;
+  classNames?: ArcaClassNames;
   
   // Custom Renderers
-  renderHeader?: (plan: Plan, subscription: MechaSubscription) => React.ReactNode;
+  renderHeader?: (plan: Plan, subscription: ArcaSubscription) => React.ReactNode;
   renderFooter?: () => React.ReactNode;
   renderTierButton?: (
     tier: Tier, 
@@ -274,10 +274,10 @@ export interface MechaPricingTableProps {
 }
 
 /**
- * MechaPricingTable
+ * ArcaPricingTable
  * Professional, premium, and fully customizable pricing table.
  */
-export const MechaPricingTable = ({
+export const ArcaPricingTable = ({
   planId,
   userId,
   redirectUrl,
@@ -291,13 +291,13 @@ export const MechaPricingTable = ({
   renderHeader,
   renderFooter,
   renderTierButton,
-}: MechaPricingTableProps) => {
-  const { apiKey, portalUrl } = useMechaConfig();
+}: ArcaPricingTableProps) => {
+  const { apiKey, portalUrl } = useArcaConfig();
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<{ message: string; code?: string } | null>(null);
   
-  const subscription = useMecha(planId, userId);
+  const subscription = useArca(planId, userId);
 
   const theme = appearance?.theme || "dark";
   const isDark = theme === "dark";
@@ -376,7 +376,7 @@ export const MechaPricingTable = ({
 
   // Scoped Custom Styles (Monochrome Flat Premium Theme)
   const customStyles = `
-    .mecha-container-cls {
+    .arca-container-cls {
       display: flex;
       flex-direction: column;
       width: 100%;
@@ -384,41 +384,41 @@ export const MechaPricingTable = ({
       margin: 0 auto;
       box-sizing: border-box;
     }
-    .mecha-grid-cls {
+    .arca-grid-cls {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--mecha-gap);
+      gap: var(--arca-gap);
       justify-content: center;
       padding: 20px 0;
       box-sizing: border-box;
     }
-    .mecha-card-cls {
+    .arca-card-cls {
       flex: 1 1 320px;
       max-width: 400px;
       display: flex;
       flex-direction: column;
-      background-color: var(--mecha-card-bg);
-      border: 1px solid var(--mecha-border-color);
-      border-radius: var(--mecha-radius);
-      padding: var(--mecha-padding);
+      background-color: var(--arca-card-bg);
+      border: 1px solid var(--arca-border-color);
+      border-radius: var(--arca-radius);
+      padding: var(--arca-padding);
       position: relative;
       box-sizing: border-box;
       transition: border-color 0.15s ease, background-color 0.15s ease;
     }
-    .mecha-card-cls:hover {
-      border-color: var(--mecha-hover-border);
+    .arca-card-cls:hover {
+      border-color: var(--arca-hover-border);
     }
-    .mecha-card-rec-cls {
-      border-color: var(--mecha-rec-border);
+    .arca-card-rec-cls {
+      border-color: var(--arca-rec-border);
     }
-    .mecha-card-active-cls {
-      border-color: var(--mecha-active-border);
+    .arca-card-active-cls {
+      border-color: var(--arca-active-border);
     }
-    .mecha-btn-cls {
+    .arca-btn-cls {
       margin-top: 32px;
       width: 100%;
       height: 48px;
-      border-radius: var(--mecha-radius);
+      border-radius: var(--arca-radius);
       border: none;
       font-weight: 700;
       text-transform: uppercase;
@@ -432,76 +432,76 @@ export const MechaPricingTable = ({
       box-sizing: border-box;
       transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
-    .mecha-btn-active-cls {
+    .arca-btn-active-cls {
       background-color: transparent;
-      color: var(--mecha-btn-active-text);
+      color: var(--arca-btn-active-text);
       cursor: default;
-      border: 1px solid var(--mecha-btn-active-border);
+      border: 1px solid var(--arca-btn-active-border);
     }
-    .mecha-btn-primary-cls {
-      background-color: var(--mecha-primary);
-      color: var(--mecha-btn-text-color);
+    .arca-btn-primary-cls {
+      background-color: var(--arca-primary);
+      color: var(--arca-btn-text-color);
     }
-    .mecha-btn-primary-cls:hover {
-      background-color: var(--mecha-btn-hover-bg);
+    .arca-btn-primary-cls:hover {
+      background-color: var(--arca-btn-hover-bg);
     }
-    .mecha-btn-disabled-cls {
-      background-color: var(--mecha-border-color);
-      color: var(--mecha-muted-text);
+    .arca-btn-disabled-cls {
+      background-color: var(--arca-border-color);
+      color: var(--arca-muted-text);
       cursor: not-allowed;
       opacity: 0.6;
     }
   `;
 
   const cssVariables = {
-    "--mecha-primary": tokens.primary,
-    "--mecha-primary-alpha-50": `${tokens.primary}80`,
-    "--mecha-primary-alpha-15": `${tokens.primary}26`,
-    "--mecha-primary-alpha-30": `${tokens.primary}4d`,
-    "--mecha-card-bg": tokens.cardBg,
-    "--mecha-border-color": tokens.border,
-    "--mecha-radius": tokens.radius,
-    "--mecha-padding": tokens.padding,
-    "--mecha-gap": tokens.gap,
-    "--mecha-btn-text-color": tokens.btnText,
-    "--mecha-btn-hover-bg": tokens.btnHoverBg,
-    "--mecha-hover-border": tokens.hoverBorder,
-    "--mecha-active-border": tokens.activeBorder,
-    "--mecha-rec-border": tokens.recommendedBorder,
-    "--mecha-btn-active-border": tokens.btnActiveBorder,
-    "--mecha-btn-active-text": tokens.btnActiveText,
-    "--mecha-badge-bg-rec": tokens.badgeBgRec,
-    "--mecha-badge-border-rec": tokens.badgeBorderRec,
-    "--mecha-badge-text-rec": tokens.badgeTextRec,
-    "--mecha-badge-bg-active": tokens.badgeBgActive,
-    "--mecha-badge-text-active": tokens.badgeTextActive,
-    "--mecha-skeleton-bg": tokens.skeletonBg,
-    "--mecha-error-bg": tokens.errorBg,
-    "--mecha-muted-text": tokens.muted,
+    "--arca-primary": tokens.primary,
+    "--arca-primary-alpha-50": `${tokens.primary}80`,
+    "--arca-primary-alpha-15": `${tokens.primary}26`,
+    "--arca-primary-alpha-30": `${tokens.primary}4d`,
+    "--arca-card-bg": tokens.cardBg,
+    "--arca-border-color": tokens.border,
+    "--arca-radius": tokens.radius,
+    "--arca-padding": tokens.padding,
+    "--arca-gap": tokens.gap,
+    "--arca-btn-text-color": tokens.btnText,
+    "--arca-btn-hover-bg": tokens.btnHoverBg,
+    "--arca-hover-border": tokens.hoverBorder,
+    "--arca-active-border": tokens.activeBorder,
+    "--arca-rec-border": tokens.recommendedBorder,
+    "--arca-btn-active-border": tokens.btnActiveBorder,
+    "--arca-btn-active-text": tokens.btnActiveText,
+    "--arca-badge-bg-rec": tokens.badgeBgRec,
+    "--arca-badge-border-rec": tokens.badgeBorderRec,
+    "--arca-badge-text-rec": tokens.badgeTextRec,
+    "--arca-badge-bg-active": tokens.badgeBgActive,
+    "--arca-badge-text-active": tokens.badgeTextActive,
+    "--arca-skeleton-bg": tokens.skeletonBg,
+    "--arca-error-bg": tokens.errorBg,
+    "--arca-muted-text": tokens.muted,
   } as React.CSSProperties;
 
   if (loading) {
     return (
       <div 
-        className={cn("mecha-container-cls", className, classNames?.container)} 
+        className={cn("arca-container-cls", className, classNames?.container)} 
         style={{ fontFamily: tokens.font, color: tokens.text, ...cssVariables, ...style }}
       >
         <style dangerouslySetInnerHTML={{ __html: customStyles + `
-          @keyframes mecha-pulse {
+          @keyframes arca-pulse {
             0%, 100% { opacity: 0.4; }
             50% { opacity: 0.8; }
           }
-          .mecha-pulse-el {
-            animation: mecha-pulse 1.8s ease-in-out infinite;
-            background-color: var(--mecha-skeleton-bg);
-            border-radius: var(--mecha-radius);
+          .arca-pulse-el {
+            animation: arca-pulse 1.8s ease-in-out infinite;
+            background-color: var(--arca-skeleton-bg);
+            border-radius: var(--arca-radius);
           }
         ` }} />
 
         {!hideBranding && (
           <div style={{ textAlign: 'center', marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <div style={{ height: '36px', width: '220px' }} className="mecha-pulse-el" />
-            <div style={{ height: '18px', width: '340px' }} className="mecha-pulse-el" />
+            <div style={{ height: '36px', width: '220px' }} className="arca-pulse-el" />
+            <div style={{ height: '18px', width: '340px' }} className="arca-pulse-el" />
           </div>
         )}
 
@@ -510,7 +510,7 @@ export const MechaPricingTable = ({
           height: '140px',
           margin: '0 auto',
           boxSizing: 'border-box'
-        }} className="mecha-pulse-el" />
+        }} className="arca-pulse-el" />
       </div>
     );
   }
@@ -518,18 +518,18 @@ export const MechaPricingTable = ({
   if (error) {
     return (
       <div 
-        className={cn("mecha-container-cls", className, classNames?.container)} 
+        className={cn("arca-container-cls", className, classNames?.container)} 
         style={{ fontFamily: tokens.font, color: tokens.text, ...cssVariables, ...style }}
       >
         <style dangerouslySetInnerHTML={{ __html: customStyles }} />
         <div style={{ 
-          padding: '40px var(--mecha-padding)', 
-          border: '1px solid var(--mecha-border-color)', 
-          borderRadius: 'var(--mecha-radius)', 
+          padding: '40px var(--arca-padding)', 
+          border: '1px solid var(--arca-border-color)', 
+          borderRadius: 'var(--arca-radius)', 
           textAlign: 'center', 
           maxWidth: '440px', 
           margin: '80px auto', 
-          backgroundColor: 'var(--mecha-error-bg)',
+          backgroundColor: 'var(--arca-error-bg)',
           boxSizing: 'border-box'
         }}>
           <div style={{
@@ -567,7 +567,7 @@ export const MechaPricingTable = ({
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="mecha-btn-cls mecha-btn-primary-cls"
+            className="arca-btn-cls arca-btn-primary-cls"
             style={{ marginTop: '24px', height: '40px' }}
           >
             Retry Connection
@@ -579,7 +579,7 @@ export const MechaPricingTable = ({
 
   return (
     <div 
-      className={cn("mecha-container-cls", className, classNames?.container)} 
+      className={cn("arca-container-cls", className, classNames?.container)} 
       style={{ fontFamily: tokens.font, color: tokens.text, ...cssVariables, ...style }}
     >
       <style dangerouslySetInnerHTML={{ __html: customStyles }} />
@@ -624,7 +624,7 @@ export const MechaPricingTable = ({
       )}
 
       {/* ── Pricing Tiers Grid ── */}
-      <div className={cn("mecha-grid-cls", classNames?.grid)}>
+      <div className={cn("arca-grid-cls", classNames?.grid)}>
         {plan?.tiers.map((tier, idx) => {
           const isRecommended = recommendedTierId ? tier.id === recommendedTierId : idx === 1;
           const isThisTierActive = isActiveSub && subscription.tierIds.includes(tier.id);
@@ -656,17 +656,17 @@ export const MechaPricingTable = ({
             <div
               key={tier.id}
               className={cn(
-                "mecha-card-cls",
-                isThisTierActive && "mecha-card-active-cls",
-                !isThisTierActive && isRecommended && "mecha-card-rec-cls",
+                "arca-card-cls",
+                isThisTierActive && "arca-card-active-cls",
+                !isThisTierActive && isRecommended && "arca-card-rec-cls",
                 classNames?.card
               )}
               style={{
                 border: isThisTierActive 
-                  ? '1px solid var(--mecha-active-border)' 
+                  ? '1px solid var(--arca-active-border)' 
                   : isRecommended 
-                    ? '1px solid var(--mecha-rec-border)' 
-                    : '1px solid var(--mecha-border-color)',
+                    ? '1px solid var(--arca-rec-border)' 
+                    : '1px solid var(--arca-border-color)',
                 ...appearance?.elements?.card
               }}
             >
@@ -679,8 +679,8 @@ export const MechaPricingTable = ({
                     top: '-10px', 
                     left: '50%', 
                     transform: 'translateX(-50%)', 
-                    backgroundColor: 'var(--mecha-badge-bg-active)', 
-                    color: 'var(--mecha-badge-text-active)', 
+                    backgroundColor: 'var(--arca-badge-bg-active)', 
+                    color: 'var(--arca-badge-text-active)', 
                     padding: '3px 12px', 
                     borderRadius: '4px', 
                     fontSize: '9px', 
@@ -690,7 +690,7 @@ export const MechaPricingTable = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    border: '1px solid var(--mecha-badge-bg-active)'
+                    border: '1px solid var(--arca-badge-bg-active)'
                   }}
                 >
                   <Check size={10} style={{ strokeWidth: 3 }} />
@@ -705,15 +705,15 @@ export const MechaPricingTable = ({
                     top: '-10px', 
                     left: '50%', 
                     transform: 'translateX(-50%)', 
-                    backgroundColor: 'var(--mecha-badge-bg-rec)', 
-                    color: 'var(--mecha-badge-text-rec)', 
+                    backgroundColor: 'var(--arca-badge-bg-rec)', 
+                    color: 'var(--arca-badge-text-rec)', 
                     padding: '3px 12px', 
                     borderRadius: '4px', 
                     fontSize: '9px', 
                     fontWeight: 700, 
                     textTransform: 'uppercase', 
                     letterSpacing: '1px',
-                    border: '1px solid var(--mecha-badge-border-rec)'
+                    border: '1px solid var(--arca-badge-border-rec)'
                   }}
                 >
                   Recommended
@@ -740,11 +740,11 @@ export const MechaPricingTable = ({
                   </span>
                 </div>
 
-                <div className={cn(classNames?.featuresList)} style={{ borderTop: `1px solid var(--mecha-border-color)`, paddingTop: '24px' }}>
+                <div className={cn(classNames?.featuresList)} style={{ borderTop: `1px solid var(--arca-border-color)`, paddingTop: '24px' }}>
                   {tier.features.map((f, i) => (
-                    <div key={i} className={cn("mecha-feat-item", classNames?.featureItem)} style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start' }}>
+                    <div key={i} className={cn("arca-feat-item", classNames?.featureItem)} style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'flex-start' }}>
                       <div style={{ marginTop: '4px', flexShrink: 0 }}>
-                        <Check size={12} style={{ color: isThisTierActive ? 'var(--mecha-active-border)' : 'var(--mecha-muted-text)' }} />
+                        <Check size={12} style={{ color: isThisTierActive ? 'var(--arca-active-border)' : 'var(--arca-muted-text)' }} />
                       </div>
                       <div>
                         <p className={cn(classNames?.featureTitle)} style={{ fontSize: '13.5px', fontWeight: 700, margin: 0, lineHeight: '1.4' }}>
@@ -780,16 +780,16 @@ export const MechaPricingTable = ({
                   onClick={() => !isThisTierActive && handleSelect(tier.id)}
                   disabled={isThisTierActive}
                   className={cn(
-                    "mecha-btn-cls",
+                    "arca-btn-cls",
                     isThisTierActive 
-                      ? "mecha-btn-active-cls" 
-                      : "mecha-btn-primary-cls",
+                      ? "arca-btn-active-cls" 
+                      : "arca-btn-primary-cls",
                     classNames?.button
                   )}
                   style={{
-                    backgroundColor: isThisTierActive ? 'transparent' : 'var(--mecha-primary)',
-                    color: isThisTierActive ? 'var(--mecha-btn-active-text)' : 'var(--mecha-btn-text-color)',
-                    border: isThisTierActive ? '1px solid var(--mecha-btn-active-border)' : 'none',
+                    backgroundColor: isThisTierActive ? 'transparent' : 'var(--arca-primary)',
+                    color: isThisTierActive ? 'var(--arca-btn-active-text)' : 'var(--arca-btn-text-color)',
+                    border: isThisTierActive ? '1px solid var(--arca-btn-active-border)' : 'none',
                     ...appearance?.elements?.button
                   }}
                 >
@@ -810,7 +810,7 @@ export const MechaPricingTable = ({
         !hideBranding && (
           <div style={{ marginTop: '60px', textAlign: 'center', opacity: 0.35, display: 'flex', justifyContent: 'center', gap: '20px', alignItems: 'center' }}>
             <p style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', margin: 0 }}>
-              Powered by Mecha Pay
+              Powered by Arca Pay
             </p>
             <Lock size={11} />
             <Zap size={11} />
@@ -822,13 +822,13 @@ export const MechaPricingTable = ({
 };
 
 /**
- * useMechaPerks
+ * useArcaPerks
  * Fetches and resolves active plan tier details (tier name, features, expiry date) subscribed by the user.
  * Returns null if the user has no active subscriptions, or is expired.
  */
-export const useMechaPerks = (planId: string, userId?: string) => {
-  const { apiKey, portalUrl } = useMechaConfig();
-  const subscription = useMecha(planId, userId);
+export const useArcaPerks = (planId: string, userId?: string) => {
+  const { apiKey, portalUrl } = useArcaConfig();
+  const subscription = useArca(planId, userId);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loadingPlan, setLoadingPlan] = useState(true);
 
@@ -846,7 +846,7 @@ export const useMechaPerks = (planId: string, userId?: string) => {
           setPlan(data.plan);
         }
       } catch (err) {
-        console.error("Failed to fetch plan in useMechaPerks", err);
+        console.error("Failed to fetch plan in useArcaPerks", err);
       } finally {
         setLoadingPlan(false);
       }

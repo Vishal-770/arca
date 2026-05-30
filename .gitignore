@@ -1,0 +1,40 @@
+# Node
+node_modules/
+.pnpm-store/
+
+# Build outputs
+/dist/
+/build/
+/.next/
+/out/
+/coverage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+
+# Hardhat
+/Arc_contracts/artifacts/
+/Arc_contracts/cache/
+
+# Indexer
+/indexer/.graphclient/
+
+# Misc
+*.log

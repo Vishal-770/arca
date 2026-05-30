@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { MechaProvider, useMecha } from "mechapay-react";
+import { ArcaProvider, useArca } from "arca-sdk";
 import { CreditCard, Loader2, AlertCircle, Tv } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const PLAN_ID = process.env.NEXT_PUBLIC_MECHA_PLAN_ID || "";
-const API_KEY = process.env.NEXT_PUBLIC_MECHA_API_KEY || "";
+const PLAN_ID = process.env.NEXT_PUBLIC_ARCA_PLAN_ID || "";
+const API_KEY = process.env.NEXT_PUBLIC_ARCA_API_KEY || "";
 
 function DashboardContentInner({ userId }: { userId: string }) {
-  const { status, remainingSeconds, tierIds, loading, error } = useMecha(PLAN_ID, userId);
+  const { status, remainingSeconds, tierIds, loading, error } = useArca(PLAN_ID, userId);
 
   if (loading) {
     return (
@@ -111,8 +111,8 @@ function DashboardContentInner({ userId }: { userId: string }) {
 
 export function DashboardContent({ userId }: { userId: string }) {
   return (
-    <MechaProvider apiKey={API_KEY}>
+    <ArcaProvider apiKey={API_KEY}>
       <DashboardContentInner userId={userId} />
-    </MechaProvider>
+    </ArcaProvider>
   );
 }
