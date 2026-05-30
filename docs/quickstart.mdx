@@ -9,32 +9,30 @@ All API endpoints are authenticated using an API key passed in the headers.
 
 ```bash
 curl -X GET "https://api-arca.vercel.app/api/v1/wallet" \
-  -H "x-api-key: your_api_key_here"
+  -H "x-api-key: arca_..."
 ```
 
 ## Base URL
 
-If you are testing locally, the base URL is:
-`https://api-arca.vercel.app/api/v1`
-
-In production, use:
-`https://api-arca.vercel.app/api/v1`
+- Production: `https://api-arca.vercel.app/api/v1`
+- Local dev: `http://localhost:3001/api/v1`
 
 ## Response Format
 
-All responses follow a standard JSON format:
+Success responses include `success: true` and endpoint-specific fields:
 
 ```json
 {
   "success": true,
-  "data": { ... }
+  "walletAddress": "0x123abc456def7890"
 }
 ```
 
-If an error occurs:
+Error responses include `error` and `code`:
 
 ```json
 {
-  "error": "Unauthorized"
+  "error": "Unauthorized: Invalid or revoked API key",
+  "code": "UNAUTHORIZED"
 }
 ```

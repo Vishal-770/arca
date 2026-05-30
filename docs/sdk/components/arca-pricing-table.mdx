@@ -1,0 +1,113 @@
+---
+title: "ArcaPricingTable"
+description: "High-fidelity pricing UI with built-in checkout routing."
+---
+
+The `ArcaPricingTable` fetches plan data and renders a premium, responsive tier grid. When you pass a `userId`, it also shows the active tier and remaining time.
+
+## Usage
+
+```tsx
+import { ArcaPricingTable } from "arca-react";
+
+function MyPricing() {
+  return (
+    <ArcaPricingTable
+      planId="0x77c4..."
+      userId="user_99"
+      recommendedTierId="tier_premium"
+    />
+  );
+}
+```
+
+## Props
+
+<ParamField prop="planId" type="string" required>
+  The unique ID of the plan you want to display.
+</ParamField>
+
+<ParamField prop="userId" type="string">
+  Your user identifier used for subscription lookup and checkout tracking.
+</ParamField>
+
+<ParamField prop="redirectUrl" type="string" default="window.location.href">
+  URL to redirect back to after checkout completes.
+</ParamField>
+
+<ParamField prop="appearance" type="ArcaAppearance">
+  Theming and styling tokens. See [Theming](/sdk/theming).
+</ParamField>
+
+<ParamField prop="className" type="string">
+  Class name for the outer container.
+</ParamField>
+
+<ParamField prop="style" type="React.CSSProperties">
+  Inline styles for the outer container.
+</ParamField>
+
+<ParamField prop="hideBranding" type="boolean" default="false">
+  Set to `true` to hide the "Powered by Arca" footer.
+</ParamField>
+
+<ParamField prop="recommendedTierId" type="string">
+  Tier ID to highlight as recommended. Defaults to the second tier.
+</ParamField>
+
+<ParamField prop="customLabels" type="ArcaLabels">
+  Override button and status text.
+
+  ```typescript
+  interface ArcaLabels {
+    activeSubscription?: string;       // "Current Plan"
+    upgrade?: string;                  // "Upgrade"
+    downgrade?: string;                // "Downgrade"
+    changePlan?: string;               // "Switch Plan"
+    getTier?: string;                  // "Get {{tierLabel}}"
+    selectPlanDescription?: string;    // "Select a membership tier to access the protocol."
+    subscriptionActiveHeader?: string; // "Subscription Active · {{countdown}} Left"
+  }
+  ```
+</ParamField>
+
+<ParamField prop="classNames" type="ArcaClassNames">
+  Custom class overrides for internal UI elements.
+
+  ```typescript
+  interface ArcaClassNames {
+    container?: string;
+    grid?: string;
+    card?: string;
+    badge?: string;
+    tierLabel?: string;
+    priceContainer?: string;
+    priceAmount?: string;
+    priceMuted?: string;
+    featuresList?: string;
+    featureItem?: string;
+    featureTitle?: string;
+    featureDescription?: string;
+    button?: string;
+  }
+  ```
+</ParamField>
+
+<ParamField prop="renderHeader" type="(plan: Plan, subscription: ArcaSubscription) => React.ReactNode">
+  Replace the default header section.
+</ParamField>
+
+<ParamField prop="renderFooter" type="() => React.ReactNode">
+  Replace the default footer / brand section.
+</ParamField>
+
+<ParamField prop="renderTierButton" type="(tier: Tier, state: { isActive: boolean; isCurrent: boolean; isDisabled: boolean; isUpgrade: boolean; isDowngrade: boolean; label: string }, handleSelect: () => void) => React.ReactNode">
+  Replace the CTA button for each tier.
+</ParamField>
+
+## What it does
+
+- Fetches plan data from the Arca API.
+- Highlights active tiers for the current `userId`.
+- Routes users into checkout with `planId`, `userId`, and `redirectUrl`.
+- Adapts layout for mobile and desktop.

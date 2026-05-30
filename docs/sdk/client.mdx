@@ -1,0 +1,48 @@
+---
+title: "ArcaClient"
+description: "Server-side and scripted access to subscription status."
+---
+
+`ArcaClient` is a lightweight client for calling the Arca API outside of React. Use it in server routes, cron jobs, or scripts to verify a user subscription.
+
+## Usage
+
+```ts
+import { ArcaClient } from "arca-react";
+
+const client = new ArcaClient("arca_...");
+const status = await client.getSubscriptionStatus("0x_PLAN_ID", "USER_ID");
+
+if (status.status === "ACTIVE") {
+  console.log("Active tiers:", status.tierIds);
+}
+```
+
+## Constructor
+
+```ts
+new ArcaClient(apiKey: string, options?: ArcaClientOptions)
+```
+
+### Options
+
+| Option | Type | Description |
+| :--- | :--- | :--- |
+| `baseUrl` | `string` | Override the API base URL. Defaults to `https://api-arca.vercel.app`. |
+
+## Methods
+
+### `getSubscriptionStatus(planId, userId)`
+
+Fetches the latest subscription state for a user.
+
+**Returns** `ArcaSubscriptionResult`:
+
+```ts
+{
+  status: "ACTIVE" | "EXPIRED" | "NONE";
+  remainingSeconds: number;
+  tierId?: string;
+  tierIds: string[];
+}
+```

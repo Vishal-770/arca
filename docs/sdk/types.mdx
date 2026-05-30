@@ -1,6 +1,6 @@
 ---
 title: "API & Types Reference"
-description: "Detailed type definitions for the Arca SDK."
+description: "Key TypeScript types exposed by the Arca SDK."
 ---
 
 The Arca SDK is fully typed with TypeScript. Below are the primary interfaces you will interact with.
@@ -51,6 +51,19 @@ export interface ArcaSubscription {
   loading: boolean;
   error: string | null;
 }
+
+## ArcaSubscriptionResult
+
+Returned by `ArcaClient.getSubscriptionStatus`.
+
+```typescript
+export interface ArcaSubscriptionResult {
+  status: "ACTIVE" | "EXPIRED" | "NONE";
+  remainingSeconds: number;
+  tierId?: string;
+  tierIds: string[];
+}
+```
 ```
 
 ## ArcaAppearance
@@ -79,6 +92,14 @@ export interface ArcaAppearance {
     tierLabel?: React.CSSProperties;
   };
 }
+
+## ArcaClientOptions
+
+```typescript
+export interface ArcaClientOptions {
+  baseUrl?: string; // Defaults to https://api-arca.vercel.app
+}
+```
 ```
 
 ## Feature

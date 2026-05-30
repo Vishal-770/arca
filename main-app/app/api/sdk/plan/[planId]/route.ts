@@ -110,7 +110,7 @@ export async function GET(
   try {
     // 1. API Key Validation (Mock)
     // In production, you would verify this against your database
-    if (!apiKey || (!apiKey.startsWith("mp_live_") && !apiKey.startsWith("mp_test_"))) {
+    if (!apiKey || !apiKey.startsWith("arca_")) {
       return NextResponse.json(
         { error: "Invalid or missing Arca API Key", code: "UNAUTHORIZED" },
         { status: 401, headers: corsHeaders() }

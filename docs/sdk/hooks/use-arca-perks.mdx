@@ -57,8 +57,8 @@ function PremiumFeatureDashboard() {
   The ID of the plan to check.
 </ParamField>
 
-<ParamField path="userId" type="string" required>
-  The user's unique identifier.
+<ParamField path="userId" type="string">
+  The user's unique identifier. If omitted, the hook returns `null` perks.
 </ParamField>
 
 ## Returns

@@ -1,23 +1,24 @@
 ---
 title: "Hooks & Feature Gating"
-description: "Protect your content and features with simple React hooks."
+description: "Protect premium features with a few lines of React code."
 ---
 
 ## useArca
 
-The `useArca` hook is the primary way to check a user's subscription status programmatically. It connects to the Arca Indexer to provide real-time status updates.
+`useArca(planId, userId)` fetches the subscription state for a user and keeps a client-side countdown timer. If you omit `userId`, the hook stays idle and returns `status: "NONE"`.
 
 ### Usage
 
 ```tsx
-import { useArca } from 'arca-react';
+import { useArca } from "arca-react";
 
 function PremiumFeature() {
   const { status, remainingSeconds, loading, error } = useArca(PLAN_ID, USER_ID);
 
-  if (loading) return <div>Synchronizing with blockchain...</div>;
-  
-  if (status !== 'ACTIVE') {
+  if (loading) return <div>Syncing subscription...</div>;
+  if (error) return <div>Failed to load subscription: {error}</div>;
+
+  if (status !== "ACTIVE") {
     return (
       <div className="locked-state">
         <h3>This feature is locked</h3>
@@ -39,33 +40,35 @@ function PremiumFeature() {
 
 | Value | Type | Description |
 | :--- | :--- | :--- |
-| `status` | `'ACTIVE' | 'EXPIRED' | 'NONE'` | The current subscription status. |
-| `remainingSeconds` | `number` | Time left until the subscription expires. |
-| `tierId` | `string | undefined` | The active subscription tier ID (backward-compatible). |
-| `tierIds` | `string[]` | Array of all active subscription tier IDs under this plan. |
-| `loading` | `boolean` | Whether the SDK is currently fetching data. |
-| `error` | `any` | Any error encountered during the sync. |
+| `status` | `'ACTIVE' | 'EXPIRED' | 'NONE'` | Subscription status. |
+| `remainingSeconds` | `number` | Seconds remaining for the active subscription. |
+| `tierId` | `string | undefined` | The last active tier ID (if available). |
+| `tierIds` | `string[]` | All active tier IDs for the plan. |
+| `loading` | `boolean` | Whether the hook is fetching data. |
+| `error` | `string | null` | Error message, if any. |
 
 ## useArcaPerks
 
-The `useArcaPerks` hook resolves and aggregates all perks, features, and active entitlements across all active subscription tiers.
+`useArcaPerks(planId, userId)` combines subscription status with plan metadata to resolve all active perks and features. It returns `null` when there is no active subscription.
 
 ### Usage
 
 ```tsx
-import { useArcaPerks } from 'arca-react';
+import { useArcaPerks } from "arca-react";
 
 function PremiumDashboard() {
   const { perks, loading, error } = useArcaPerks(PLAN_ID, USER_ID);
 
-  if (loading) return <div>Synchronizing entitlements...</div>;
+  if (loading) return <div>Syncing entitlements...</div>;
   if (error) return <div>Error loading perks: {error}</div>;
 
   return (
     <div>
       {perks?.map((tier, i) => (
-        <div key={i} style={{ marginBottom: '16px' }}>
-          <h3>Tier: {tier.tierName} (Expires: {tier.expiryDate.toLocaleDateString()})</h3>
+        <div key={i} style={{ marginBottom: "16px" }}>
+          <h3>
+            Tier: {tier.tierName} (Expires: {tier.expiryDate.toLocaleDateString()})
+          </h3>
           <ul>
             {tier.features.map((feature, j) => (
               <li key={j}>
@@ -84,6 +87,6 @@ function PremiumDashboard() {
 
 | Value | Type | Description |
 | :--- | :--- | :--- |
-| `perks` | `SubscribedTierDetail[] | null | undefined` | List of all active tier details from active subscription tiers. `undefined` while loading, `null` if no active subscription. |
-| `loading` | `boolean` | Whether the SDK is currently fetching data. |
-| `error` | `any` | Any error encountered during synchronization. |
+| `perks` | `SubscribedTierDetail[] | null | undefined` | `undefined` while loading, `null` if no active subscription, or a list of active tiers. |
+| `loading` | `boolean` | Whether the hook is fetching data. |
+| `error` | `string | null` | Error message, if any. |

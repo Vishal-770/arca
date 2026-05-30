@@ -255,7 +255,7 @@ export default function MyPlanDetailPage() {
       b.subscriber.toLowerCase().includes(q) || 
       b.buyerData.toLowerCase().includes(q)
     );
-  }, [data?.buyers, search]);
+  }, [data, search]);
 
   const chartData = useMemo(() => {
     if (!data?.chartData) return [];
@@ -263,7 +263,7 @@ export default function MyPlanDetailPage() {
         ...d,
         revenueNum: Number(formatUnits(d.revenue, 6))
     }));
-  }, [data?.chartData]);
+  }, [data]);
 
   const embedMarkdown = useMemo(() => {
     const planId = data?.plan?.planId ?? "0x…";
@@ -280,7 +280,7 @@ import { ArcaProvider } from 'arca-react';
 
 function App() {
   return (
-    <ArcaProvider apiKey="mp_live_your_api_key">
+    <ArcaProvider apiKey="arca_your_api_key">
       <YourPricingPage />
     </ArcaProvider>
   );

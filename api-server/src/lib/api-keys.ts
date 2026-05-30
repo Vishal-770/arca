@@ -1,11 +1,11 @@
 import { createHash, randomBytes } from "crypto";
 
 /**
- * Generates a high-entropy API key with a 'mp_live_' prefix.
+ * Generates a high-entropy API key with a 'arca_' prefix.
  */
 export function generateApiKey(): string {
   const bytes = randomBytes(24); // 192 bits of entropy
-  return `mp_live_${bytes.toString("hex")}`;
+  return `arca_${bytes.toString("hex")}`;
 }
 
 /**

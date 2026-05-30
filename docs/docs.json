@@ -60,15 +60,16 @@
             "pages": [
               "sdk/introduction",
               "sdk/setup",
+              "sdk/client",
               {
                 "group": "Components",
                 "pages": [
-                  "sdk/components/mecha-provider",
-                  "sdk/components/mecha-pricing-table"
+                  "sdk/components/arca-provider",
+                  "sdk/components/arca-pricing-table"
                 ]
               },
-              "sdk/hooks/use-mecha",
-              "sdk/hooks/use-mecha-perks",
+              "sdk/hooks/use-arca",
+              "sdk/hooks/use-arca-perks",
               "sdk/theming",
               "sdk/types",
               "sdk/example-app"

@@ -1,0 +1,30 @@
+---
+title: "ArcaProvider"
+description: "The core configuration provider for the Arca React SDK."
+---
+
+The `ArcaProvider` supplies your API key and base portal URL to all SDK hooks and components. It should wrap your entire React app.
+
+## Props
+
+<ParamField prop="apiKey" type="string" required>
+  Your Arca Developer API Key. Used for authenticated requests to the Arca API.
+</ParamField>
+
+## Implementation Example
+
+```tsx
+import { ArcaProvider } from "arca-react";
+
+export default function App() {
+  return (
+    <ArcaProvider apiKey={process.env.NEXT_PUBLIC_ARCA_API_KEY as string}>
+      {/* Rest of your application */}
+    </ArcaProvider>
+  );
+}
+```
+
+<Warning>
+  The SDK runs in the browser, so only use API keys that are safe for client-side read access.
+</Warning>

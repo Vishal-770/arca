@@ -7,7 +7,7 @@ description: "Retrieve aggregate analytics across all your plans."
 ### Headers
 
 <ParamField header="x-api-key" type="string" required>
-  Your Mecha Pay Developer API Key.
+  Your Arca Developer API Key.
 </ParamField>
 
 ### Response
@@ -24,14 +24,15 @@ description: "Retrieve aggregate analytics across all your plans."
     <ResponseField name="subscriptionCount" type="number">Total subscriptions across all plans.</ResponseField>
     <ResponseField name="totalGrossRevenue" type="string">Total raw revenue.</ResponseField>
     <ResponseField name="totalNetRevenue" type="string">Revenue after protocol fees.</ResponseField>
+    <ResponseField name="totalFeeContributed" type="string">Total protocol fees paid.</ResponseField>
   </Expandable>
 </ResponseField>
 
 <RequestExample>
 
 ```bash cURL
-curl -X GET "https://mecha-pay.vercel.app/api/v1/analytics" \
-  -H "x-api-key: your_api_key_here"
+curl -X GET "https://api-arca.vercel.app/api/v1/analytics" \
+  -H "x-api-key: arca_..."
 ```
 
 </RequestExample>

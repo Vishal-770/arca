@@ -22,7 +22,7 @@ export async function validateApiKeyMiddleware(
   }
 
   const normalizedKey = apiKey.trim();
-  if (!normalizedKey.startsWith("mp_live_") && !normalizedKey.startsWith("mp_test_")) {
+  if (!normalizedKey.startsWith("arca_")) {
     return res.status(400).json({
       error: "Malformed API key",
       code: "INVALID_API_KEY_FORMAT",

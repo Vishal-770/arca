@@ -27,7 +27,7 @@ import { ArcaProvider } from 'arca-react';
 
 function App() {
   return (
-    <ArcaProvider apiKey="mp_live_your_api_key_here">
+    <ArcaProvider apiKey="arca_your_api_key_here">
       <MyRoutes />
     </ArcaProvider>
   );
@@ -89,7 +89,7 @@ Create a client with your API key, then fetch a user's subscription status for a
 ```tsx
 import { createArcaClient } from 'arca-react';
 
-const arca = createArcaClient('mp_live_your_api_key_here');
+const arca = createArcaClient('arca_your_api_key_here');
 
 async function checkSubscription(planId: string, userId: string) {
   const subscription = await arca.getSubscriptionStatus(planId, userId);
@@ -140,7 +140,7 @@ Create a client instance once and reuse it to check a user's subscription for a 
 ```tsx
 import { createArcaClient } from 'arca-react';
 
-const arca = createArcaClient("mp_live_your_api_key_here");
+const arca = createArcaClient("arca_your_api_key_here");
 
 const status = await arca.getSubscriptionStatus("0x...", "user_123");
 // status = { status, remainingSeconds, tierId, tierIds }

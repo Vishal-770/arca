@@ -1,11 +1,11 @@
 ---
 title: "Plans"
-description: "List all your plan IDs and retrieve individual plan metadata or analytics."
+description: "List plan IDs and retrieve plan metadata or analytics."
 ---
 
 ## List Plans
 
-<Note>Returns an array of `planId`s that belong to your merchant wallet.</Note>
+<Note>Returns an array of plan IDs that belong to your merchant wallet.</Note>
 
 **`GET /api/v1/plans`**
 
@@ -15,8 +15,8 @@ description: "List all your plan IDs and retrieve individual plan metadata or an
 
 <RequestExample>
 ```bash cURL
-curl -X GET "https://mecha-pay.vercel.app/api/v1/plans" \
-  -H "x-api-key: your_api_key_here"
+curl -X GET "https://api-arca.vercel.app/api/v1/plans" \
+  -H "x-api-key: arca_..."
 ```
 </RequestExample>
 
@@ -46,8 +46,8 @@ curl -X GET "https://mecha-pay.vercel.app/api/v1/plans" \
 
 <RequestExample>
 ```bash cURL
-curl -X GET "https://mecha-pay.vercel.app/api/v1/plans/0x123..." \
-  -H "x-api-key: your_api_key_here"
+curl -X GET "https://api-arca.vercel.app/api/v1/plans/0x123..." \
+  -H "x-api-key: arca_..."
 ```
 </RequestExample>
 
@@ -57,7 +57,7 @@ curl -X GET "https://mecha-pay.vercel.app/api/v1/plans/0x123..." \
   "success": true,
   "planId": "0x123...",
   "metadata": {
-    "brand": { "name": "Mecha Service" }
+    "brand": { "name": "Arca Service" }
   }
 }
 ```
@@ -77,8 +77,8 @@ curl -X GET "https://mecha-pay.vercel.app/api/v1/plans/0x123..." \
 
 <RequestExample>
 ```bash cURL
-curl -X GET "https://mecha-pay.vercel.app/api/v1/plans/0x123.../analytics" \
-  -H "x-api-key: your_api_key_here"
+curl -X GET "https://api-arca.vercel.app/api/v1/plans/0x123.../analytics" \
+  -H "x-api-key: arca_..."
 ```
 </RequestExample>
 

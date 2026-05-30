@@ -94,7 +94,7 @@ router.get("/plan/:planId", async (req: ExpressRequest, res: ExpressResponse) =>
 
   try {
     // 1. API Key Validation
-    if (!apiKey || (!apiKey.startsWith("mp_live_") && !apiKey.startsWith("mp_test_"))) {
+    if (!apiKey || !apiKey.startsWith("arca_")) {
       return res.status(401).json({
         error: "Invalid or missing Arca API Key",
         code: "UNAUTHORIZED",

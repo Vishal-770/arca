@@ -1,27 +1,27 @@
 ---
 title: "Introduction"
-description: "Build stunning subscription interfaces with the Arca React SDK."
+description: "Build polished subscription experiences with the Arca React SDK."
 ---
 
-The Arca React SDK (`arca-react`) is the official library for integrating the Arca Protocol into your React applications. It handles everything from API authentication to real-time blockchain synchronization and membership gating.
+The Arca React SDK (`arca-react`) is the official UI + hooks layer for Arca Protocol. It wraps authentication, plan data fetching, subscription status, and checkout routing in a small set of components and hooks.
 
 ## Key Features
 
 <CardGroup cols={2}>
   <Card title="Provider Pattern" icon="palette">
-    Centralized state management with `ArcaProvider`.
+    App-level configuration via `ArcaProvider`.
   </Card>
-  <Card title="Real-time Synchronization" icon="sync">
-    Automated tracking of membership status and remaining time.
-  </Card>
-  <Card title="UI Components" icon="table-columns">
-    Premium, ready-to-use pricing tables.
+  <Card title="Pricing UI" icon="table-columns">
+    `ArcaPricingTable` renders a full pricing and checkout flow.
   </Card>
   <Card title="Feature Gating" icon="shield-check">
-    Simple hooks to protect your premium features and content.
+    Hooks for access control and entitlements.
+  </Card>
+  <Card title="Client API" icon="terminal">
+    `ArcaClient` for server-side or scripted checks.
   </Card>
 </CardGroup>
 
 ## Architecture
 
-The SDK connects your frontend directly to the Arca smart contracts and the Arca Indexer. This ensures that your users always see the most accurate and up-to-date subscription information without you having to build complex backend sync logic.
+The SDK talks to the Arca API (default base URL: `https://api-arca.vercel.app`). It pulls plan metadata and optional subscription status from `/api/sdk/plan/:planId`, so you can avoid direct blockchain or subgraph calls in your UI.

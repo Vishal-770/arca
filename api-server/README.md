@@ -17,7 +17,7 @@ Express API gateway that serves SDK read endpoints and merchant analytics endpoi
 ## Authentication
 
 - Send `x-api-key` header.
-- Supported key prefixes: `mp_live_` and `mp_test_`.
+- Supported key prefix: `arca_`.
 
 ## Error Format
 

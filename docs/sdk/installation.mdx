@@ -17,14 +17,14 @@ pnpm add arca-react
 
 ## Configuration
 
-To use the SDK, you must wrap your application (usually in `App.tsx` or `main.tsx`) with the `ArcaProvider`. This component provides the necessary context for all other SDK components and hooks.
+Wrap your application (usually `App.tsx` or `main.tsx`) with `ArcaProvider` so hooks and components can access your API key.
 
 ```tsx
-import { ArcaProvider } from 'arca-react';
+import { ArcaProvider } from "arca-react";
 
 function App() {
   return (
-    <ArcaProvider apiKey="mp_live_...">
+    <ArcaProvider apiKey="arca_...">
       <MyRoutes />
     </ArcaProvider>
   );
@@ -37,4 +37,15 @@ function App() {
 | :--- | :--- | :--- |
 | `apiKey` | `string` | **Required.** Your Arca Developer API Key. |
 
-*(Note: Custom appearance, styling, and dark/light mode configurations are passed directly to individual components like `ArcaPricingTable` via their `appearance` prop).*
+## Server-side Usage
+
+If you need to check subscription status outside React, use `ArcaClient`:
+
+```ts
+import { ArcaClient } from "arca-react";
+
+const client = new ArcaClient("arca_...");
+const status = await client.getSubscriptionStatus("0x...", "user_123");
+```
+
+*(Note: UI customization is passed via component props such as `appearance` on `ArcaPricingTable`.)*

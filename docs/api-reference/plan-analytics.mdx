@@ -13,7 +13,7 @@ description: "Retrieve detailed on-chain statistics for a specific plan."
 ### Headers
 
 <ParamField header="x-api-key" type="string" required>
-  Your Mecha Pay Developer API Key.
+  Your Arca Developer API Key.
 </ParamField>
 
 ### Response
@@ -30,13 +30,17 @@ description: "Retrieve detailed on-chain statistics for a specific plan."
     <ResponseField name="totalGrossVolume" type="string">Total USDC processed by this plan.</ResponseField>
     <ResponseField name="totalFeesCollected" type="string">Total protocol fees paid by this plan.</ResponseField>
     <ResponseField name="netRevenue" type="string">Net revenue earned by the merchant.</ResponseField>
+    <ResponseField name="lastSubscriptionAt" type="string | null">Unix timestamp of the last subscription.</ResponseField>
+    <ResponseField name="createdAt" type="string">Unix timestamp when the plan was created.</ResponseField>
+    <ResponseField name="updatedAt" type="string">Unix timestamp when the plan was last updated.</ResponseField>
+    <ResponseField name="tiers" type="array">List of active tiers for the plan.</ResponseField>
   </Expandable>
 </ResponseField>
 
 <RequestExample>
 ```bash cURL
-curl -X GET "https://mecha-pay.vercel.app/api/v1/plans/0x123.../analytics" \
-  -H "x-api-key: your_api_key_here"
+curl -X GET "https://api-arca.vercel.app/api/v1/plans/0x123.../analytics" \
+  -H "x-api-key: arca_..."
 ```
 </RequestExample>
 
@@ -50,7 +54,13 @@ curl -X GET "https://mecha-pay.vercel.app/api/v1/plans/0x123.../analytics" \
     "subscriptionCount": 42,
     "totalGrossVolume": "42000000",
     "totalFeesCollected": "840000",
-    "netRevenue": "41160000"
+    "netRevenue": "41160000",
+    "lastSubscriptionAt": "1715426189",
+    "createdAt": "1714000000",
+    "updatedAt": "1715426189",
+    "tiers": [
+      { "tierId": "tier_basic", "price": "10000000", "label": "Basic", "active": true }
+    ]
   }
 }
 ```
