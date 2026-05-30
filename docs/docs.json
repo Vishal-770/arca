@@ -2,8 +2,8 @@
   "$schema": "https://mintlify.com/docs.json",
   "name": "Arca",
   "logo": {
-    "dark": "/logo.png",
-    "light": "/logo.png"
+    "dark": "/logo-dark.png",
+    "light": "/logo-light.png"
   },
   "favicon": "/logo.png",
   "theme": "maple",
