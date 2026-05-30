@@ -46,10 +46,6 @@ type PlanRecord = {
 
 type SortKey = "latest" | "priceLow" | "priceHigh" | "subscribers";
 
-type UserSubscription = {
-  active: boolean;
-  planId: string;
-};
 
 function isSortKey(value: string | null): value is SortKey {
   return value === "latest" || value === "priceLow" || value === "priceHigh" || value === "subscribers";
@@ -179,7 +175,7 @@ function ProtocolCard({ plan, isSubscribed }: { plan: PlanRecord; isSubscribed?:
 }
 
 export default function MarketplacePage() {
-  const { wallet } = useDashboardContext();
+  const { wallet, sessionUserToken } = useDashboardContext();
   const [plans, setPlans] = useState<PlanRecord[]>([]);
   const [userSubs, setUserSubs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -190,10 +186,10 @@ export default function MarketplacePage() {
   // Fetch subscriptions
   useEffect(() => {
     const fetchUserSubs = async () => {
-      if (!wallet?.address || !wallet?.userToken) return;
+      if (!wallet?.address || !sessionUserToken) return;
       try {
         const res = await fetch(
-          `/api/subscription/my-subscriptions?subscriber=${wallet.address}&userToken=${wallet.userToken}`
+          `/api/subscription/my-subscriptions?subscriber=${wallet.address}&userToken=${sessionUserToken}`
         );
         if (!res.ok) return;
         const data = (await res.json()) as {
@@ -209,7 +205,7 @@ export default function MarketplacePage() {
       }
     };
     fetchUserSubs();
-  }, [wallet?.address, wallet?.userToken]);
+  }, [wallet?.address, sessionUserToken]);
 
   useEffect(() => {
     let mounted = true;

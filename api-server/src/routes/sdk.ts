@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request as ExpressRequest, Response as ExpressResponse } from "express";
 import { querySubgraph, SubgraphError, toLowerHex, toNumber, toSecondsNow } from "../lib/subgraph";
 import { ipfsHashToHttpUrl } from "../lib/subscription";
 
@@ -87,7 +87,7 @@ const SUB_QUERY = `
 `;
 
 // GET /api/sdk/plan/:planId
-router.get("/plan/:planId", async (req: Request, res: Response) => {
+router.get("/plan/:planId", async (req: ExpressRequest, res: ExpressResponse) => {
   const { planId } = req.params;
   const userId = req.query.userId as string | undefined;
   const apiKey = req.headers["x-api-key"] as string | undefined;

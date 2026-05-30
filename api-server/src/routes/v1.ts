@@ -1,4 +1,4 @@
-import { Router, Response } from "express";
+import { Router, Response as ExpressResponse } from "express";
 import { validateApiKeyMiddleware, AuthenticatedRequest } from "../middlewares/auth";
 import { querySubgraph, SubgraphError, toLowerHex } from "../lib/subgraph";
 import { ipfsHashToHttpUrl, isAddressLike } from "../lib/subscription";
@@ -172,7 +172,7 @@ const SELLER_ANALYTICS_QUERY = `
 /* ── Routes ── */
 
 // GET /api/v1/wallet
-router.get("/wallet", async (req: AuthenticatedRequest, res: Response) => {
+router.get("/wallet", async (req: AuthenticatedRequest, res: ExpressResponse) => {
   const { merchantAddress } = req;
 
   const walletResult = requireMerchantAddress(merchantAddress);
@@ -190,7 +190,7 @@ router.get("/wallet", async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/v1/plans
-router.get("/plans", async (req: AuthenticatedRequest, res: Response) => {
+router.get("/plans", async (req: AuthenticatedRequest, res: ExpressResponse) => {
   const { merchantAddress } = req;
 
   const walletResult = requireMerchantAddress(merchantAddress);
@@ -231,7 +231,7 @@ router.get("/plans", async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/v1/plans/:id
-router.get("/plans/:id", async (req: AuthenticatedRequest, res: Response) => {
+router.get("/plans/:id", async (req: AuthenticatedRequest, res: ExpressResponse) => {
   const { merchantAddress } = req;
   const { id } = req.params;
 
@@ -306,7 +306,7 @@ router.get("/plans/:id", async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/v1/plans/:id/subscribers
-router.get("/plans/:id/subscribers", async (req: AuthenticatedRequest, res: Response) => {
+router.get("/plans/:id/subscribers", async (req: AuthenticatedRequest, res: ExpressResponse) => {
   const { merchantAddress } = req;
   const { id } = req.params;
 
@@ -384,7 +384,7 @@ router.get("/plans/:id/subscribers", async (req: AuthenticatedRequest, res: Resp
 });
 
 // GET /api/v1/plans/:id/analytics
-router.get("/plans/:id/analytics", async (req: AuthenticatedRequest, res: Response) => {
+router.get("/plans/:id/analytics", async (req: AuthenticatedRequest, res: ExpressResponse) => {
   const { merchantAddress } = req;
   const { id } = req.params;
 
@@ -460,7 +460,7 @@ router.get("/plans/:id/analytics", async (req: AuthenticatedRequest, res: Respon
 });
 
 // GET /api/v1/analytics
-router.get("/analytics", async (req: AuthenticatedRequest, res: Response) => {
+router.get("/analytics", async (req: AuthenticatedRequest, res: ExpressResponse) => {
   const { merchantAddress } = req;
 
   const walletResult = requireMerchantAddress(merchantAddress);
