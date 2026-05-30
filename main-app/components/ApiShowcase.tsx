@@ -35,7 +35,7 @@ export default function ApiShowcase() {
               <span className="text-zinc-300 text-xs font-semibold tracking-wide">Developer Suite</span>
             </div>
             
-            <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff]">
+            <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff] font-serif">
               Seamless Data <br/><span className="text-[#3b82f6]">Via REST API</span>
             </h2>
             

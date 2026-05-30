@@ -194,7 +194,7 @@ export default function LandingPage() {
             <div className="relative w-9 h-9">
               <Image src="/logo.png" alt="Arca Logo" fill className="object-contain dark:invert" unoptimized />
             </div>
-            <span className="text-xl font-bold tracking-tight text-[#ffffff]">Arca</span>
+            <span className="text-xl font-bold tracking-tight text-[#ffffff] font-serif">Arca</span>
           </div>
 
           <div className="flex items-center gap-3 lg:gap-5">
@@ -213,7 +213,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-start text-left relative z-30 w-full">
               <div className="flex flex-col mb-10 relative">
                 <motion.h1 
-                  className="text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[5.5rem] font-extrabold tracking-tighter leading-[1.05] text-foreground"
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[5.5rem] font-extrabold tracking-tighter leading-[1.05] text-foreground font-serif"
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -272,394 +272,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <AppPreview />
-      </motion.div>
-
-      {/* Global Coverage & Real-time Analytics Section */}
-      <section className="relative w-full bg-[#000000] py-20 px-6 sm:px-12 lg:px-20 z-20 border-t border-white/5 overflow-hidden">
-        {/* Subtle radial glow background to blend with other sections */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,#3b82f608,transparent_70%)] pointer-events-none" />
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 relative z-10">
-          
-          {/* Global Coverage Card */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 min-h-[320px] bg-transparent">
-            <div className="flex flex-col flex-1 max-w-sm">
-              <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Global Coverage</span>
-              <h3 className="text-3xl sm:text-[2.25rem] font-normal tracking-tight text-white mt-4 leading-tight font-serif">A truly global<br className="hidden sm:block" /> infrastructure.</h3>
-              <p className="text-zinc-400 text-sm mt-3 leading-relaxed font-normal">Local presence. Global reach. Built to support businesses and users everywhere.</p>
-              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
-                <span>View all regions</span>
-                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-              </Link>
-            </div>
-            
-            {/* Minimalist Globe Image */}
-            <div className="relative w-full max-w-[200px] h-[200px] flex items-center justify-center opacity-90 select-none pointer-events-none shrink-0">
-              <Image src="/globle.png" alt="Global Coverage" fill className="object-contain" />
-            </div>
-          </div>
-
-          {/* Real-time Analytics Card */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 min-h-[320px] bg-transparent">
-            <div className="flex flex-col flex-1 max-w-sm">
-              <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Real-time Analytics</span>
-              <h3 className="text-3xl sm:text-[2.25rem] font-normal tracking-tight text-white mt-4 leading-tight font-serif">Data that moves<br className="hidden sm:block" /> at the speed of<br className="hidden sm:block" /> your business.</h3>
-              <p className="text-zinc-400 text-sm mt-3 leading-relaxed font-normal">Real-time insights into payments, subscriptions, settlements, and revenue performance.</p>
-              <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
-                <span>Explore analytics</span>
-                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-              </Link>
-            </div>
-            
-            {/* Visual Analytics Dashboard Card (Flat) */}
-            <div className="flex flex-col gap-4 w-full max-w-[240px] shrink-0 select-none bg-transparent">
-              
-              {/* Volume Chart Card */}
-              <div className="flex flex-col">
-                <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-wider">Total volume (USD)</span>
-                <span className="text-2xl font-bold tracking-tight text-white mt-1">$24,530,890</span>
-                <span className="text-[9px] font-bold text-[#10b981] mt-1 flex items-center gap-0.5">
-                  ↑ 18.4% <span className="text-zinc-500 font-medium">vs last month</span>
-                </span>
-                
-                {/* Green Line Chart Path */}
-                <svg className="w-full h-12 stroke-[#10b981] fill-none mt-3" viewBox="0 0 160 50">
-                  <defs>
-                    <linearGradient id="chart-glow-green" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity="0.1" />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5 L 160 50 L 0 50 Z" fill="url(#chart-glow-green)" strokeWidth="0" />
-                </svg>
-              </div>
-              
-              <div className="h-[1px] bg-white/5" />
-              
-              {/* Circular Success Rate Card */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex flex-col">
-                  <span className="text-zinc-500 text-[9px] font-bold uppercase tracking-wider">Success rate</span>
-                  <span className="text-lg font-bold tracking-tight text-white mt-0.5">98.72%</span>
-                  <span className="text-[9px] font-bold text-[#10b981] mt-1 flex items-center gap-0.5">
-                    ↑ 0.45% <span className="text-zinc-500 font-medium">vs last month</span>
-                  </span>
-                </div>
-                
-                <div className="relative h-12 w-12 flex items-center justify-center shrink-0">
-                  <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
-                    <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3.5" />
-                    <circle cx="18" cy="18" r="16" fill="none" stroke="#003b8f" strokeWidth="3.5" strokeDasharray="100" strokeDashoffset="2" strokeLinecap="round" />
-                    <circle cx="18" cy="18" r="16" fill="none" stroke="#3b82f6" strokeWidth="3.5" strokeDasharray="100" strokeDashoffset="12.8" strokeLinecap="round" />
-                    <circle cx="18" cy="18" r="16" fill="none" stroke="#10b981" strokeWidth="3.5" strokeDasharray="100" strokeDashoffset="50" strokeLinecap="round" />
-                  </svg>
-                  <span className="text-[8px] font-bold text-zinc-500">98%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Documentation Showcase Section */}
-      <section className="relative w-full bg-[#000000] py-20 px-6 sm:px-12 lg:px-20 z-20 border-t border-white/5 overflow-hidden">
-        {/* Architectural Grid Background to blend with other sections */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-          
-          {/* Left text column */}
-          <div className="flex flex-col lg:col-span-4">
-            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Documentation</span>
-            <h3 className="text-4xl sm:text-[2.5rem] font-normal tracking-tight text-white mt-4 leading-tight font-serif">Everything you need.<br/>All in one place.</h3>
-            <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">From quickstarts to deep technical guides, our docs help you build with confidence.</p>
-            <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
-              <span>Go to documentation</span>
-              <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-            </Link>
-          </div>
-          
-          {/* Right interactive panel column (Flat) */}
-          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-12 bg-transparent">
-            {/* Sidebar tabs */}
-            <div className="sm:col-span-4 p-4 flex sm:flex-col gap-1 overflow-x-auto sm:overflow-x-visible no-scrollbar">
-              {[
-                { id: "Overview", label: "Overview" },
-                { id: "Quickstart", label: "Quickstart" },
-                { id: "API Reference", label: "API Reference" },
-                { id: "Guides", label: "Guides" },
-                { id: "SDKs", label: "SDKs" },
-                { id: "Webhooks", label: "Webhooks" },
-                { id: "Changelog", label: "Changelog" }
-              ].map((tab) => {
-                const isActive = activeDocTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveDocTab(tab.id)}
-                    className={`flex items-center gap-2.5 px-4 py-3 text-xs font-semibold rounded-xl text-left transition-all shrink-0 sm:shrink ${
-                      isActive 
-                        ? "bg-white/5 text-[#3b82f6] pl-3.5" 
-                        : "text-zinc-500 hover:text-zinc-300"
-                    }`}
-                  >
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-            
-            {/* Detail panel */}
-            <div className="sm:col-span-8 p-8 flex flex-col justify-between min-h-[340px] bg-transparent">
-              {(() => {
-                const currentTab = [
-                  {
-                    id: "Overview",
-                    title: "Overview",
-                    desc: "ARCA provides the financial infrastructure APIs you need to build scalable, compliant, and reliable commerce experiences.",
-                    cards: [
-                      { title: "Subscriptions API", desc: "Manage plans, customers, and billing workflows.", icon: SubscriptionsIcon },
-                      { title: "Settlement API", desc: "Move money globally with stablecoin rails.", icon: SettlementIcon }
-                    ]
-                  },
-                  {
-                    id: "Quickstart",
-                    title: "Quickstart",
-                    desc: "Deploy your first payment button and provision a merchant wallet in less than five minutes with our quickstart template.",
-                    cards: [
-                      { title: "React Starter", desc: "Clone the Next.js starter repository.", icon: Zap },
-                      { title: "Deploy Script", desc: "One-click deployment script to Vercel.", icon: ArrowUpRight }
-                    ]
-                  },
-                  {
-                    id: "API Reference",
-                    title: "API Reference",
-                    desc: "Deep dive into our robust JSON REST APIs for programmatically triggering transfers, managing plans, and auditing webhooks.",
-                    cards: [
-                      { title: "REST Endpoints", desc: "Explore secure POST and GET endpoints.", icon: LayoutGrid },
-                      { title: "Auth Header", desc: "Read about Bearer token security schemes.", icon: Shield }
-                    ]
-                  },
-                  {
-                    id: "Guides",
-                    title: "Guides",
-                    desc: "Step-by-step walkthroughs to design custom subscriber onboarding flows, trial periods, and tier upgrades.",
-                    cards: [
-                      { title: "Tier Upgrades", desc: "Implement prorated billing mechanics.", icon: Globe },
-                      { title: "Trial Flows", desc: "Configure zero-upfront trial periods.", icon: Activity }
-                    ]
-                  },
-                  {
-                    id: "SDKs",
-                    title: "SDKs",
-                    desc: "Pre-packaged TypeScript, Go, and Python libraries to abstract wallet operations, gas relays, and event validations.",
-                    cards: [
-                      { title: "TypeScript SDK", desc: "Import direct browser client wrappers.", icon: Mail },
-                      { title: "Go Library", desc: "Integrate high-speed server execution.", icon: Zap }
-                    ]
-                  },
-                  {
-                    id: "Webhooks",
-                    title: "Webhooks",
-                    desc: "Subscribe to transaction-state change events and instantly deliver updates to your database upon successful bridge settlement.",
-                    cards: [
-                      { title: "Webhook Events", desc: "Listen for charge.succeeded and bridge.completed.", icon: Globe },
-                      { title: "Payload Validation", desc: "Verify cryptographic SHA-256 signatures.", icon: Shield }
-                    ]
-                  },
-                  {
-                    id: "Changelog",
-                    title: "Changelog",
-                    desc: "Track the latest protocol upgrades, new chain integrations, and security patches for our relayer nodes.",
-                    cards: [
-                      { title: "v2.4 Release", desc: "Multi-party computation enhancements.", icon: Shield },
-                      { title: "Sei Support", desc: "Seamless Sei Network testnet bridging.", icon: Zap }
-                    ]
-                  }
-                ].find(t => t.id === activeDocTab) || {
-                  title: "Overview",
-                  desc: "ARCA provides the financial infrastructure APIs you need.",
-                  cards: []
-                };
-                
-                return (
-                  <div className="flex flex-col gap-6 animate-in fade-in duration-300">
-                    <div>
-                      <h4 className="text-xl font-bold tracking-tight text-white">{currentTab.title}</h4>
-                      <p className="text-zinc-400 text-xs font-medium leading-relaxed mt-2.5 max-w-xl">{currentTab.desc}</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                      {currentTab.cards.map((card, i) => {
-                        const IconComponent = card.icon;
-                        return (
-                          <div key={i} className="p-5 rounded-2xl bg-[#050505] border border-white/5 flex gap-4 hover:bg-[#0a0a0f] transition-all items-center">
-                            <div className="h-12 w-12 rounded-2xl bg-[#3b82f6]/10 flex items-center justify-center text-[#3b82f6] shrink-0">
-                              <IconComponent className="h-6 w-6 stroke-[2.2]" />
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="text-sm font-bold text-white">{card.title}</span>
-                              <span className="text-zinc-400 text-xs font-medium leading-normal mt-1">{card.desc}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust & Compliance Section */}
-      <section id="compliance" className="relative w-full bg-[#000000] py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden border-t border-[#ffffff]/10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,#3b82f608,transparent_70%)] pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-            
-            {/* Left Content column */}
-            <div className="flex flex-col lg:col-span-4 max-w-md">
-              <span className="text-zinc-500 text-xs font-bold uppercase tracking-[0.18em] mb-4">Enterprise Trust</span>
-              <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-white leading-[1.1] font-serif">
-                Security. Compliance.<br/>Reliability. Built-in.
-              </h2>
-              <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">
-                ARCA meets the highest standards of security and compliance so you can build with confidence.
-              </p>
-              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
-                <span>View security</span>
-                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-              </Link>
-            </div>
-            
-            {/* Right Horizontal Layout column */}
-            <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-0 w-full relative">
-              {[
-                { name: "SOC 2 Type II", desc: "MPC Insulated", icon: Soc2Icon },
-                { name: "EU MiCA", desc: "Circle USDC Rails", icon: MicaIcon },
-                { name: "BSA / AML", desc: "OFAC Filtered", icon: BsaAmlIcon },
-                { name: "GDPR Compliant", desc: "Zero PII Ledger", icon: GdprIcon },
-              ].map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <div 
-                    key={idx} 
-                    className={`flex flex-col items-center text-center px-4 ${
-                      idx !== 0 ? "md:border-l md:border-white/10" : ""
-                    }`}
-                  >
-                    <div className="h-14 w-14 rounded-full border border-white/10 flex items-center justify-center bg-white/5 hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/5 transition-all duration-300 mb-5">
-                      <Icon className="h-6 w-6 text-[#3b82f6] stroke-[2px]" />
-                    </div>
-                    <span className="text-white font-bold text-sm tracking-tight">{item.name}</span>
-                    <span className="text-zinc-500 text-xs font-semibold mt-1">{item.desc}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Protocol Economics Section */}
-      {/* Protocol Economics Section */}
-      <section className="relative w-full bg-[#000000] py-24 lg:py-40 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
-        {/* Subtle Architectural Grid Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-20 relative z-10">
-          <motion.div
-            className="flex-1 flex flex-col gap-6 w-full"
-            initial={{ opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
-              <span className="text-zinc-300 text-xs font-semibold tracking-wide">Fee Transparency</span>
-            </div>
-            <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#ffffff] leading-[1.1]">
-              Pure Efficiency. <br/>
-              <span className="text-[#3b82f6]">Zero Waste.</span>
-            </h2>
-            <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
-              Traditional payment rails eat into your margins with hidden fees and expensive gas costs. Arca redefines protocol economics.
-            </p>
-          </motion.div>
-
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            <motion.div
-              className="group relative overflow-hidden p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-[#3b82f6]/30 transition-all duration-500"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            >
-              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                <Coins className="w-32 h-32 text-[#3b82f6] -mr-8 -mt-8" />
-              </div>
-              <div className="relative z-10">
-                <div className="text-5xl font-bold tracking-tighter text-[#ffffff] mb-4 group-hover:text-[#3b82f6] transition-colors duration-500">$0.00</div>
-                <h4 className="text-xl font-bold text-[#ffffff] mb-2 tracking-tight">Native Fee</h4>
-                <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-[90%]">Eliminate secondary gas tokens. Arc uses USDC as native gas for predictable, low-cost execution.</p>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              className="group relative overflow-hidden p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-[#3b82f6]/30 transition-all duration-500"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            >
-              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                <Zap className="w-32 h-32 text-[#3b82f6] -mr-8 -mt-8" />
-              </div>
-              <div className="relative z-10">
-                <div className="text-5xl font-bold tracking-tighter text-[#ffffff] mb-4 group-hover:text-[#3b82f6] transition-colors duration-500">Instant</div>
-                <h4 className="text-xl font-bold text-[#ffffff] mb-2 tracking-tight">Sub-Second Finality</h4>
-                <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-[90%]">Subscriptions and bridges confirm in under 1 second, providing a true Web2-like experience.</p>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              className="group relative overflow-hidden p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-[#3b82f6]/30 transition-all duration-500 md:col-span-2"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-            >
-              <div className="absolute inset-0 bg-linear-to-r from-[#3b82f6]/0 via-[#3b82f6]/5 to-[#3b82f6]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                <Globe className="w-48 h-48 text-[#3b82f6] -mr-16 -mt-16" />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-[#ffffff]/5 flex items-center justify-center border border-[#ffffff]/10 group-hover:border-[#3b82f6]/30 transition-colors duration-500">
-                     <Globe className="h-6 w-6 text-[#ffffff] group-hover:text-[#3b82f6] transition-colors duration-500" />
-                  </div>
-                  <div className="text-3xl font-bold tracking-tighter text-[#ffffff]">Unified Liquidity</div>
-                </div>
-                <h4 className="text-xl font-bold text-[#ffffff] mb-2 tracking-tight">Native Circle CCTP Integration</h4>
-                <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-lg">No wrapped assets. Move canonical USDC seamlessly between Ethereum, Base, Polygon, and 15+ others via official burn-and-mint logic.</p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* Protocol Features Section */}
-
       <section id="features" className="relative w-full bg-[#000000] py-24 lg:py-32 z-20">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 px-6 sm:px-12 lg:px-20 w-full">
           <motion.div
@@ -672,7 +286,7 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
             <span className="text-zinc-300 text-xs font-semibold tracking-wide">Protocol Architecture</span>
           </div>
-          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff]">
+          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff] font-serif">
             USDC-Native. <br/><span className="text-[#3b82f6]">Arc-Powered.</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
@@ -744,73 +358,55 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Developer Integration Section */}
-      <section id="developers" className="relative w-full bg-[#000000] py-32 z-20">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20 px-6 sm:px-12 lg:px-20 w-full">
-          <motion.div
-            className="flex-1 w-full max-w-3xl mx-auto flex items-center justify-center relative perspective-[2000px]"
-            initial={{ opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          >
-          <Terminal className="bg-[#050505] border border-[#ffffff]/10 shadow-2xl h-[520px] w-full max-w-3xl">
-            <TypingAnimation delay={500} duration={30} className="text-zinc-500 text-xs sm:text-sm font-mono">
-              &gt; npm install arca-react
-            </TypingAnimation>
-            <AnimatedSpan delay={1500} className="text-[#3b82f6] text-xs sm:text-sm font-mono mt-2 block">
-              ✔ Package installed successfully
-            </AnimatedSpan>
+      {/* Trust & Compliance Section */}
+      <section id="compliance" className="relative w-full bg-[#000000] py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden border-t border-[#ffffff]/10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,#3b82f608,transparent_70%)] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
             
-            <TypingAnimation delay={2500} duration={30} className="text-zinc-500 text-xs sm:text-sm font-mono mt-6 block">
-              &gt; cat components/Pricing.tsx
-            </TypingAnimation>
+            {/* Left Content column */}
+            <div className="flex flex-col lg:col-span-4 max-w-md">
+              <span className="text-zinc-500 text-xs font-bold uppercase tracking-[0.18em] mb-4">Enterprise Trust</span>
+              <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-white leading-[1.1] font-serif">
+                Security. Compliance.<br/>Reliability. Built-in.
+              </h2>
+              <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">
+                ARCA meets the highest standards of security and compliance so you can build with confidence.
+              </p>
+              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
+                <span>View security</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+              </Link>
+            </div>
             
-            <AnimatedSpan delay={3500} className="text-zinc-300 text-xs sm:text-sm font-mono mt-2 block whitespace-pre-wrap leading-relaxed">
-              <span className="text-[#ff7b72]">import</span> {'{'} <span className="text-[#d2a8ff]">ArcaPricingTable</span> {'}'} <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">&apos;arca-react&apos;</span>;
-              <br/><br/>
-              <span className="text-[#ff7b72]">export default function</span> <span className="text-[#d2a8ff]">Page</span>() {'{'}
-              <br/>
-              {'  '}<span className="text-[#ff7b72]">return</span> (
-              <br/>
-              {'    '}&lt;<span className="text-[#7ee787]">ArcaPricingTable</span> 
-              <br/>
-              {'      '}planId=<span className="text-[#a5d6ff]">&quot;0x123...&quot;</span> 
-              <br/>
-              {'      '}userId=<span className="text-[#a5d6ff]">&quot;user_1&quot;</span> 
-              <br/>
-              {'    '}/&gt;
-              <br/>
-              {'  '});
-              <br/>
-              {'}'}
-            </AnimatedSpan>
-          </Terminal>
-        </motion.div>
+            {/* Right Horizontal Layout column */}
+            <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-0 w-full relative">
+              {[
+                { name: "SOC 2 Type II", desc: "MPC Insulated", icon: Soc2Icon },
+                { name: "EU MiCA", desc: "Circle USDC Rails", icon: MicaIcon },
+                { name: "BSA / AML", desc: "OFAC Filtered", icon: BsaAmlIcon },
+                { name: "GDPR Compliant", desc: "Zero PII Ledger", icon: GdprIcon },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div 
+                    key={idx} 
+                    className={`flex flex-col items-center text-center px-4 ${
+                      idx !== 0 ? "md:border-l md:border-white/10" : ""
+                    }`}
+                  >
+                    <div className="h-14 w-14 rounded-full border border-white/10 flex items-center justify-center bg-white/5 hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/5 transition-all duration-300 mb-5">
+                      <Icon className="h-6 w-6 text-[#3b82f6] stroke-[2px]" />
+                    </div>
+                    <span className="text-white font-bold text-sm tracking-tight">{item.name}</span>
+                    <span className="text-zinc-500 text-xs font-semibold mt-1">{item.desc}</span>
+                  </div>
+                );
+              })}
+            </div>
 
-        <motion.div
-          className="flex-1 flex flex-col gap-6 max-w-2xl w-full mt-16 lg:mt-0"
-          initial={{ opacity: 0, x: 32 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
-            <span className="text-[#3b82f6] text-xs font-semibold tracking-wide">Drop-in Checkout SDK</span>
           </div>
-          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff] leading-tight">
-            One-Click Payments. <br/><span className="text-[#3b82f6]">Integrates in Seconds.</span>
-          </h2>
-          <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
-            Arca offers a zero-friction, pre-built checkout widget for your client application. Drop in a single React component to accept USDC subscriptions instantly, with automatic wallet provisioning, passkey security, native bridging, and real-time access gating.
-          </p>
-          <div className="flex gap-4 mt-6">
-            <Link href="/docs" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-[#3b82f6] text-sm font-bold text-[#ffffff] hover:opacity-90 transition-opacity">
-              <span>Explore SDK Docs</span>
-              <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
-            </Link>
-          </div>
-        </motion.div>
         </div>
       </section>
 
@@ -820,11 +416,10 @@ export default function LandingPage() {
         viewport={{ once: true }}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
       >
-        <ApiShowcase />
+        <AppPreview />
       </motion.div>
 
       {/* Multi-Chain Bridge Showcase Section */}
-
       <section id="bridge" className="relative w-full bg-[#000000] py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20">
         
         <motion.div
@@ -837,7 +432,7 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
             <span className="text-zinc-300 text-xs font-semibold tracking-wide">Interoperability Layer</span>
           </div>
-          <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#ffffff] max-w-4xl">
+          <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#ffffff] max-w-4xl font-serif">
             Bridge USDC <br/><span className="text-zinc-500">Across Every Chain</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl max-w-3xl mt-4">
@@ -897,8 +492,481 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
+      {/* Protocol Economics Section */}
+      <section className="relative w-full bg-[#000000] py-24 lg:py-40 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
+        {/* Subtle Architectural Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-20 relative z-10">
+          <motion.div
+            className="flex-1 flex flex-col gap-6 w-full"
+            initial={{ opacity: 0, x: -32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
+              <span className="text-zinc-300 text-xs font-semibold tracking-wide">Fee Transparency</span>
+            </div>
+            <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#ffffff] leading-[1.1] font-serif">
+              Pure Efficiency. <br/>
+              <span className="text-[#3b82f6]">Zero Waste.</span>
+            </h2>
+            <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
+              Traditional payment rails eat into your margins with hidden fees and expensive gas costs. Arca redefines protocol economics.
+            </p>
+          </motion.div>
+
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <motion.div
+              className="group relative overflow-hidden p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-[#3b82f6]/30 transition-all duration-500"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                <Coins className="w-32 h-32 text-[#3b82f6] -mr-8 -mt-8" />
+              </div>
+              <div className="relative z-10">
+                <div className="text-5xl font-bold tracking-tighter text-[#ffffff] mb-4 group-hover:text-[#3b82f6] transition-colors duration-500">$0.00</div>
+                <h4 className="text-xl font-bold text-[#ffffff] mb-2 tracking-tight">Native Fee</h4>
+                <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-[90%]">Eliminate secondary gas tokens. Arc uses USDC as native gas for predictable, low-cost execution.</p>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              className="group relative overflow-hidden p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-[#3b82f6]/30 transition-all duration-500"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                <Zap className="w-32 h-32 text-[#3b82f6] -mr-8 -mt-8" />
+              </div>
+              <div className="relative z-10">
+                <div className="text-5xl font-bold tracking-tighter text-[#ffffff] mb-4 group-hover:text-[#3b82f6] transition-colors duration-500">Instant</div>
+                <h4 className="text-xl font-bold text-[#ffffff] mb-2 tracking-tight">Sub-Second Finality</h4>
+                <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-[90%]">Subscriptions and bridges confirm in under 1 second, providing a true Web2-like experience.</p>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              className="group relative overflow-hidden p-8 rounded-3xl bg-[#050505] border border-[#ffffff]/10 hover:bg-[#0a0a0f] hover:border-[#3b82f6]/30 transition-all duration-500 md:col-span-2"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+            >
+              <div className="absolute inset-0 bg-linear-to-r from-[#3b82f6]/0 via-[#3b82f6]/5 to-[#3b82f6]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                <Globe className="w-48 h-48 text-[#3b82f6] -mr-16 -mt-16" />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-12 w-12 rounded-xl bg-[#ffffff]/5 flex items-center justify-center border border-[#ffffff]/10 group-hover:border-[#3b82f6]/30 transition-colors duration-500">
+                     <Globe className="h-6 w-6 text-[#ffffff] group-hover:text-[#3b82f6] transition-colors duration-500" />
+                  </div>
+                  <div className="text-3xl font-bold tracking-tighter text-[#ffffff]">Unified Liquidity</div>
+                </div>
+                <h4 className="text-xl font-bold text-[#ffffff] mb-2 tracking-tight">Native Circle CCTP Integration</h4>
+                <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-lg">No wrapped assets. Move canonical USDC seamlessly between Ethereum, Base, Polygon, and 15+ others via official burn-and-mint logic.</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Developer Integration Section */}
+      <section id="developers" className="relative w-full bg-[#000000] py-32 z-20">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20 px-6 sm:px-12 lg:px-20 w-full">
+          <motion.div
+            className="flex-1 w-full max-w-3xl mx-auto flex items-center justify-center relative perspective-[2000px]"
+            initial={{ opacity: 0, x: -32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+          <Terminal className="bg-[#050505] border border-[#ffffff]/10 shadow-2xl h-[520px] w-full max-w-3xl">
+            <TypingAnimation delay={500} duration={30} className="text-zinc-500 text-xs sm:text-sm font-mono">
+              &gt; npm install arca-react
+            </TypingAnimation>
+            <AnimatedSpan delay={1500} className="text-[#3b82f6] text-xs sm:text-sm font-mono mt-2 block">
+              ✔ Package installed successfully
+            </AnimatedSpan>
+            
+            <TypingAnimation delay={2500} duration={30} className="text-zinc-500 text-xs sm:text-sm font-mono mt-6 block">
+              &gt; cat components/Pricing.tsx
+            </TypingAnimation>
+            
+            <AnimatedSpan delay={3500} className="text-zinc-300 text-xs sm:text-sm font-mono mt-2 block whitespace-pre-wrap leading-relaxed">
+              <span className="text-[#ff7b72]">import</span> {'{'} <span className="text-[#d2a8ff]">ArcaPricingTable</span> {'}'} <span className="text-[#ff7b72]">from</span> <span className="text-[#a5d6ff]">&apos;arca-react&apos;</span>;
+              <br/><br/>
+              <span className="text-[#ff7b72]">export default function</span> <span className="text-[#d2a8ff]">Page</span>() {'{'}
+              <br/>
+              {'  '}<span className="text-[#ff7b72]">return</span> (
+              <br/>
+              {'    '}&lt;<span className="text-[#7ee787]">ArcaPricingTable</span> 
+              <br/>
+              {'      '}planId=<span className="text-[#a5d6ff]">&quot;0x123...&quot;</span> 
+              <br/>
+              {'      '}userId=<span className="text-[#a5d6ff]">&quot;user_1&quot;</span> 
+              <br/>
+              {'    '}/&gt;
+              <br/>
+              {'  '});
+              <br/>
+              {'}'}
+            </AnimatedSpan>
+          </Terminal>
+        </motion.div>
+
+        <motion.div
+          className="flex-1 flex flex-col gap-6 max-w-2xl w-full mt-16 lg:mt-0"
+          initial={{ opacity: 0, x: 32 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffffff]/5 border border-[#ffffff]/10 rounded-full w-fit mb-2">
+            <span className="text-[#3b82f6] text-xs font-semibold tracking-wide">Drop-in Checkout SDK</span>
+          </div>
+          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff] leading-tight font-serif">
+            One-Click Payments. <br/><span className="text-[#3b82f6]">Integrates in Seconds.</span>
+          </h2>
+          <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
+            Arca offers a zero-friction, pre-built checkout widget for your client application. Drop in a single React component to accept USDC subscriptions instantly, with automatic wallet provisioning, passkey security, native bridging, and real-time access gating.
+          </p>
+          <div className="flex gap-4 mt-6">
+            <Link href="/docs" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-[#3b82f6] text-sm font-bold text-[#ffffff] hover:opacity-90 transition-opacity">
+              <span>Explore SDK Docs</span>
+              <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
+            </Link>
+          </div>
+        </motion.div>
+        </div>
+      </section>
+
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <ApiShowcase />
+      </motion.div>
+
+      {/* Infrastructure & Resources Bento Grid Section */}
+      <section id="infrastructure" className="relative w-full bg-[#000000] py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20 border-t border-white/5 overflow-hidden">
+        {/* Subtle radial glow background to blend with other sections */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-20%,#3b82f608,transparent_70%)] pointer-events-none" />
+        
+        {/* Architectural Grid Background to add premium depth */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          
+          {/* Section Header */}
+          <div className="flex flex-col mb-16 gap-4 max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Infrastructure & Resources</span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter text-[#ffffff] font-serif">
+              Built for Scale. <br/>Equipped for Developers.
+            </h2>
+            <p className="text-zinc-400 font-medium leading-relaxed text-base md:text-lg">
+              Explore our global network architecture, real-time transaction intelligence layer, and interactive documentation hubs.
+            </p>
+          </div>
+
+          {/* Bento Grid Container */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+            
+            {/* Tile 1: Real-time Analytics (col-span-1 lg:col-span-7) */}
+            <div className="relative group overflow-hidden rounded-3xl border border-[#ffffff]/10 bg-[#050505] p-8 lg:p-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 hover:bg-[#07070c] hover:border-[#3b82f6]/20 transition-all duration-500 min-h-[360px] col-span-1 lg:col-span-7">
+              {/* Card Inner Glow */}
+              <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_-20%,#3b82f605,transparent_50%) pointer-events-none" />
+              
+              <div className="flex flex-col flex-1 max-w-sm relative z-10 justify-between h-full">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Real-time Analytics</span>
+                  <h3 className="text-2xl sm:text-3xl font-normal tracking-tight text-white mt-4 leading-tight font-serif">
+                    Data that moves<br/>at the speed of<br/>your business.
+                  </h3>
+                  <p className="text-zinc-400 text-xs font-medium mt-3 leading-relaxed max-w-[90%]">
+                    Real-time insights into payments, subscriptions, settlements, and revenue performance.
+                  </p>
+                </div>
+                
+                <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-8 transition-colors group/link w-fit">
+                  <span>Explore analytics</span>
+                  <span className="group-hover/link:translate-x-1 transition-transform duration-200">→</span>
+                </Link>
+              </div>
+              
+              {/* Visual Analytics Widget */}
+              <div className="flex flex-col gap-4 w-full max-w-[220px] shrink-0 select-none bg-white/[0.02] border border-white/5 rounded-2xl p-5 relative z-10 group-hover:border-[#3b82f6]/10 transition-colors duration-500">
+                {/* Volume Chart */}
+                <div className="flex flex-col">
+                  <span className="text-zinc-500 text-[8px] font-bold uppercase tracking-wider">Total volume (USD)</span>
+                  <span className="text-xl font-bold tracking-tight text-white mt-1">$24,530,890</span>
+                  <span className="text-[8px] font-bold text-[#10b981] mt-0.5 flex items-center gap-0.5">
+                    ↑ 18.4% <span className="text-zinc-500 font-medium">vs last month</span>
+                  </span>
+                  
+                  {/* Glowing Green line */}
+                  <svg className="w-full h-10 stroke-[#10b981] fill-none mt-2" viewBox="0 0 160 50">
+                    <defs>
+                      <linearGradient id="chart-glow-green-bento" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.1" />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5 L 160 50 L 0 50 Z" fill="url(#chart-glow-green-bento)" strokeWidth="0" />
+                  </svg>
+                </div>
+                
+                <div className="h-[1px] bg-white/5" />
+                
+                {/* Success Rate */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-zinc-500 text-[8px] font-bold uppercase tracking-wider">Success rate</span>
+                    <span className="text-base font-bold tracking-tight text-white mt-0.5">98.72%</span>
+                  </div>
+                  
+                  <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
+                    <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="3" />
+                      <circle cx="18" cy="18" r="16" fill="none" stroke="#3b82f6" strokeWidth="3" strokeDasharray="100" strokeDashoffset="12.8" strokeLinecap="round" />
+                      <circle cx="18" cy="18" r="16" fill="none" stroke="#10b981" strokeWidth="3" strokeDasharray="100" strokeDashoffset="50" strokeLinecap="round" />
+                    </svg>
+                    <span className="text-[7px] font-bold text-zinc-400">98%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tile 2: Global Coverage (col-span-1 lg:col-span-5) */}
+            <div className="relative group overflow-hidden rounded-3xl border border-[#ffffff]/10 bg-[#050505] p-8 lg:p-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 hover:bg-[#07070c] hover:border-[#3b82f6]/20 transition-all duration-500 min-h-[360px] col-span-1 lg:col-span-5">
+              {/* Card Inner Glow */}
+              <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_-20%,#3b82f605,transparent_50%) pointer-events-none" />
+              
+              <div className="flex flex-col flex-1 max-w-sm relative z-10 justify-between h-full">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Global Coverage</span>
+                  <h3 className="text-2xl sm:text-3xl font-normal tracking-tight text-white mt-4 leading-tight font-serif">
+                    A truly global<br/>infrastructure.
+                  </h3>
+                  <p className="text-zinc-400 text-xs font-medium mt-3 leading-relaxed max-w-[90%]">
+                    Local presence. Global reach. Built to support businesses and users everywhere.
+                  </p>
+                </div>
+                
+                <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-8 transition-colors group/link w-fit">
+                  <span>View all regions</span>
+                  <span className="group-hover/link:translate-x-1 transition-transform duration-200">→</span>
+                </Link>
+              </div>
+              
+              {/* Minimalist Globe graphic */}
+              <div className="relative w-full max-w-[160px] h-[160px] flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-500 shrink-0 mx-auto select-none pointer-events-none relative z-10">
+                <Image src="/globle.png" alt="Global Coverage" fill className="object-contain" />
+              </div>
+            </div>
+
+            {/* Tile 3: Interactive Developer Documentation (col-span-1 lg:col-span-12) */}
+            <div className="relative overflow-hidden rounded-3xl border border-[#ffffff]/10 bg-[#050505] p-8 lg:p-10 col-span-1 lg:col-span-12">
+              {/* Card Inner Glow */}
+              <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_-10%,#3b82f603,transparent_40%) pointer-events-none" />
+              
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10">
+                
+                {/* Left Side: Sidebar documentation context */}
+                <div className="lg:col-span-4 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#3b82f6]">Documentation Hub</span>
+                    <h3 className="text-3xl font-normal tracking-tight text-white mt-4 leading-tight font-serif">
+                      Everything you need.<br/>All in one place.
+                    </h3>
+                    <p className="text-zinc-400 text-xs font-medium mt-4 leading-relaxed max-w-sm">
+                      From drop-in pricing tables to deep JSON REST references, our interactive guides help you ship compliant billing lifecycles in minutes.
+                    </p>
+                  </div>
+                  
+                  {/* Desktop tabs menu */}
+                  <div className="hidden lg:flex flex-col gap-1 mt-8 max-w-xs pr-4 border-r border-white/5">
+                    {[
+                      { id: "Overview", label: "Overview" },
+                      { id: "Quickstart", label: "Quickstart" },
+                      { id: "API Reference", label: "API Reference" },
+                      { id: "Guides", label: "Guides" },
+                      { id: "SDKs", label: "SDKs" },
+                      { id: "Webhooks", label: "Webhooks" },
+                      { id: "Changelog", label: "Changelog" }
+                    ].map((tab) => {
+                      const isActive = activeDocTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveDocTab(tab.id)}
+                          className={`flex items-center px-4 py-2.5 text-xs font-semibold rounded-xl text-left transition-all ${
+                            isActive 
+                              ? "bg-white/5 text-[#3b82f6] pl-5" 
+                              : "text-zinc-500 hover:text-zinc-300"
+                          }`}
+                        >
+                          <span>{tab.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Mobile tabs menu */}
+                  <div className="flex lg:hidden gap-1.5 overflow-x-auto py-4 mt-6 no-scrollbar shrink-0">
+                    {[
+                      { id: "Overview", label: "Overview" },
+                      { id: "Quickstart", label: "Quickstart" },
+                      { id: "API Reference", label: "API" },
+                      { id: "Guides", label: "Guides" },
+                      { id: "SDKs", label: "SDKs" },
+                      { id: "Webhooks", label: "Webhooks" },
+                      { id: "Changelog", label: "Changelog" }
+                    ].map((tab) => {
+                      const isActive = activeDocTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveDocTab(tab.id)}
+                          className={`px-4 py-2 text-xs font-semibold rounded-lg shrink-0 transition-all ${
+                            isActive 
+                              ? "bg-[#3b82f6]/10 text-[#3b82f6] border border-[#3b82f6]/20" 
+                              : "bg-white/5 text-zinc-500 hover:text-zinc-300 border border-transparent"
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Side: Active tab details and structural sub-cards */}
+                <div className="lg:col-span-8 flex flex-col justify-center min-h-[300px] lg:pl-8">
+                  {(() => {
+                    const currentTab = [
+                      {
+                        id: "Overview",
+                        title: "Overview",
+                        desc: "ARCA provides the financial infrastructure APIs you need to build scalable, compliant, and reliable commerce experiences.",
+                        cards: [
+                          { title: "Subscriptions API", desc: "Manage plans, customers, and billing workflows.", icon: SubscriptionsIcon },
+                          { title: "Settlement API", desc: "Move money globally with stablecoin rails.", icon: SettlementIcon }
+                        ]
+                      },
+                      {
+                        id: "Quickstart",
+                        title: "Quickstart",
+                        desc: "Deploy your first payment button and provision a merchant wallet in less than five minutes with our quickstart template.",
+                        cards: [
+                          { title: "React Starter", desc: "Clone the Next.js starter repository.", icon: Zap },
+                          { title: "Deploy Script", desc: "One-click deployment script to Vercel.", icon: ArrowUpRight }
+                        ]
+                      },
+                      {
+                        id: "API Reference",
+                        title: "API Reference",
+                        desc: "Deep dive into our robust JSON REST APIs for programmatically triggering transfers, managing plans, and auditing webhooks.",
+                        cards: [
+                          { title: "REST Endpoints", desc: "Explore secure POST and GET endpoints.", icon: LayoutGrid },
+                          { title: "Auth Header", desc: "Read about Bearer token security schemes.", icon: Shield }
+                        ]
+                      },
+                      {
+                        id: "Guides",
+                        title: "Guides",
+                        desc: "Step-by-step walkthroughs to design custom subscriber onboarding flows, trial periods, and tier upgrades.",
+                        cards: [
+                          { title: "Tier Upgrades", desc: "Implement prorated billing mechanics.", icon: Globe },
+                          { title: "Trial Flows", desc: "Configure zero-upfront trial periods.", icon: Activity }
+                        ]
+                      },
+                      {
+                        id: "SDKs",
+                        title: "SDKs",
+                        desc: "Pre-packaged TypeScript, Go, and Python libraries to abstract wallet operations, gas relays, and event validations.",
+                        cards: [
+                          { title: "TypeScript SDK", desc: "Import direct browser client wrappers.", icon: Mail },
+                          { title: "Go Library", desc: "Integrate high-speed server execution.", icon: Zap }
+                        ]
+                      },
+                      {
+                        id: "Webhooks",
+                        title: "Webhooks",
+                        desc: "Subscribe to transaction-state change events and instantly deliver updates to your database upon successful bridge settlement.",
+                        cards: [
+                          { title: "Webhook Events", desc: "Listen for charge.succeeded and bridge.completed.", icon: Globe },
+                          { title: "Payload Validation", desc: "Verify cryptographic SHA-256 signatures.", icon: Shield }
+                        ]
+                      },
+                      {
+                        id: "Changelog",
+                        title: "Changelog",
+                        desc: "Track the latest protocol upgrades, new chain integrations, and security patches for our relayer nodes.",
+                        cards: [
+                          { title: "v2.4 Release", desc: "Multi-party computation enhancements.", icon: Shield },
+                          { title: "Sei Support", desc: "Seamless Sei Network testnet bridging.", icon: Zap }
+                        ]
+                      }
+                    ].find(t => t.id === activeDocTab) || {
+                      title: "Overview",
+                      desc: "ARCA provides the financial infrastructure APIs you need.",
+                      cards: []
+                    };
+                    
+                    return (
+                      <div className="flex flex-col gap-6 animate-in fade-in duration-300">
+                        <div>
+                          <h4 className="text-xl font-bold tracking-tight text-white">{currentTab.title}</h4>
+                          <p className="text-zinc-400 text-xs font-semibold leading-relaxed mt-2.5 max-w-xl">{currentTab.desc}</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                          {currentTab.cards.map((card, i) => {
+                            const IconComponent = card.icon;
+                            return (
+                              <div key={i} className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex gap-4 hover:bg-[#09090e] hover:border-[#3b82f6]/20 transition-all duration-300 items-center">
+                                <div className="h-10 w-10 rounded-xl bg-[#3b82f6]/10 flex items-center justify-center text-[#3b82f6] shrink-0">
+                                  <IconComponent className="h-5 w-5 stroke-[2.2]" />
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-xs font-bold text-white">{card.title}</span>
+                                  <span className="text-zinc-400 text-[10px] font-semibold leading-normal mt-1">{card.desc}</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        
+                        <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-4 transition-colors group/link w-fit">
+                          <span>Go to documentation</span>
+                          <span className="group-hover/link:translate-x-1 transition-transform duration-200">→</span>
+                        </Link>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="relative w-full bg-[#000000] pt-24 pb-12 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
+      <footer className="relative w-full bg-[#000000] pt-24 pb-12 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden border-t border-white/5">
         
         {/* Subtle background glow to blend with the rest of the page */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#3b82f604,transparent_50%)] pointer-events-none" />
@@ -921,42 +989,39 @@ export default function LandingPage() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           
-          {/* Top Block: Brand Statement & CTA buttons */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 pb-16 relative">
-            <div className="flex flex-col max-w-xl">
-              <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-medium tracking-tight text-white mb-4 leading-[1.1] font-sans">
-                The future of commerce<br className="hidden sm:block" /> runs on <span className="font-extrabold tracking-tighter italic uppercase text-white">ARCA</span>.
-              </h2>
-              <p className="text-zinc-400 text-sm font-medium leading-relaxed max-w-md">
-                Join the companies building the next generation of global, programmable commerce.
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold text-black hover:bg-zinc-200 transition-all duration-300 shadow-md">
-                Start building
-              </Link>
-              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex h-11 items-center justify-center rounded-lg border border-white/20 px-6 text-sm font-semibold text-white hover:bg-white/5 transition-all duration-300">
-                Explore Docs
-              </Link>
-            </div>
-          </div>
-
-          {/* Middle Grid: Brand column, multi-columns of links & newsletter sign-up */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 py-16 border-t border-white/5 relative">
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16">
             
-            {/* Brand/Tagline Column */}
-            <div className="flex flex-col gap-4 lg:col-span-3 pr-0 lg:pr-6">
-              <div className="flex items-center gap-2.5">
-                <Image src="/logo.png" alt="Arca Logo" width={28} height={28} className="dark:invert" unoptimized />
-                <span className="text-xl font-bold tracking-tight text-white uppercase italic">ARCA</span>
+            {/* Left Block: Brand, CTA, and Description */}
+            <div className="flex flex-col gap-6 lg:col-span-5 pr-0 lg:pr-8">
+              <div className="flex items-center gap-3">
+                <div className="relative w-8 h-8">
+                  <Image src="/logo.png" alt="Arca Logo" fill className="object-contain dark:invert" unoptimized />
+                </div>
+                <span className="text-xl font-bold tracking-tight text-[#ffffff] font-serif">Arca</span>
               </div>
-              <p className="text-zinc-500 text-[10px] font-bold tracking-[0.18em] uppercase leading-relaxed max-w-xs mt-1">
-                The Reserve Network For<br />Programmable Commerce
-              </p>
+              
+              <div className="flex flex-col">
+                <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white mb-4 leading-[1.15] font-serif">
+                  The future of commerce <br/>runs on <span className="text-[#3b82f6]">ARCA</span>.
+                </h2>
+                <p className="text-zinc-400 text-sm font-medium leading-relaxed max-w-md">
+                  Integrate beautiful, predictable USDC subscriptions in seconds. Zero friction checkouts powered by Circle MPC wallets and unified liquidity.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <Link href="/login" className="inline-flex h-10 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-black hover:bg-zinc-200 transition-all duration-300 shadow-md">
+                  Start building
+                </Link>
+                <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex h-10 items-center justify-center rounded-full border border-white/20 px-6 text-sm font-semibold text-white hover:bg-white/5 transition-all duration-300">
+                  Explore Docs
+                </Link>
+              </div>
             </div>
 
-            {/* Link Columns Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 lg:col-span-6">
+            {/* Right Block: Platform, Developers, Stay Updated */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:col-span-7">
               
               {/* Platform Column */}
               <div className="flex flex-col gap-4">
@@ -964,9 +1029,9 @@ export default function LandingPage() {
                 <div className="flex flex-col gap-3">
                   <Link href="/dashboard" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Subscriptions</Link>
                   <Link href="/dashboard/wallet" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Settlement</Link>
-                  <Link href="/dashboard/autopay" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Treasury</Link>
                   <Link href="/dashboard/smart-bridge" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Orchestration</Link>
-                  <Link href="#pricing" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Pricing</Link>
+                  <Link href="/dashboard/autopay" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Treasury</Link>
+                  <Link href="#features" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Pricing</Link>
                 </div>
               </div>
 
@@ -976,67 +1041,43 @@ export default function LandingPage() {
                 <div className="flex flex-col gap-3">
                   <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Documentation</Link>
                   <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">API Reference</Link>
-                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">SDKs</Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">SDKs / GitHub</Link>
                   <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Changelog</Link>
                   <Link href="https://testnet.arcscan.net" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Status</Link>
                 </div>
               </div>
 
-              {/* Resources Column */}
+              {/* Newsletter & Socials Column */}
               <div className="flex flex-col gap-4">
-                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Resources</h4>
-                <div className="flex flex-col gap-3">
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Guides</Link>
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Blog</Link>
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Case Studies</Link>
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Help Center</Link>
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Events</Link>
+                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Stay updated</h4>
+                <p className="text-zinc-400 text-xs font-medium leading-relaxed">
+                  Get updates on new products, features, and more.
+                </p>
+                <div className="relative flex items-center w-full bg-white/5 hover:bg-white/10 transition-all duration-300 border border-white/10 rounded-lg overflow-hidden focus-within:border-white/30 focus-within:ring-1 focus-within:ring-white/10 mt-1">
+                  <input 
+                    type="email" 
+                    placeholder="Enter your email" 
+                    className="w-full bg-transparent px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 outline-none"
+                  />
+                  <button className="flex h-7 w-7 items-center justify-center rounded-md bg-white text-black hover:bg-zinc-200 transition-colors mr-1 shrink-0">
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+                
+                {/* Social Media Links */}
+                <div className="flex items-center gap-4 mt-2">
+                  <Link href="https://twitter.com" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
+                    <Twitter className="h-4 w-4" />
+                  </Link>
+                  <Link href="https://linkedin.com" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
+                    <Linkedin className="h-4 w-4" />
+                  </Link>
+                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
+                    <Github className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
 
-              {/* Company Column */}
-              <div className="flex flex-col gap-4">
-                <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Company</h4>
-                <div className="flex flex-col gap-3">
-                  <Link href="#features" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">About</Link>
-                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Careers</Link>
-                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Partners</Link>
-                  <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Security</Link>
-                  <Link href="#features" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Contact</Link>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Newsletter Column */}
-            <div className="flex flex-col gap-4 lg:col-span-3">
-              <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Stay updated</h4>
-              <p className="text-zinc-400 text-xs font-medium leading-relaxed">
-                Get updates on new products, features, and more.
-              </p>
-              <div className="relative flex items-center w-full bg-white/5 hover:bg-white/10 transition-all duration-300 border border-white/10 rounded-lg overflow-hidden focus-within:border-white/30 focus-within:ring-1 focus-within:ring-white/10 mt-1">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="w-full bg-transparent px-4 py-3 text-xs font-medium text-white placeholder-zinc-500 outline-none"
-                />
-                <button className="flex h-8 w-8 items-center justify-center rounded-md bg-white text-black hover:bg-zinc-200 transition-colors mr-1 shrink-0">
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-              
-              {/* Social Media Link Grid */}
-              <div className="flex items-center gap-5 mt-2">
-                <Link href="https://twitter.com" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
-                  <Twitter className="h-4 w-4" />
-                </Link>
-                <Link href="https://linkedin.com" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
-                  <Linkedin className="h-4 w-4" />
-                </Link>
-                <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 hover:text-white transition-colors duration-200">
-                  <Github className="h-4 w-4" />
-                </Link>
-              </div>
             </div>
 
           </div>

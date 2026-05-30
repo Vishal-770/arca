@@ -1,7 +1,44 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono, Mulish, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono, Mulish, Space_Grotesk, Cormorant_Garamond, IBM_Plex_Mono } from "next/font/google";
+// import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+
+/* ── Uncomment these local font configurations once the licensed font files are uploaded to `/public/fonts/` ──
+const sohne = localFont({
+  src: [
+    { path: "../public/fonts/Sohne-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/Sohne-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/Sohne-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-sans-override",
+  display: 'swap',
+});
+
+const canela = localFont({
+  src: [
+    { path: "../public/fonts/Canela-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/Canela-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/Canela-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-serif-override",
+  display: 'swap',
+});
+*/
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-cormorant-garamond",
+  display: 'swap',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono",
+  display: 'swap',
+});
 
 const mulish = Mulish({ 
   subsets: ["latin"],
@@ -14,8 +51,6 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   display: 'swap',
 });
-
-const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,9 +76,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(jetbrainsMono.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn(ibmPlexMono.variable)} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${spaceGrotesk.variable} ${cormorantGaramond.variable} antialiased`}
+        // className={`${geistSans.variable} ${geistMono.variable} ${mulish.variable} ${spaceGrotesk.variable} ${cormorantGaramond.variable} ${sohne.variable} ${canela.variable} antialiased`}
       >
          <ThemeProvider
             attribute="class"

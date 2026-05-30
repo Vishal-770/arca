@@ -49,7 +49,7 @@ export default function AppPreview() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           viewport={{ once: true, margin: "-100px" }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-bold tracking-tighter text-[#ffffff] leading-[1.05] max-w-4xl mb-8"
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-bold tracking-tighter text-[#ffffff] leading-[1.05] max-w-4xl mb-8 font-serif"
         >
           The New Standard <br/>
           <span className="text-[#3b82f6]">

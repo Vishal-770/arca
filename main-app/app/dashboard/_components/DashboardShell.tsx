@@ -314,7 +314,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-border z-50 flex items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src="/logo.png" alt="Arca" className="h-6 w-6 dark:invert" />
-            <span className="font-black uppercase italic text-sm">Arca</span>
+            <span className="font-serif font-bold uppercase tracking-widest text-sm text-white">Arca</span>
           </Link>
           <div className="flex items-center gap-2">
             <button 
@@ -346,7 +346,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           <div className="flex flex-col h-full p-6">
             <Link href="/" className="flex items-center gap-2 mb-10 px-2 mt-4 lg:mt-0 hover:opacity-80 transition-opacity">
               <img src="/logo.png" alt="Arca" className="h-8 w-8 dark:invert" />
-              <span className="text-lg font-black uppercase italic tracking-tighter">Arca</span>
+              <span className="text-lg font-serif font-bold uppercase tracking-wider text-white">Arca</span>
             </Link>
 
             <nav className="flex flex-col flex-1 overflow-y-auto no-scrollbar">

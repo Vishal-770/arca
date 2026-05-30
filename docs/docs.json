@@ -15,6 +15,14 @@
     "light": "#60A5FA",
     "dark": "#1E3A8A"
   },
+  "fonts": {
+    "heading": {
+      "family": "Lora"
+    },
+    "body": {
+      "family": "Inter"
+    }
+  },
   "navbar": {
     "links": [
       {
