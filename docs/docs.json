@@ -5,7 +5,7 @@
     "dark": "/logo-dark.png",
     "light": "/logo-light.png"
   },
-  "favicon": "/logo.png",
+  "favicon": "/logo-light.png",
   "theme": "maple",
   "appearance": {
     "default": "dark"
