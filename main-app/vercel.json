@@ -2,43 +2,43 @@
   "rewrites": [
     {
       "source": "/_mintlify/:path*",
-      "destination": "https://arca.mintlify.dev/_mintlify/:path*"
+      "destination": "https://arca-3fddca6f.mintlify.dev/_mintlify/:path*"
     },
     {
       "source": "/api/request",
-      "destination": "https://arca.mintlify.dev/_mintlify/api/request"
+      "destination": "https://arca-3fddca6f.mintlify.dev/_mintlify/api/request"
     },
     {
       "source": "/docs",
-      "destination": "https://arca.mintlify.dev/docs"
+      "destination": "https://arca-3fddca6f.mintlify.dev/docs"
     },
     {
       "source": "/docs/llms.txt",
-      "destination": "https://arca.mintlify.dev/llms.txt"
+      "destination": "https://arca-3fddca6f.mintlify.dev/llms.txt"
     },
     {
       "source": "/docs/llms-full.txt",
-      "destination": "https://arca.mintlify.dev/llms-full.txt"
+      "destination": "https://arca-3fddca6f.mintlify.dev/llms-full.txt"
     },
     {
       "source": "/docs/sitemap.xml",
-      "destination": "https://arca.mintlify.dev/sitemap.xml"
+      "destination": "https://arca-3fddca6f.mintlify.dev/sitemap.xml"
     },
     {
       "source": "/docs/robots.txt",
-      "destination": "https://arca.mintlify.dev/robots.txt"
+      "destination": "https://arca-3fddca6f.mintlify.dev/robots.txt"
     },
     {
       "source": "/docs/mcp",
-      "destination": "https://arca.mintlify.dev/mcp"
+      "destination": "https://arca-3fddca6f.mintlify.dev/mcp"
     },
     {
       "source": "/docs/:path*",
-      "destination": "https://arca.mintlify.dev/docs/:path*"
+      "destination": "https://arca-3fddca6f.mintlify.dev/docs/:path*"
     },
     {
       "source": "/mintlify-assets/:path+",
-      "destination": "https://arca.mintlify.dev/mintlify-assets/:path+"
+      "destination": "https://arca-3fddca6f.mintlify.dev/mintlify-assets/:path+"
     }
   ]
 }
