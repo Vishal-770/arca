@@ -1,6 +1,12 @@
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import React from 'react';
 
+interface ArcaProviderProps {
+    apiKey: string;
+    children: React.ReactNode;
+}
+declare const ArcaProvider: ({ apiKey, children }: ArcaProviderProps) => react_jsx_runtime.JSX.Element;
+
 interface Feature {
     title: string;
     description: string;
@@ -51,6 +57,15 @@ interface ArcaAppearance {
 interface ArcaConfig {
     apiKey: string;
 }
+interface ArcaClientOptions {
+    baseUrl?: string;
+}
+interface ArcaSubscriptionResult {
+    status: "ACTIVE" | "EXPIRED" | "NONE";
+    remainingSeconds: number;
+    tierId?: string;
+    tierIds: string[];
+}
 interface ArcaLabels {
     activeSubscription?: string;
     upgrade?: string;
@@ -75,15 +90,6 @@ interface ArcaClassNames {
     featureDescription?: string;
     button?: string;
 }
-interface ArcaProviderProps {
-    apiKey: string;
-    children: React.ReactNode;
-}
-/**
- * ArcaProvider
- * Wraps your application to provide Arca configuration to all components and hooks.
- */
-declare const ArcaProvider: ({ apiKey, children }: ArcaProviderProps) => react_jsx_runtime.JSX.Element;
 interface ArcaSubscription {
     status: "ACTIVE" | "EXPIRED" | "NONE";
     remainingSeconds: number;
@@ -92,11 +98,7 @@ interface ArcaSubscription {
     loading: boolean;
     error: string | null;
 }
-/**
- * useArca
- * The primary hook to check a user's subscription status, active tier IDs, and remaining time.
- */
-declare const useArca: (planId: string, userId?: string) => ArcaSubscription;
+
 interface ArcaPricingTableProps {
     planId: string;
     userId?: string;
@@ -119,20 +121,22 @@ interface ArcaPricingTableProps {
         label: string;
     }, handleSelect: () => void) => React.ReactNode;
 }
-/**
- * ArcaPricingTable
- * Professional, premium, and fully customizable pricing table.
- */
 declare const ArcaPricingTable: ({ planId, userId, redirectUrl, appearance, className, style, hideBranding, recommendedTierId, customLabels, classNames, renderHeader, renderFooter, renderTierButton, }: ArcaPricingTableProps) => react_jsx_runtime.JSX.Element;
-/**
- * useArcaPerks
- * Fetches and resolves active plan tier details (tier name, features, expiry date) subscribed by the user.
- * Returns null if the user has no active subscriptions, or is expired.
- */
+
+declare const useArca: (planId: string, userId?: string) => ArcaSubscription;
+
 declare const useArcaPerks: (planId: string, userId?: string) => {
     perks: SubscribedTierDetail[] | null | undefined;
     loading: boolean;
     error: string | null;
 };
 
-export { type ArcaAppearance, type ArcaClassNames, type ArcaConfig, type ArcaLabels, ArcaPricingTable, type ArcaPricingTableProps, ArcaProvider, type ArcaProviderProps, type ArcaSubscription, type Feature, type Plan, type SubscribedTierDetail, type Tier, useArca, useArcaPerks };
+declare class ArcaClient {
+    private apiKey;
+    private baseUrl;
+    constructor(apiKey: string, options?: ArcaClientOptions);
+    getSubscriptionStatus(planId: string, userId: string): Promise<ArcaSubscriptionResult>;
+}
+declare function createArcaClient(apiKey: string, options?: ArcaClientOptions): ArcaClient;
+
+export { type ArcaAppearance, type ArcaClassNames, ArcaClient, type ArcaClientOptions, type ArcaConfig, type ArcaLabels, ArcaPricingTable, type ArcaPricingTableProps, ArcaProvider, type ArcaProviderProps, type ArcaSubscription, type ArcaSubscriptionResult, type Feature, type Plan, type SubscribedTierDetail, type Tier, createArcaClient, useArca, useArcaPerks };

@@ -82,6 +82,22 @@ function PremiumFeature() {
 }
 ```
 
+### `createArcaClient` (Subscription Check)
+
+Create a client with your API key, then fetch a user's subscription status for a plan.
+
+```tsx
+import { createArcaClient } from 'arcapay-react';
+
+const arca = createArcaClient('mp_live_your_api_key_here');
+
+async function checkSubscription(planId: string, userId: string) {
+  const subscription = await arca.getSubscriptionStatus(planId, userId);
+  if (!subscription) return 'NONE';
+  return subscription.status;
+}
+```
+
 ### `useArcaPerks` (Subscribed Perks & Features)
 
 Fetches active plan details, listing subscribed tiers, their respective features, and custom expiration dates. 
@@ -113,6 +129,21 @@ function ActiveUserPerks() {
     </div>
   );
 }
+```
+
+---
+
+## ✅ Server-Side Subscription Check
+
+Create a client instance once and reuse it to check a user's subscription for a plan.
+
+```tsx
+import { createArcaClient } from 'arcapay-react';
+
+const arca = createArcaClient("mp_live_your_api_key_here");
+
+const status = await arca.getSubscriptionStatus("0x...", "user_123");
+// status = { status, remainingSeconds, tierId, tierIds }
 ```
 
 ---
