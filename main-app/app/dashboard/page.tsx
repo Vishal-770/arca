@@ -168,7 +168,7 @@ export default function DashboardOverviewPage() {
           <span className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" />{wallet?.blockchain ?? "—"}
           </span>
-          <Link href="/dashboard/plans/create" className={cn(buttonVariants({ variant: "default", size: "sm" }), "gap-1.5 text-xs font-bold h-8 px-4")}>
+          <Link href="/dashboard/plans/create" className={cn(buttonVariants({ variant: "default", size: "sm" }), "gap-1.5 text-xs font-bold h-8 px-4 rounded-xl")}>
             <Plus className="h-3.5 w-3.5" /> New Plan
           </Link>
         </div>
@@ -298,7 +298,7 @@ export default function DashboardOverviewPage() {
             ) : (analytics?.topPlans ?? []).length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full gap-2 py-4">
                 <p className="text-xs text-muted-foreground">No plans yet</p>
-                <Link href="/dashboard/plans/create" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "text-xs h-7")}>
+                <Link href="/dashboard/plans/create" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "text-xs h-7 rounded-xl")}>
                   <Plus className="h-3 w-3 mr-1" /> Create
                 </Link>
               </div>

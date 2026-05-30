@@ -191,7 +191,7 @@ export default function MyPlansPage() {
           </div>
           <Link
             href="/dashboard/plans/create"
-            className={cn(buttonVariants({ size: "sm" }), "h-9 px-4 text-xs font-medium rounded-lg gap-1.5")}
+            className={cn(buttonVariants({ size: "sm" }), "h-9 px-4 text-xs font-medium rounded-xl gap-1.5")}
           >
             <Plus size={13} /> New Plan
           </Link>
@@ -208,7 +208,7 @@ export default function MyPlansPage() {
           </div>
           <Link
             href="/dashboard/plans/create"
-            className={cn(buttonVariants({ size: "sm" }), "h-9 px-5 text-xs font-medium rounded-lg gap-1.5 mt-2")}
+            className={cn(buttonVariants({ size: "sm" }), "h-9 px-5 text-xs font-medium rounded-xl gap-1.5 mt-2")}
           >
             <Plus size={13} /> Create Your First Plan
           </Link>
@@ -229,7 +229,7 @@ export default function MyPlansPage() {
         </div>
         <Link
           href="/dashboard/plans/create"
-          className={cn(buttonVariants({ size: "sm" }), "h-9 px-4 text-xs font-medium rounded-lg gap-1.5 shrink-0")}
+          className={cn(buttonVariants({ size: "sm" }), "h-9 px-4 text-xs font-medium rounded-xl gap-1.5 shrink-0")}
         >
           <Plus size={13} /> New Plan
         </Link>
