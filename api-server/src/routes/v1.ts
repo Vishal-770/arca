@@ -276,8 +276,12 @@ router.get("/plans/:id", async (req: AuthenticatedRequest, res: ExpressResponse)
 
     let metadata = null;
     try {
-      const fetchRes: globalThis.Response = await fetch(ipfsHashToHttpUrl(plan.ipfsHash));
-      metadata = fetchRes.ok ? await fetchRes.json() : null;
+      const response = (await fetch(ipfsHashToHttpUrl(plan.ipfsHash))) as {
+        ok: boolean;
+        status: number;
+        json: () => Promise<unknown>;
+      };
+      metadata = response.ok ? await response.json() : null;
     } catch (err) {
       console.warn("Failed to fetch plan metadata from IPFS:", err);
       metadata = null;
@@ -304,6 +308,7 @@ router.get("/plans/:id", async (req: AuthenticatedRequest, res: ExpressResponse)
     });
   }
 });
+
 
 // GET /api/v1/plans/:id/subscribers
 router.get("/plans/:id/subscribers", async (req: AuthenticatedRequest, res: ExpressResponse) => {
