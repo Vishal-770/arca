@@ -1,6 +1,6 @@
 ---
 title: "Installation"
-description: "Install and configure the Mecha Pay SDK in your project."
+description: "Install and configure the Arca React SDK in your project."
 ---
 
 ## Installation
@@ -8,25 +8,25 @@ description: "Install and configure the Mecha Pay SDK in your project."
 Install the SDK using your favorite package manager:
 
 ```bash
-npm install mechapay-react
+npm install arca-react
 # or
-yarn add mechapay-react
+yarn add arca-react
 # or
-pnpm add mechapay-react
+pnpm add arca-react
 ```
 
 ## Configuration
 
-To use the SDK, you must wrap your application (usually in `App.tsx` or `main.tsx`) with the `MechaProvider`. This component provides the necessary context for all other SDK components and hooks.
+To use the SDK, you must wrap your application (usually in `App.tsx` or `main.tsx`) with the `ArcaProvider`. This component provides the necessary context for all other SDK components and hooks.
 
 ```tsx
-import { MechaProvider } from 'mechapay-react';
+import { ArcaProvider } from 'arca-react';
 
 function App() {
   return (
-    <MechaProvider apiKey="mp_live_...">
+    <ArcaProvider apiKey="mp_live_...">
       <MyRoutes />
-    </MechaProvider>
+    </ArcaProvider>
   );
 }
 ```
@@ -35,6 +35,6 @@ function App() {
 
 | Prop | Type | Description |
 | :--- | :--- | :--- |
-| `apiKey` | `string` | **Required.** Your Mecha Pay Developer API Key. |
+| `apiKey` | `string` | **Required.** Your Arca Developer API Key. |
 
-*(Note: Custom appearance, styling, and dark/light mode configurations are passed directly to individual components like `MechaPricingTable` via their `appearance` prop).*
+*(Note: Custom appearance, styling, and dark/light mode configurations are passed directly to individual components like `ArcaPricingTable` via their `appearance` prop).*

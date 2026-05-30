@@ -1,18 +1,18 @@
 ---
-title: "MechaPricingTable"
+title: "ArcaPricingTable"
 description: "A high-fidelity pricing table with automated checkout integration."
 ---
 
-The `MechaPricingTable` is the flagship UI component of the SDK. it fetches your plan details (name, duration, tiers, features) and displays them in a premium, interactive interface.
+The `ArcaPricingTable` is the flagship UI component of the SDK. It fetches your plan details (name, duration, tiers, features) and displays them in a premium, interactive interface.
 
 ## Usage
 
 ```tsx
-import { MechaPricingTable } from 'mechapay-react';
+import { ArcaPricingTable } from 'arca-react';
 
 function MyPricing() {
   return (
-    <MechaPricingTable 
+    <ArcaPricingTable 
       planId="0x77c4..." 
       userId="user_99" 
       recommendedTierId="tier_premium"
@@ -35,12 +35,12 @@ function MyPricing() {
   The URL the user should be redirected back to after a successful payment.
 </ParamField>
 
-<ParamField prop="appearance" type="MechaAppearance">
+<ParamField prop="appearance" type="ArcaAppearance">
   Customization object for theming. See [Theming](/sdk/theming) for details.
 </ParamField>
 
 <ParamField prop="hideBranding" type="boolean" default="false">
-  Set to `true` to remove the "Powered by Mecha Pay" footer.
+  Set to `true` to remove the "Powered by Arca" footer.
 </ParamField>
 
 <ParamField prop="recommendedTierId" type="string">
@@ -55,11 +55,11 @@ function MyPricing() {
   Standard inline styles applied to the outer container.
 </ParamField>
 
-<ParamField prop="customLabels" type="MechaLabels">
+<ParamField prop="customLabels" type="ArcaLabels">
   Custom label overrides for UI text elements. Supports translation or custom phrasing.
   
   ```typescript
-  interface MechaLabels {
+  interface ArcaLabels {
     activeSubscription?: string;      // Default: "Current Plan"
     upgrade?: string;                 // Default: "Upgrade"
     downgrade?: string;               // Default: "Downgrade"
@@ -71,11 +71,11 @@ function MyPricing() {
   ```
 </ParamField>
 
-<ParamField prop="classNames" type="MechaClassNames">
+<ParamField prop="classNames" type="ArcaClassNames">
   Custom TailwindCSS or standard class overrides for styling table elements.
   
   ```typescript
-  interface MechaClassNames {
+  interface ArcaClassNames {
     container?: string;
     grid?: string;
     card?: string;
@@ -93,7 +93,7 @@ function MyPricing() {
   ```
 </ParamField>
 
-<ParamField prop="renderHeader" type="(plan: Plan, subscription: MechaSubscription) => React.ReactNode">
+<ParamField prop="renderHeader" type="(plan: Plan, subscription: ArcaSubscription) => React.ReactNode">
   A custom render function to completely replace the default pricing table header section.
 </ParamField>
 
@@ -110,4 +110,4 @@ function MyPricing() {
 - **Automated Fetching**: Retrieves all tiers, prices, and features from IPFS.
 - **Member Awareness**: If the provided `userId` has an active subscription, the table will highlight their current plan and show a countdown timer.
 - **Responsive Design**: Fluidly adapts from mobile to desktop layouts.
-- **Animations**: Uses `framer-motion` for smooth hover states and entry animations.
+- **Animations**: Uses native CSS transitions for smooth hover states and entry animations.

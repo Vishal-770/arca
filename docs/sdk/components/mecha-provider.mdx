@@ -1,28 +1,28 @@
 ---
-title: "MechaProvider"
-description: "The core configuration component for the Mecha SDK."
+title: "ArcaProvider"
+description: "The core configuration component for the Arca SDK."
 ---
 
-The `MechaProvider` is a context provider that should wrap your entire application. It stores your API key and portal settings, enabling hooks like `useMecha` and components like `MechaPricingTable` to function correctly.
+The `ArcaProvider` is a context provider that should wrap your entire application. It stores your API key and portal settings, enabling hooks like `useArca` and components like `ArcaPricingTable` to function correctly.
 
 ## Props
 
 <ParamField prop="apiKey" type="string" required>
-  Your Mecha Pay Developer API Key. Used for authenticated requests to the protocol indexers.
+  Your Arca Developer API Key. Used for authenticated requests to the protocol indexers.
 </ParamField>
 
 ## Implementation Example
 
 ```tsx
-import { MechaProvider } from 'mechapay-react';
+import { ArcaProvider } from 'arca-react';
 
 export default function App() {
   return (
-    <MechaProvider 
-      apiKey={process.env.NEXT_PUBLIC_MECHA_API_KEY}
+    <ArcaProvider 
+      apiKey={process.env.NEXT_PUBLIC_ARCA_API_KEY}
     >
       {/* Rest of your application */}
-    </MechaProvider>
+    </ArcaProvider>
   );
 }
 ```

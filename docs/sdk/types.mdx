@@ -1,9 +1,9 @@
 ---
 title: "API & Types Reference"
-description: "Detailed type definitions for the Mecha Pay SDK."
+description: "Detailed type definitions for the Arca SDK."
 ---
 
-The Mecha Pay SDK is fully typed with TypeScript. Below are the primary interfaces you will interact with.
+The Arca SDK is fully typed with TypeScript. Below are the primary interfaces you will interact with.
 
 ## Plan
 
@@ -38,12 +38,12 @@ export interface Tier {
 }
 ```
 
-## MechaSubscription
+## ArcaSubscription
 
-The shape of the data returned by the `useMecha` hook.
+The shape of the data returned by the `useArca` hook.
 
 ```typescript
-export interface MechaSubscription {
+export interface ArcaSubscription {
   status: "ACTIVE" | "EXPIRED" | "NONE";
   remainingSeconds: number;
   tierId?: string;
@@ -53,12 +53,12 @@ export interface MechaSubscription {
 }
 ```
 
-## MechaAppearance
+## ArcaAppearance
 
 Configuration for UI component styling.
 
 ```typescript
-export interface MechaAppearance {
+export interface ArcaAppearance {
   theme?: "light" | "dark";
   variables?: {
     colorPrimary?: string;

@@ -1,17 +1,17 @@
 ---
-title: "useMechaPerks"
+title: "useArcaPerks"
 description: "React hook to retrieve resolved subscription details and features across all active tiers."
 ---
 
-The `useMechaPerks` hook resolves and aggregates all active subscription details, active tiers, and features/entitlements associated with the user's active subscriptions under a given plan. It is ideal for checking feature flags, tier names, and expiration dates across multiple active tiers programmatically.
+The `useArcaPerks` hook resolves and aggregates all active subscription details, active tiers, and features/entitlements associated with the user's active subscriptions under a given plan. It is ideal for checking feature flags, tier names, and expiration dates across multiple active tiers programmatically.
 
 ## Usage
 
 ```tsx
-import { useMechaPerks } from 'mechapay-react';
+import { useArcaPerks } from 'arca-react';
 
 function PremiumFeatureDashboard() {
-  const { perks, loading, error } = useMechaPerks(
+  const { perks, loading, error } = useArcaPerks(
     "0x_PLAN_ID", 
     "USER_ID"
   );

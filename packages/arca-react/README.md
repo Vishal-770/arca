@@ -1,4 +1,4 @@
-# arcapay-react
+# arca-react
 
 The professional, high-fidelity React SDK for the **Arca Protocol**. Build stunning, production-ready subscription interfaces with custom-tailored styling, real-time blockchain synchronization, and zero third-party animation overhead.
 
@@ -15,7 +15,7 @@ The professional, high-fidelity React SDK for the **Arca Protocol**. Build stunn
 ## 📦 Installation
 
 ```bash
-npm install arcapay-react
+npm install arca-react
 ```
 
 ## 🛠️ Quick Start
@@ -23,7 +23,7 @@ npm install arcapay-react
 ### 1. Wrap your Application
 
 ```tsx
-import { ArcaProvider } from 'arcapay-react';
+import { ArcaProvider } from 'arca-react';
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
 ### 2. Add the Pricing Table
 
 ```tsx
-import { ArcaPricingTable } from 'arcapay-react';
+import { ArcaPricingTable } from 'arca-react';
 
 function PricingPage() {
   return (
@@ -65,7 +65,7 @@ function PricingPage() {
 The primary hook to inspect the overall membership status, remaining time, and list of all active/bought tier IDs.
 
 ```tsx
-import { useArca } from 'arcapay-react';
+import { useArca } from 'arca-react';
 
 function PremiumFeature() {
   const { status, remainingSeconds, tierIds, loading } = useArca(PLAN_ID, USER_ID);
@@ -87,7 +87,7 @@ function PremiumFeature() {
 Create a client with your API key, then fetch a user's subscription status for a plan.
 
 ```tsx
-import { createArcaClient } from 'arcapay-react';
+import { createArcaClient } from 'arca-react';
 
 const arca = createArcaClient('mp_live_your_api_key_here');
 
@@ -103,7 +103,7 @@ async function checkSubscription(planId: string, userId: string) {
 Fetches active plan details, listing subscribed tiers, their respective features, and custom expiration dates. 
 
 ```tsx
-import { useArcaPerks } from 'arcapay-react';
+import { useArcaPerks } from 'arca-react';
 
 function ActiveUserPerks() {
   const { perks, loading } = useArcaPerks(PLAN_ID, USER_ID);
@@ -138,7 +138,7 @@ function ActiveUserPerks() {
 Create a client instance once and reuse it to check a user's subscription for a plan.
 
 ```tsx
-import { createArcaClient } from 'arcapay-react';
+import { createArcaClient } from 'arca-react';
 
 const arca = createArcaClient("mp_live_your_api_key_here");
 

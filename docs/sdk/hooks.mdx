@@ -3,17 +3,17 @@ title: "Hooks & Feature Gating"
 description: "Protect your content and features with simple React hooks."
 ---
 
-## useMecha
+## useArca
 
-The `useMecha` hook is the primary way to check a user's subscription status programmatically. It connects to the Mecha Indexer to provide real-time status updates.
+The `useArca` hook is the primary way to check a user's subscription status programmatically. It connects to the Arca Indexer to provide real-time status updates.
 
 ### Usage
 
 ```tsx
-import { useMecha } from 'mechapay-react';
+import { useArca } from 'arca-react';
 
 function PremiumFeature() {
-  const { status, remainingSeconds, loading, error } = useMecha(PLAN_ID, USER_ID);
+  const { status, remainingSeconds, loading, error } = useArca(PLAN_ID, USER_ID);
 
   if (loading) return <div>Synchronizing with blockchain...</div>;
   
@@ -46,17 +46,17 @@ function PremiumFeature() {
 | `loading` | `boolean` | Whether the SDK is currently fetching data. |
 | `error` | `any` | Any error encountered during the sync. |
 
-## useMechaPerks
+## useArcaPerks
 
-The `useMechaPerks` hook resolves and aggregates all perks, features, and active entitlements across all active subscription tiers.
+The `useArcaPerks` hook resolves and aggregates all perks, features, and active entitlements across all active subscription tiers.
 
 ### Usage
 
 ```tsx
-import { useMechaPerks } from 'mechapay-react';
+import { useArcaPerks } from 'arca-react';
 
 function PremiumDashboard() {
-  const { perks, loading, error } = useMechaPerks(PLAN_ID, USER_ID);
+  const { perks, loading, error } = useArcaPerks(PLAN_ID, USER_ID);
 
   if (loading) return <div>Synchronizing entitlements...</div>;
   if (error) return <div>Error loading perks: {error}</div>;
