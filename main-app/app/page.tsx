@@ -374,7 +374,7 @@ export default function LandingPage() {
               <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">
                 ARCA meets the highest standards of security and compliance so you can build with confidence.
               </p>
-              <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
+              <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-sm font-semibold mt-6 transition-colors group">
                 <span>View security</span>
                 <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
               </Link>
@@ -763,7 +763,7 @@ export default function LandingPage() {
                   </p>
                 </div>
                 
-                <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-8 transition-colors group/link w-fit">
+                <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-8 transition-colors group/link w-fit">
                   <span>View all regions</span>
                   <span className="group-hover/link:translate-x-1 transition-transform duration-200">→</span>
                 </Link>
@@ -948,7 +948,7 @@ export default function LandingPage() {
                           })}
                         </div>
                         
-                        <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-4 transition-colors group/link w-fit">
+                        <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-[#3b82f6] hover:text-[#60a5fa] text-xs font-semibold mt-4 transition-colors group/link w-fit">
                           <span>Go to documentation</span>
                           <span className="group-hover/link:translate-x-1 transition-transform duration-200">→</span>
                         </Link>
@@ -1014,7 +1014,7 @@ export default function LandingPage() {
                 <Link href="/login" className="inline-flex h-10 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-black hover:bg-zinc-200 transition-all duration-300 shadow-md">
                   Start building
                 </Link>
-                <Link href="https://arca.vercel.app/docs" target="_blank" className="inline-flex h-10 items-center justify-center rounded-full border border-white/20 px-6 text-sm font-semibold text-white hover:bg-white/5 transition-all duration-300">
+                <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex h-10 items-center justify-center rounded-full border border-white/20 px-6 text-sm font-semibold text-white hover:bg-white/5 transition-all duration-300">
                   Explore Docs
                 </Link>
               </div>
@@ -1039,8 +1039,8 @@ export default function LandingPage() {
               <div className="flex flex-col gap-4">
                 <h4 className="text-white font-semibold text-xs tracking-wider uppercase">Developers</h4>
                 <div className="flex flex-col gap-3">
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Documentation</Link>
-                  <Link href="https://arca.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">API Reference</Link>
+                  <Link href="https://arca7.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Documentation</Link>
+                  <Link href="https://arca7.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">API Reference</Link>
                   <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">SDKs / GitHub</Link>
                   <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Changelog</Link>
                   <Link href="https://testnet.arcscan.net" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Status</Link>
