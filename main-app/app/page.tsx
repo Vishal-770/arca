@@ -437,7 +437,7 @@ export default function LandingPage() {
           </div>
 
           {/* Grid Layout (Flat, borderless, cardless) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
             {/* Left Column: Vertical Interactive Options (col-span-6) */}
             <div className="lg:col-span-6 flex flex-col gap-6">
@@ -496,10 +496,10 @@ export default function LandingPage() {
             </div>
 
             {/* Right Column: Flat visual presentation (col-span-6) */}
-            <div className="lg:col-span-6 flex flex-col gap-10 items-center justify-center">
+            <div className="lg:col-span-6 flex flex-col items-center lg:items-end justify-center w-full">
               
               {/* Image Frame (Flat, transparent, borderless) */}
-              <div className="w-full max-w-[450px] aspect-square flex items-center justify-center relative select-none">
+              <div className="relative w-full max-w-[450px] aspect-square select-none">
                 <Image
                   src="/modular-security.png"
                   alt="Modular Smart Wallet Security Stack"
@@ -737,235 +737,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Relocated Subscription Showcase Section - High-Fidelity Professional Console Simulator */}
-      <section className="relative w-full bg-background py-28 lg:py-36 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start relative z-10">
-          
-          {/* Left Column: Premium Editorial Typography & Details */}
-          <div className="lg:col-span-5 flex flex-col gap-10">
-            <div className="flex flex-col gap-6">
-              <h2 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-foreground leading-[1.05] font-serif">
-                Subscriptions <br />built for the <span className="text-ring font-semibold">internet</span>
-              </h2>
-              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed max-w-lg font-medium">
-                Arca is a USDC-native subscription protocol designed for modern applications. Simple to integrate, powerful to scale.
-              </p>
-            </div>
 
-            {/* Premium Vertical Editorial Benefits List */}
-            <div className="flex flex-col gap-8">
-              {[
-                { number: "01", title: "USDC Native", desc: "Direct, borderless settlements with zero gas complexity. Paid entirely in stablecoins." },
-                { number: "02", title: "Flexible Billing", desc: "Predictable subscription checkouts with custom frequencies, trials, and grace periods." },
-                { number: "03", title: "Secure by Design", desc: "Smart contract automated renewals, non-custodial custody, and active dunning protection." }
-              ].map((item) => (
-                <div key={item.number} className="flex gap-6 items-start group">
-                  <span className="text-xs font-mono font-bold tracking-widest text-ring/60 pt-1 transition-colors group-hover:text-ring">
-                    {item.number}
-                  </span>
-                  <div className="flex flex-col">
-                    <span className="text-base font-bold text-foreground tracking-tight">{item.title}</span>
-                    <span className="text-xs text-zinc-500 mt-1.5 leading-relaxed font-medium">{item.desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex flex-row items-center gap-6 mt-4">
-              <Link href="/login" className="flex h-12 px-7 items-center justify-center gap-2 rounded-full bg-ring text-white text-xs font-bold uppercase tracking-wider hover:bg-ring/90 transition-all cursor-pointer shadow-lg shadow-ring/5">
-                <span>Start Building</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/docs" className="text-ring hover:text-ring/80 font-bold text-xs uppercase tracking-widest flex items-center gap-1.5 cursor-pointer ml-1 transition-colors">
-                <span>Explore SDK Docs</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Column: High-Fidelity, State-of-the-Art Interactive Subscription Console */}
-          <motion.div
-            className="lg:col-span-7 w-full"
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          >
-            <div className="flex flex-col gap-8 w-full bg-muted/15 rounded-3xl p-8 sm:p-10 relative overflow-hidden select-none">
-              {/* Subtle background visual highlights */}
-              <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[30%] bg-ring rounded-full blur-[120px] opacity-[0.06] pointer-events-none" />
-              
-              {/* Console Header bar */}
-              <div className="flex items-center justify-between pb-6 border-b border-border/10">
-                <div className="flex items-center gap-2.5">
-                  <span className="h-2 w-2 rounded-full bg-ring animate-pulse" />
-                  <span className="text-[10px] font-mono tracking-[0.25em] text-ring uppercase font-bold">LIVE SUBSCRIPTION CONSOLE</span>
-                </div>
-                <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">STATE: ACTIVE_RUN</span>
-              </div>
-
-              {/* Console Core Section Layout: Two-Column details */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                
-                {/* Panel A: Core Plan State & Ledger Table (col-span-7) */}
-                <div className="md:col-span-7 flex flex-col gap-6">
-                  
-                  {/* Active Wallet detail */}
-                  <div className="flex flex-col">
-                    <span className="text-[9px] font-mono tracking-wider text-zinc-500 uppercase">Onchain Account</span>
-                    <span className="text-sm font-mono font-bold text-foreground mt-1 tracking-tight">0x8a3c...7f2e</span>
-                  </div>
-
-                  {/* Pricing detail */}
-                  <div className="flex items-center gap-4 py-3 px-4 bg-muted/30 rounded-2xl w-fit">
-                    <div className="h-10 w-10 rounded-full bg-ring/10 flex items-center justify-center text-ring shrink-0">
-                      <Package className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-foreground">Pro Plan</span>
-                        <span className="text-[8px] font-mono font-bold text-ring bg-ring/15 px-1.5 py-0.5 rounded uppercase tracking-wider">Live</span>
-                      </div>
-                      <div className="text-[11px] text-zinc-400 mt-0.5">29.00 USDC / Month</div>
-                    </div>
-                  </div>
-
-                  {/* Micro Ledger of transactions */}
-                  <div className="flex flex-col gap-3 mt-2">
-                    <span className="text-[9px] font-mono tracking-wider text-zinc-500 uppercase">Payment History Ledger</span>
-                    
-                    <div className="flex flex-col gap-2">
-                      {[
-                        { date: "May 25, 2024", hash: "0x4a9d...b38e", amount: "29.00 USDC", status: "Settled" },
-                        { date: "Apr 25, 2024", hash: "0x1f2c...d74c", amount: "29.00 USDC", status: "Settled" }
-                      ].map((tx, idx) => (
-                        <div key={idx} className="flex items-center justify-between py-2 px-3 bg-muted/20 hover:bg-muted/40 rounded-xl transition-all text-[11px] font-mono text-zinc-300">
-                          <span className="text-zinc-500">{tx.date}</span>
-                          <span className="font-semibold text-zinc-400">{tx.hash}</span>
-                          <span className="font-bold text-foreground">{tx.amount}</span>
-                          <span className="text-ring font-bold flex items-center gap-1.5">
-                            <span className="h-1 w-1 rounded-full bg-ring" />
-                            {tx.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Panel B: Smart Contract Automated Lifecycle Timeline (col-span-5) */}
-                <div className="md:col-span-5 flex flex-col gap-6">
-                  <span className="text-[9px] font-mono tracking-wider text-zinc-500 uppercase">Smart Contract Engine</span>
-                  
-                  {/* Vertical Timeline State Machine */}
-                  <div className="relative flex flex-col gap-6 pl-5 border-l border-border/10">
-                    
-                    {/* Stepper Active Line progress */}
-                    <div className="absolute left-[-1px] top-2 bottom-12 w-[1.5px] bg-ring/30">
-                      <div className="absolute top-0 left-0 w-full h-[65%] bg-ring" />
-                    </div>
-
-                    {[
-                      { step: "01", status: "INITIALIZED", desc: "Subscription state provisioned on ledger.", done: true },
-                      { step: "02", status: "AUTHORIZED", desc: "Allowance confirmed via Circle CPW.", done: true },
-                      { step: "03", status: "SETTLED", desc: "USDC bridged & debited successfully.", done: true },
-                      { step: "04", status: "PENDING", desc: "Next automated charge on Jun 25, 2024.", done: false }
-                    ].map((item, idx) => (
-                      <div key={idx} className="relative flex flex-col gap-1 items-start">
-                        {/* Timeline Node dot */}
-                        <div className={`absolute left-[-26px] top-1 h-3.5 w-3.5 rounded-full flex items-center justify-center transition-all ${
-                          item.done 
-                            ? "bg-ring border-4 border-background" 
-                            : "bg-muted border-4 border-background outline-[1.5px] outline outline-zinc-600 animate-pulse"
-                        }`} />
-                        
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[9px] font-mono font-bold tracking-widest text-zinc-500">
-                            {item.step}
-                          </span>
-                          <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${item.done ? "text-ring" : "text-zinc-400"}`}>
-                            {item.status}
-                          </span>
-                        </div>
-                        <span className="text-[10px] text-zinc-500 leading-snug font-medium">
-                          {item.desc}
-                        </span>
-                      </div>
-                    ))}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* Panel C: Live Developer Integration State (Footer parameters) */}
-              <div className="mt-4 pt-6 border-t border-border/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 text-[10px] font-mono text-zinc-400">
-                <div className="flex items-center gap-3">
-                  <span className="text-zinc-600">URL //</span>
-                  <span className="text-foreground font-semibold">https://api.arca.io/v1/webhook</span>
-                </div>
-                <div className="flex items-center justify-between sm:justify-start gap-4">
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
-                    <span className="text-zinc-500">WEBHOOK_STATUS:</span>
-                    <span className="text-[#10b981] font-bold">ACTIVE</span>
-                  </div>
-                  <Link href="/docs" className="text-ring font-bold hover:text-ring/80 transition-colors uppercase tracking-wider text-[9px] flex items-center gap-1 shrink-0">
-                    Explore API
-                    <ArrowUpRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-
-            </div>
-          </motion.div>
-
-          {/* Bottom Banner: 4-Column Feature Row */}
-          <motion.div
-            className="col-span-1 lg:col-span-12 mt-16 pt-10 grid grid-cols-2 lg:grid-cols-4 gap-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          >
-            {[
-              {
-                title: "Global",
-                desc: "Borderless payments with USDC",
-                icon: Globe,
-              },
-              {
-                title: "99.99%",
-                desc: "Uptime SLA. Enterprise reliability",
-                icon: Zap,
-              },
-              {
-                title: "Secure",
-                desc: "Funds protected with industry best practices",
-                icon: ShieldCheck,
-              },
-              {
-                title: "Developer First",
-                desc: "API-first. Webhooks. SDKs. Open source.",
-                icon: Code2,
-              },
-            ].map((feature) => (
-              <div key={feature.title} className="flex items-center gap-4 group">
-                <div className="h-12 w-12 rounded-xl bg-ring/10 flex items-center justify-center text-ring shrink-0 transition-all duration-300">
-                  <feature.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-foreground">{feature.title}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5 leading-relaxed font-medium">{feature.desc}</div>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-
-        </div>
-      </section>
 
       {/* Infrastructure & Resources Bento Grid Section */}
       <section id="infrastructure" className="relative w-full bg-background pt-24 pb-16 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
