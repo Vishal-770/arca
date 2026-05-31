@@ -58,19 +58,13 @@ async function checkAccess(userId: string) {
 
 ## API Reference
 
-### `new ArcaClient(apiKey, options?)`
+### `new ArcaClient(apiKey)`
 
 Instantiates a new validation client.
 
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `apiKey` | `string` | **Yes** | Your Arca secret/server API key. |
-| `options` | `ArcaClientOptions` | No | Configuration options. |
-
-#### `ArcaClientOptions`
-| Option | Type | Description |
-| :--- | :--- | :--- |
-| `baseUrl` | `string` | Override the API base URL. Defaults to `https://api-arca.vercel.app`. |
 
 ---
 

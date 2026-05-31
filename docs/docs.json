@@ -14,10 +14,7 @@
     "options": [
       "copy",
       "chatgpt",
-      "claude",
-      "cursor",
-      "add-mcp",
-      "vscode"
+      "claude"
     ]
   },
   "colors": {
