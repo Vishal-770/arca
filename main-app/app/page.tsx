@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, LayoutGrid, Zap, Shield, Globe, Coins, Activity, Mail, Github, Linkedin, Twitter, ChevronDown, ArrowRight, Check, Clock, ShieldCheck, Code2, RefreshCw, MoreHorizontal, Calendar, User, Wallet, Package } from "lucide-react";
+import { ArrowUpRight, LayoutGrid, Zap, Shield, Globe, Coins, Activity, Mail, Github, Linkedin, Twitter, ChevronDown, ArrowRight, Check, Clock, ShieldCheck, Code2, RefreshCw, MoreHorizontal, Calendar, User, Wallet, Package, Fingerprint, Sliders, Lock, Key } from "lucide-react";
 import Lenis from 'lenis';
 import { motion, AnimatePresence } from "framer-motion";
 import BootScreen from "@/components/BootScreen";
@@ -120,6 +120,7 @@ export default function LandingPage() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [booted, setBooted] = useState(false);
   const [activeDocTab, setActiveDocTab] = useState("Overview");
+  const [activeSecurityTab, setActiveSecurityTab] = useState("passkey");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -419,6 +420,308 @@ export default function LandingPage() {
       >
         <AppPreview />
       </motion.div>
+
+      {/* Interactive Modular Wallet Security Section */}
+      <section id="wallet-security" className="relative w-full bg-background py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          
+          {/* Header Area */}
+          <div className="flex flex-col mb-16 max-w-3xl">
+            <span className="text-ring text-xs font-bold uppercase tracking-[0.2em] mb-4">Secure By Design</span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1] font-serif">
+              Modular wallets. <br/>Security that adapts <span className="text-ring">to you.</span>
+            </h2>
+            <p className="text-zinc-400 font-medium text-base sm:text-lg mt-6 leading-relaxed">
+              You own your assets. We provide the tools to keep them protected — your way, not ours.
+            </p>
+          </div>
+
+          {/* Bento-style Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            {/* Left Column: Vertical Interactive Options (col-span-5) */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              {[
+                {
+                  id: "passkey",
+                  title: "Passkey Login",
+                  tag: "Recommended",
+                  desc: "Passwordless, phishing-resistant sign-in with biometrics or device PIN.",
+                  icon: Fingerprint,
+                },
+                {
+                  id: "security-key",
+                  title: "Security Key",
+                  desc: "Use a hardware key (USB or NFC) for strong, physical-layer protection.",
+                  icon: Key,
+                },
+                {
+                  id: "recovery",
+                  title: "Recovery Phrase",
+                  desc: "Back up your wallet with a standard cryptographic seed phrase you control.",
+                  icon: Shield,
+                },
+                {
+                  id: "mfa",
+                  title: "Multi-factor Authentication",
+                  desc: "Add an extra verification step (OTP, Authenticator) for critical smart contract actions.",
+                  icon: ShieldCheck,
+                },
+              ].map((tab) => {
+                const TabIcon = tab.icon;
+                const isActive = activeSecurityTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveSecurityTab(tab.id)}
+                    className={`group text-left flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 relative ${
+                      isActive
+                        ? "bg-muted/40 border-ring/30 shadow-[0_4px_20px_-4px_rgba(37,99,235,0.1)]"
+                        : "bg-muted/10 border-border/10 hover:bg-muted/20 hover:border-border/30"
+                    }`}
+                  >
+                    {/* Left colored accent bar matching screenshot */}
+                    <div className={`absolute left-0 top-0 bottom-0 w-[3.5px] rounded-l-2xl transition-all duration-300 ${
+                      isActive ? "bg-ring" : "bg-transparent group-hover:bg-zinc-700/30"
+                    }`} />
+
+                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      isActive ? "bg-ring/10 text-ring" : "bg-zinc-800/50 text-zinc-500 group-hover:text-zinc-300"
+                    }`}>
+                      <TabIcon className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 flex flex-col items-start gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-bold tracking-tight transition-colors ${
+                          isActive ? "text-foreground" : "text-zinc-400 group-hover:text-zinc-200"
+                        }`}>
+                          {tab.title}
+                        </span>
+                        {tab.tag && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-ring bg-ring/10 px-2 py-0.5 rounded-full">
+                            {tab.tag}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-zinc-500 leading-relaxed font-medium">
+                        {tab.desc}
+                      </span>
+                    </div>
+                    <ArrowRight className={`h-4 w-4 shrink-0 transition-all duration-300 mt-1 ${
+                      isActive ? "text-ring translate-x-1" : "text-zinc-600 group-hover:text-zinc-400 group-hover:translate-x-0.5"
+                    }`} />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Column: Two Bento Cards (col-span-7) */}
+            <div className="lg:col-span-7 flex flex-col gap-8">
+              
+              {/* Card 1: Secure. Seamless. Self-Custodial (Top Card) */}
+              <div className="bg-card border border-border/30 rounded-[2rem] p-8 sm:p-10 flex flex-col md:flex-row gap-8 items-center overflow-hidden min-h-[380px] relative shadow-2xl">
+                <div className="flex-1 flex flex-col gap-6 relative z-10 w-full">
+                  <div>
+                    <h3 className="text-2xl font-bold tracking-tight text-foreground font-serif">
+                      Secure. Seamless. Self-Custodial.
+                    </h3>
+                    <p className="text-zinc-400 text-xs sm:text-sm mt-2 leading-relaxed">
+                      Advanced security standards that protect your assets at every layer.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-5 mt-2">
+                    {[
+                      {
+                        title: "Key Isolation",
+                        desc: "Your private keys are isolated and never leave your device.",
+                        icon: Lock,
+                        color: "text-[#a855f7] bg-[#a855f7]/10",
+                      },
+                      {
+                        title: "Transaction Simulation",
+                        desc: "Simulate and review transactions before you sign.",
+                        icon: LayoutGrid,
+                        color: "text-ring bg-ring/10",
+                      },
+                      {
+                        title: "Policy Controls",
+                        desc: "Set limits, approvals, and custom security rules.",
+                        icon: ShieldCheck,
+                        color: "text-[#10b981] bg-[#10b981]/10",
+                      },
+                    ].map((feature, idx) => {
+                      const FeatureIcon = feature.icon;
+                      return (
+                        <div key={idx} className="flex items-start gap-4">
+                          <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${feature.color}`}>
+                            <FeatureIcon className="h-4.5 w-4.5" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-foreground leading-none">{feature.title}</span>
+                            <span className="text-xs text-zinc-500 leading-normal font-medium mt-1">{feature.desc}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right/Visual part of Card 1: Beautiful 3D illustration provided by user */}
+                <div className="w-full md:w-[320px] lg:w-[350px] aspect-square flex items-center justify-center relative select-none shrink-0">
+                  {/* Glowing purple ambient background behind the graphic */}
+                  <div className="absolute inset-4 rounded-full bg-ring/10 blur-[60px]" />
+                  
+                  {/* Embedded Visual Masterpiece (User provided high-quality image) */}
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden flex items-center justify-center p-2 transition-transform hover:scale-[1.02] duration-500">
+                    <Image
+                      src="/modular-security.png"
+                      alt="Modular Smart Wallet Security Stack"
+                      fill
+                      className="object-contain"
+                      priority
+                      unoptimized
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: One Wallet. Any Chain. Any App (Bottom Card) */}
+              <div className="bg-card/40 border border-border/20 rounded-[2rem] p-8 sm:p-10 flex flex-col justify-between overflow-hidden relative shadow-lg min-h-[250px]">
+                
+                {/* Glowing subtle mesh background in the card */}
+                <div className="absolute inset-0 opacity-10 mix-blend-screen pointer-events-none">
+                  <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid-pattern)" className="text-ring" />
+                  </svg>
+                </div>
+
+                {/* Network world connectivity overlay */}
+                <div className="absolute right-0 bottom-0 top-0 w-full md:w-2/3 opacity-[0.08] pointer-events-none select-none">
+                  <svg className="w-full h-full" viewBox="0 0 800 400" fill="none" stroke="currentColor">
+                    <path d="M150 150 Q 300 80, 450 150 T 750 150" strokeWidth="1.5" strokeDasharray="5 5" className="text-ring"/>
+                    <path d="M200 200 Q 400 120, 600 200" strokeWidth="1.5" className="text-ring"/>
+                    <circle cx="150" cy="150" r="4" fill="currentColor" className="text-ring" />
+                    <circle cx="450" cy="150" r="3" fill="currentColor" className="text-ring" />
+                    <circle cx="750" cy="150" r="5" fill="currentColor" className="text-ring" />
+                    <circle cx="200" cy="200" r="4" fill="currentColor" className="text-ring" />
+                    <circle cx="600" cy="200" r="3" fill="currentColor" className="text-ring" />
+                  </svg>
+                </div>
+
+                <div className="relative z-10 flex flex-col gap-6">
+                  <div>
+                    <h3 className="text-2xl font-bold tracking-tight text-foreground font-serif">
+                      One wallet. Any chain. Any app.
+                    </h3>
+                    <p className="text-zinc-400 text-xs sm:text-sm mt-2 leading-relaxed">
+                      Use your modular wallet across all your favorite chains and applications.
+                    </p>
+                  </div>
+
+                  {/* Chain/Network row icons using real high-fidelity circular logo assets */}
+                  <div className="flex items-center gap-3.5 mt-2">
+                    {[
+                      { name: "Ethereum", icon: "/seoplia-logo.png" },
+                      { name: "Arc Network", icon: "/arc-logo.png" },
+                      { name: "Avalanche", icon: "/avalanche-logo.png" },
+                      { name: "Polygon", icon: "/polygon-logo.png" },
+                      { name: "Arbitrum", icon: "/arbitrum-logo.png" },
+                    ].map((chain, idx) => (
+                      <div key={idx} className="h-10 w-10 rounded-full border border-border/40 bg-zinc-950 p-2 flex items-center justify-center shadow-md relative hover:scale-110 hover:border-ring/50 transition-all duration-300">
+                        <Image
+                          src={chain.icon}
+                          alt={chain.name}
+                          width={24}
+                          height={24}
+                          className="object-contain"
+                        />
+                      </div>
+                    ))}
+                    <div className="h-10 w-10 rounded-full border border-border/10 bg-zinc-900/50 flex items-center justify-center text-sm font-mono font-bold text-zinc-500 cursor-default">
+                      +
+                    </div>
+                    <div className="text-xs font-mono text-zinc-500 ml-1">
+                      and more
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom row in Card 2 with Globe access badge */}
+                <div className="relative z-10 mt-8 pt-4 border-t border-border/10 flex justify-between items-center w-full">
+                  <div className="flex items-center gap-2 text-zinc-400 text-xs font-semibold">
+                    <Globe className="h-4.5 w-4.5 text-zinc-500" />
+                    <span>Global Access</span>
+                  </div>
+                  <span className="text-[10px] font-mono tracking-wider font-bold text-ring bg-ring/5 border border-ring/10 px-3 py-1 rounded-full uppercase">
+                    Available Anywhere, Anytime
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Bottom Grid: 4-Column Feature Row with dividers exactly like screenshot */}
+          <div className="mt-20 pt-12 border-t border-border/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                title: "You're in control",
+                desc: "We never store your private keys or recovery phrases.",
+                icon: Lock,
+                color: "bg-[#a855f7]/10 text-[#a855f7]",
+              },
+              {
+                title: "Modular & flexible",
+                desc: "Add or remove security modules anytime to fit your needs.",
+                icon: LayoutGrid,
+                color: "bg-ring/10 text-ring",
+              },
+              {
+                title: "Open & interoperable",
+                desc: "Built with open standards. Built for the future.",
+                icon: Code2,
+                color: "bg-[#3b82f6]/10 text-[#3b82f6]",
+              },
+              {
+                title: "Works everywhere",
+                desc: "Any chain. Any device. Any application.",
+                icon: Globe,
+                color: "bg-[#10b981]/10 text-[#10b981]",
+              },
+            ].map((feature, idx) => {
+              const HighlightIcon = feature.icon;
+              return (
+                <div 
+                  key={idx} 
+                  className={`flex items-start gap-4 group ${
+                    idx !== 0 ? "lg:border-l lg:border-border/10 lg:pl-8" : ""
+                  }`}
+                >
+                  <div className={`h-11 w-11 rounded-full flex items-center justify-center shrink-0 ${feature.color} transition-transform group-hover:scale-105 duration-300`}>
+                    <HighlightIcon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-foreground transition-colors group-hover:text-ring">
+                      {feature.title}
+                    </h4>
+                    <p className="text-xs text-zinc-500 mt-1 leading-relaxed font-medium">
+                      {feature.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
 
       {/* Multi-Chain Bridge Showcase Section */}
       <section id="bridge" className="relative w-full bg-background py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20">
