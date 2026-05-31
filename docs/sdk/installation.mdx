@@ -37,15 +37,8 @@ function App() {
 | :--- | :--- | :--- |
 | `apiKey` | `string` | **Required.** Your Arca Developer API Key. |
 
-## Server-side Usage
+## Server-side Validation
 
-If you need to check subscription status outside React, use `ArcaClient`:
-
-```ts
-import { ArcaClient } from "arca-react";
-
-const client = new ArcaClient("arca_...");
-const status = await client.getSubscriptionStatus("0x...", "user_123");
-```
+If you need to verify subscription status securely on your backend (e.g., in Next.js Server Components, API routes, or middleware), please refer to our dedicated [Server-Side Validation](/server-side/validation) guide.
 
 *(Note: UI customization is passed via component props such as `appearance` on `ArcaPricingTable`.)*

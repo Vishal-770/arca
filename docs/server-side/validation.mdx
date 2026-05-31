@@ -1,0 +1,231 @@
+---
+title: "Server-Side Validation"
+description: "Securely verify subscriber eligibility and plan access on your backend server using ArcaClient."
+---
+
+Client-side checks are fantastic for dynamic UI layouts, but they should never be the sole gatekeeper for premium features, paywalled content, or secure API endpoints. To build a secure, robust subscription billing system, you must validate subscription status on the server.
+
+The `ArcaClient` is a lightweight, isomorphic TypeScript client designed to run in server environments (such as Node.js, Next.js Server Components, Serverless Functions, and edge runtimes) to perform instantaneous subscription validations against the Arca Gateway.
+
+---
+
+## Installation
+
+The `ArcaClient` is packaged directly within `arca-react` (which contains both isomorphic server utilities and React frontend hooks).
+
+```bash
+npm install arca-react
+# or
+yarn add arca-react
+# or
+pnpm add arca-react
+```
+
+---
+
+## Quickstart
+
+Initialize `ArcaClient` with your private **Server API Key** (e.g., `arca_live_...` or `arca_test_...`). Always fetch this key securely from environment variables.
+
+```ts
+import { ArcaClient } from "arca-react";
+
+// Initialize the client
+const arca = new ArcaClient(process.env.ARCA_API_KEY!);
+
+async function checkAccess(userId: string) {
+  const planId = "0x8a3f9e2b1c6d7e8f0a9b8c7d6e5f4a3b2c1d0e9f";
+  
+  try {
+    const result = await arca.getSubscriptionStatus(planId, userId);
+    
+    if (result.status === "ACTIVE") {
+      console.log(`Access granted! Remaining subscription seconds: ${result.remainingSeconds}`);
+      console.log(`Active premium tiers:`, result.tierIds);
+      return true;
+    } else {
+      console.log(`Access denied. Current status: ${result.status}`);
+      return false;
+    }
+  } catch (error) {
+    console.error("Failed to validate subscription:", error);
+    return false;
+  }
+}
+```
+
+---
+
+## API Reference
+
+### `new ArcaClient(apiKey, options?)`
+
+Instantiates a new validation client.
+
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `apiKey` | `string` | **Yes** | Your Arca secret/server API key. |
+| `options` | `ArcaClientOptions` | No | Configuration options. |
+
+#### `ArcaClientOptions`
+| Option | Type | Description |
+| :--- | :--- | :--- |
+| `baseUrl` | `string` | Override the API base URL. Defaults to `https://api-arca.vercel.app`. |
+
+---
+
+### `arca.getSubscriptionStatus(planId, userId)`
+
+Checks the on-chain subscription status of a user. The client queries the highly optimized Arca off-chain indexer database to return instantaneous responses, avoiding the latency of direct RPC node calls.
+
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `planId` | `string` | **Yes** | The unique smart contract Plan ID (hex address). |
+| `userId` | `string` | **Yes** | The user identification token (e.g., database UID or wallet address). |
+
+#### Return Value (`Promise<ArcaSubscriptionResult>`)
+
+```ts
+interface ArcaSubscriptionResult {
+  status: "ACTIVE" | "EXPIRED" | "NONE";
+  remainingSeconds: number;
+  tierId?: string;    // The active tier if applicable
+  tierIds: string[];  // List of all active tier IDs the user has unlocked
+}
+```
+
+---
+
+## Implementation Blueprints
+
+### 1. Next.js API Route (App Router)
+
+Secure a dynamic backend endpoint in Next.js using `ArcaClient`:
+
+```ts
+// app/api/premium-content/route.ts
+import { NextResponse } from "next/server";
+import { ArcaClient } from "arca-react";
+
+const arca = new ArcaClient(process.env.ARCA_API_KEY!);
+const PRO_PLAN_ID = process.env.NEXT_PUBLIC_PRO_PLAN_ID!;
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized: Missing User ID" }, { status: 401 });
+  }
+
+  try {
+    // Perform secure server-side validation
+    const { status } = await arca.getSubscriptionStatus(PRO_PLAN_ID, userId);
+
+    if (status !== "ACTIVE") {
+      return NextResponse.json(
+        { error: "Payment Required: Active subscription required" },
+        { status: 402 }
+      );
+    }
+
+    // Return premium paywalled content
+    return NextResponse.json({
+      secretData: "Welcome to the premium portal! Here is your exclusive dashboard data.",
+    });
+  } catch (error) {
+    console.error("Subscription validation failed:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+```
+
+### 2. Next.js Server Components
+
+Gate page access before the page is even rendered to the user:
+
+```tsx
+// app/premium-dashboard/page.tsx
+import { redirect } from "next/navigation";
+import { ArcaClient } from "arca-react";
+import { getSession } from "@/lib/auth"; // Your custom auth session getter
+
+const arca = new ArcaClient(process.env.ARCA_API_KEY!);
+const PREMIUM_PLAN_ID = process.env.NEXT_PUBLIC_PREMIUM_PLAN_ID!;
+
+export default async function PremiumDashboard() {
+  const session = await getSession();
+  
+  if (!session || !session.userId) {
+    redirect("/login");
+  }
+
+  // Gate the entire page server-side
+  const subscription = await arca.getSubscriptionStatus(PREMIUM_PLAN_ID, session.userId);
+
+  if (subscription.status !== "ACTIVE") {
+    redirect("/dashboard/billing?status=inactive");
+  }
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold">Premium Workspace</h1>
+      <p>This content is fully protected by secure on-chain validation.</p>
+    </div>
+  );
+}
+```
+
+### 3. Node.js Express Middleware
+
+For traditional backend services, you can abstract subscription checks into an Express middleware:
+
+```ts
+import express from "express";
+import { ArcaClient } from "arca-react";
+
+const arca = new ArcaClient(process.env.ARCA_API_KEY!);
+const PLAN_ID = "0x8a3f9e2b1c6d7e8f0a9b8c7d6e5f4a3b2c1d0e9f";
+
+export const requireSubscription = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const userId = req.headers["x-user-id"] as string;
+
+  if (!userId) {
+    return res.status(401).json({ error: "User ID is required in headers." });
+  }
+
+  try {
+    const result = await arca.getSubscriptionStatus(PLAN_ID, userId);
+
+    if (result.status === "ACTIVE") {
+      // Inject subscription details into the request context for downstream handlers
+      req.subscription = result;
+      return next();
+    }
+
+    return res.status(403).json({ 
+      error: "Access Denied", 
+      reason: "An active subscription is required to perform this action." 
+    });
+  } catch (error) {
+    console.error("Express check failed:", error);
+    return res.status(500).json({ error: "Internal Validation Error" });
+  }
+};
+```
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Never expose Server API Keys in Client-Side Code" icon="eye-slash">
+    Prefixes like `NEXT_PUBLIC_` in Next.js or `VITE_` in Vite compile keys into client bundles, rendering them visible to anyone inspecting the page. Always use pure server-side environment variables (e.g., `ARCA_API_KEY`) when constructing `ArcaClient`.
+  </Accordion>
+  <Accordion title="Cache Validation Results and Synchronize with Webhooks" icon="bolt">
+    To avoid fetching status on every database lookup or single API request, cache validation results for 60-120 seconds in Redis or in-memory caches. Use Arca's highly reliable Webhook system to immediately invalidate or update cached subscription states when events like `subscription.cancelled` or `payment.failed` occur.
+  </Accordion>
+  <Accordion title="Graceful Degradation" icon="shield-halved">
+    If the Arca validation API encounters an outage (99.99% uptime guarantee), design your fallback strategy. In high-value enterprise settings, it's recommended to log a warning but allow temporary cached access or fall back to an on-chain reading using a direct Ethereum RPC provider.
+  </Accordion>
+</AccordionGroup>

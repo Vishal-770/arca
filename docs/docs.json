@@ -65,11 +65,16 @@
             ]
           },
           {
+            "group": "Server-Side Validation",
+            "pages": [
+              "server-side/validation"
+            ]
+          },
+          {
             "group": "React SDK",
             "pages": [
               "sdk/introduction",
               "sdk/setup",
-              "sdk/client",
               {
                 "group": "Components",
                 "pages": [
