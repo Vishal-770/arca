@@ -1,0 +1,89 @@
+---
+title: "Provision Smart Wallet"
+api: "POST /api/v1/wallets/provision"
+description: "Provision a non-custodial modular smart contract account (CPW/Safe) linked to a user profile or biometric passkey."
+---
+
+### Headers
+
+<ParamField header="x-api-key" type="string" required>
+  Your Arca Developer API Key.
+</ParamField>
+
+### Body Parameters
+
+<ParamField body="userId" type="string" required>
+  The unique developer-assigned identifier for the user (e.g. database ID, username).
+</ParamField>
+
+<ParamField body="walletType" type="string" required>
+  The target modular wallet engine: `circle_cpw`, `safe_multisig`, or `kernel_aa`.
+</ParamField>
+
+<ParamField body="passkeyCredentialId" type="string">
+  Optional biometric passkey credential ID. Required if selecting `circle_cpw` or kernel passkey signers.
+</ParamField>
+
+<ParamField body="ownerAddress" type="string">
+  Optional Externally Owned Account (EOA) address. Used if provisioning a smart contract account that delegates signature control to a specific key.
+</ParamField>
+
+---
+
+### Response Fields
+
+<ResponseField name="success" type="boolean">
+  Indicates whether the smart wallet was successfully provisioned or retrieved.
+</ResponseField>
+
+<ResponseField name="walletAddress" type="string">
+  The EVM-compatible deployed contract address of the user's smart wallet.
+</ResponseField>
+
+<ResponseField name="walletType" type="string">
+  The wallet architecture type provisioned.
+</ResponseField>
+
+<ResponseField name="isDeployed" type="boolean">
+  True if the wallet contract has been deployed on-chain; false if it operates as a counterfactual address (waiting for the first transaction).
+</ResponseField>
+
+<ResponseField name="erc1271Active" type="boolean">
+  True if the contract is active and fully configured to support ERC-1271 signature validation requests.
+</ResponseField>
+
+<ResponseField name="circleWalletId" type="string">
+  The underlying Circle Programmable Wallet ID reference (returned only for `circle_cpw` type).
+</ResponseField>
+
+---
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api-arca.vercel.app/api/v1/wallets/provision" \
+  -H "x-api-key: arca_test_51Pj..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "user_vishal_99",
+    "walletType": "circle_cpw",
+    "passkeyCredentialId": "credential_9a2b8c...1a2b"
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "walletAddress": "0x8a3c8f8a3c8f8a3c8f8a3c8f8a3c8f8a3c8f7f2e",
+  "walletType": "circle_cpw",
+  "isDeployed": true,
+  "erc1271Active": true,
+  "circleWalletId": "w_5a8c9e...1b2c"
+}
+```
+
+</ResponseExample>

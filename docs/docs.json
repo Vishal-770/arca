@@ -107,6 +107,18 @@
             ]
           },
           {
+            "group": "Autopay",
+            "pages": [
+              "api-reference/autopay"
+            ]
+          },
+          {
+            "group": "Modular Wallets",
+            "pages": [
+              "api-reference/modular-wallets"
+            ]
+          },
+          {
             "group": "Plans",
             "pages": [
               "api-reference/list-plans",
