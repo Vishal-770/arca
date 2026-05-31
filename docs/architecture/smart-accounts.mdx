@@ -1,0 +1,105 @@
+---
+title: "Modular Smart Accounts"
+description: "How Arca leverages ERC-4337 Account Abstraction and Paymasters to provide a gasless checkout experience."
+---
+
+Standard Ethereum/EVM wallets are **Externally Owned Accounts (EOAs)**. They are controlled by a single cryptographic private key (typically derived from a seed phrase). EOAs suffer from two critical limitations:
+1. They cannot execute automated, pre-authorized transactions without manual signature prompt.
+2. They must hold native gas tokens (like ETH, MATIC, or ARC) to cover gas costs for every single on-chain interaction.
+
+Arca solves these user friction points completely by building atop **Modular Smart Accounts** (Account Abstraction via **ERC-4337**).
+
+---
+
+## 1. What is Account Abstraction (ERC-4337)?
+
+Account Abstraction turns the user's wallet into a **Smart Contract Account** rather than a simple key pair. 
+
+In a smart account architecture, the cryptographic key pair is separated from the account itself. The key is simply an *authorization module* that tells the smart contract wallet what transactions to sign. This programmability allows Arca to support advanced checkout flows:
+
+* **Session Authorization**: Granting a temporary key (session key) the power to sign specific types of transactions under strict guardrails.
+* **Biometric Signers (Passkeys)**: Using hardware-secure enclaves (such as Apple FaceID or Android fingerprint readers) to sign transactions directly, removing seed phrases entirely.
+* **Flexible Logic**: Allowing transactions to be verified by custom contracts (ERC-1271).
+
+```
+   Traditional EOA Wallet (Metamask)
+   ┌───────────────────────────────────┐
+   │ Private Key ======> Binds to ===> │ ==> Address (0x123...abc)
+   └───────────────────────────────────┘
+
+   Modular Smart Account (Arca)
+   ┌───────────────────┐     ┌───────────────────────┐
+   │ User Key Module   │ ──> │                       │
+   ├───────────────────┤     │ Smart Account Wallet  │
+   │ Session Key       │ ──> │   Address: 0xWallet   │ ==> Executed on Gateway
+   ├───────────────────┤     │                       │
+   │ Biometric Key     │ ──> │                       │
+   └───────────────────┘     └───────────────────────┘
+```
+
+---
+
+## 2. Paymasters & Sponsoring Gas Fees
+
+One of the greatest barriers to Web3 adoption is forcing users to buy and hold native gas tokens just to make a payment. Arca eliminates this entirely through **ERC-4337 Paymasters**:
+
+* **USDC Native Gas**: A Paymaster contract intercepts the transaction. Instead of charging the user's wallet in native gas (like ETH or ARC), the paymaster pays the validator gas in native tokens and deducts the equivalent amount in **USDC** from the user's wallet balance.
+* **Sponsorship Mode**: For merchant onboarding or high-value tiers, merchants can fully sponsor the gas fees for their subscribers. The user signs the checkout mandate, the paymaster pays the gas, and the subscriber settles entirely in USDC with zero gas friction.
+
+---
+
+## 3. Supported Smart Wallet Providers
+
+Arca is fully compatible with standard EVM modular smart accounts. The Arca React SDK provides out-of-the-box integrations for:
+
+### Circle Programmable Wallets (CPW)
+Excellent for web2-style customer onboarding. Circle CPW provisions a non-custodial smart wallet linked to passkeys or secure user credentials behind the scenes. User registration creates a smart account instantly without exposing private keys.
+
+### Safe (formerly Gnosis Safe)
+The institutional gold standard for secure asset storage. Safe accounts operate as multi-signature contracts. Arca integrates seamlessly with Safe wallets by validating signatures against Safe's ERC-1271 modular interface.
+
+### ZeroDev & Biconomy Kernel
+High-performance modular accounts optimized for low gas cost and quick execution. Kernel accounts support custom **session key plug-ins**, making them exceptionally fast for Autopay validation.
+
+---
+
+## 4. Contract Implementation: The Smart Account Interface
+
+To support modular wallets, the `SubscriptionGateway.sol` smart contract leverages `IERC1271` signature validation. This interface allows contracts to verify if a given signature is valid for a contract address:
+
+```solidity
+interface IERC1271 {
+    function isValidSignature(bytes32 hash, bytes calldata signature) external view returns (bytes4);
+}
+```
+
+When a user's wallet is a contract (`MockSmartAccount`), signature validation is delegated to the wallet's internal logic. Here is the contract implementation for smart account verification:
+
+```solidity
+contract MockSmartAccount is IERC1271 {
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    function isValidSignature(bytes32 hash, bytes calldata signature) external view override returns (bytes4) {
+        // Recover signer from signature and check if it matches the account owner
+        bytes32 ethHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
+        address signer = recoverSigner(ethHash, signature);
+        if (signer == owner) {
+            return 0x1626ba7e; // ERC-1271 Magic Selector Value
+        }
+        
+        // Also support plain hash validation without Ethereum prefix
+        signer = recoverSigner(hash, signature);
+        if (signer == owner) {
+            return 0x1626ba7e;
+        }
+        
+        return 0xffffffff; // Invalid Signature
+    }
+}
+```
+
+By supporting this interface, **any smart contract wallet** can subscribe to plans on Arca. The `SubscriptionGateway` doesn't need to know the wallet's internal complexity (whether it is a 3-of-5 multisig, a hardware key, or a social recovery wallet)—it simply checks the return value of `isValidSignature()`.

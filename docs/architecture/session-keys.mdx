@@ -1,0 +1,126 @@
+---
+title: "EIP-712 Session Keys"
+description: "How Arca uses secure off-chain mandates and typed signatures to authorize recurring payments."
+---
+
+One of the greatest security challenges of automated onchain billing is authorizing future transactions without storing the user's primary private keys. If the relayer or merchant held the user's keys, the system would be fully custodial and vulnerable to hacks.
+
+Arca solves this securely by utilizing **EIP-712 Session Keys** and off-chain mandate signatures.
+
+---
+
+## 1. What are Session Keys?
+
+A **Session Key** is an ephemeral cryptographic private/public key pair generated locally in memory by the Arca React SDK on the user's device during checkout. 
+
+Rather than authorizing the merchant or relayer to spend funds directly, the user signs a typed cryptographic mandate. This mandate authorizes the specific, temporary **Session Public Key** to trigger subscription payments on the user's behalf. 
+
+This key is restricted entirely by the smart contract: it cannot transfer assets arbitrarily, execute custom transactions, or withdraw funds. It can *only* invoke the `subscribeWithSignature` function for the specific plan, price, and cycles authorized.
+
+---
+
+## 2. EIP-712 Typed Signing Standard
+
+Standard cryptographic signing turns raw binary strings into signatures. This makes it impossible for users to know what they are actually signing in their wallet interface, leading to blind signing risks.
+
+**EIP-712** is a standard for hashing and signing typed structured data. When a user approves an Arca subscription, their wallet displays a highly legible, structured JSON mandate detailing the exact subscription parameters.
+
+```
+   Wallet Approval Screen (EIP-712)
+   ┌────────────────────────────────────────────────┐
+   │ Authorize Session Key for Arca:                │
+   │                                                │
+   │ Subscriber: 0x8a3c...7f2e                      │
+   │ Session Key: 0xSessionPub...                   │
+   │ Plan ID: 0xPlan392...                          │
+   │ Tier ID: Pro Plan (1)                          │
+   │ Max Cycles: 12 (Monthly)                       │
+   │ Deadline: May 25, 2025                         │
+   │                                                │
+   │ [ Approve ]                       [ Reject ]   │
+   └────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Cryptographic Implementation
+
+To prevent signatures from being replayed on different blockchains (e.g. executing a Sepolia signature on Mainnet) or other smart contracts, Arca constructs a unique cryptographic domain separator:
+
+### The EIP-712 Domain Separator
+
+```solidity
+DOMAIN_SEPARATOR = keccak256(
+    abi.encode(
+        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+        keccak256(bytes("MechaPay Subscription Gateway")),
+        keccak256(bytes("1")),
+        block.chainid,
+        address(this)
+    )
+);
+```
+
+### The Typed Mandate Struct
+
+The smart contract registers the strict layout of the session key authorization via a custom `TYPEHASH`:
+
+```solidity
+bytes32 public constant AUTHORIZE_SESSION_KEY_TYPEHASH = keccak256(
+    "AuthorizeSessionKey(address subscriber,address sessionPublicKey,bytes32 planId,uint256 tierId,uint256 maxCycles,uint256 deadline)"
+);
+```
+
+When a user signs the mandate, the SDK encodes their parameters and constructs the finalized cryptographic message hash:
+
+```solidity
+bytes32 messageHash = keccak256(
+    abi.encodePacked(
+        "\x19\x01", // EIP-712 compliance prefix
+        DOMAIN_SEPARATOR,
+        keccak256(
+            abi.encode(
+                AUTHORIZE_SESSION_KEY_TYPEHASH,
+                subscriber,
+                sessionPublicKey,
+                planId,
+                tierId,
+                maxCycles,
+                deadline
+            )
+        )
+    )
+);
+```
+
+---
+
+## 4. Key Security Guardrails
+
+The smart contract acts as an immutable trust engine. It guarantees that the session key can never abuse its authorization:
+
+### 1. Hardened Call Restriction
+Only the specific session key holder (`msg.sender`) can submit the renewal transaction:
+```solidity
+require(msg.sender == sessionPublicKey, "Invalid session key");
+```
+
+### 2. Temporal Deadlines
+Subscriptions cannot be executed after the mandate expiration deadline:
+```solidity
+require(block.timestamp <= deadline, "Signature expired");
+```
+
+### 3. Monotonic Billing Cycle Controls
+To prevent the relayer or merchant from charging the user multiple times in a single day, the gateway tracks next allowed execution intervals on-chain:
+```solidity
+uint256 currentCycle = executedCycles[planId][subscriber];
+require(currentCycle < maxCycles, "Max cycles reached");
+require(block.timestamp >= nextAllowedTimestamp[planId][subscriber], "Too early for next cycle");
+```
+
+### 4. Direct Revocation
+Because the billing gateway pulls funds using the smart wallet's USDC allowance, the subscriber can revoke the subscription instantly at any time by:
+* Setting the `SubscriptionGateway` USDC allowance to `0` in their wallet.
+* Explicitly rotating their keys or withdrawing their balance.
+This makes recurring billing completely non-custodial and secure for enterprise-grade operations.

@@ -1,0 +1,84 @@
+---
+title: "Autopay Relayer Engine"
+description: "The execution loop and safety guardrails of the Arca off-chain transaction scheduler."
+---
+
+While smart contracts handle payment validation, asset transfers, and security guardrails, they cannot trigger themselves. Smart contracts are reactive by nature: they require an external account (EOA) to submit a transaction and pay gas to execute code.
+
+To achieve fully automated, hands-free recurring payments, Arca utilizes the **Autopay Relayer Engine**.
+
+---
+
+## 1. Relayer Engine Overview
+
+The Autopay Relayer is a high-performance off-chain service that monitors active subscription mandates, schedules execution cycles, and broadcasts transactions on-chain.
+
+Importantly, the relayer is **completely non-custodial**:
+* It only stores the **EIP-712 session signatures** and mandate metadata.
+* It does *not* have access to the user's primary private keys or assets.
+* It can only execute charges that comply strictly with the user's on-chain smart contract configurations.
+
+```
+   ┌────────────────────────────────────────────────────────┐
+   │                 Autopay Relayer Engine                 │
+   │                                                        │
+   │  ┌──────────────┐     ┌──────────────┐     ┌────────┐  │
+   │  │ State Parser │ ──> │ Cron Monitor │ ──> │ Tx     │  │
+   │  │  (Event Log) │     │  (Database)  │     │ Engine │  │
+   │  └──────────────┘     └──────────────┘     └────────┘  │
+   └───────────────────────────────┬────────────────────────┘
+                                   │
+                                   ▼
+                       SubscriptionGateway.sol
+                       ┌───────────────────────┐
+                       │ subscribeWithSig()    │
+                       └───────────────────────┘
+```
+
+---
+
+## 2. The Execution Event Loop
+
+The relayer operates via a continuous high-availability execution loop:
+
+### Step 1: Mandate Ingestion
+When a user subscribes via the Arca React SDK, the SDK generates the mandate, collects the user's signature, and transmits the payload to the Relayer's secure REST endpoint. The Relayer stores the metadata in a highly available, encrypted state database.
+
+### Step 2: Cron Scheduling
+The Relayer continuously calculates the next charge timestamp based on the plan's duration (e.g. `nextAllowedTimestamp = startTime + duration`).
+
+### Step 3: Readiness Verification
+When a subscription reaches its billing date, the Relayer runs local sanity checks:
+* Is the current cycle count less than `maxCycles`?
+* Does the subscriber’s wallet hold a sufficient USDC balance?
+* Has the subscriber's wallet approved the gateway spend allowance?
+
+### Step 4: Ephemeral Key Execution
+If the verification passes, the Relayer uses the ephemeral **session key** associated with the subscription to sign the gateway transaction and broadcasts the transaction on-chain via the `subscribeWithSignature` method.
+
+### Step 5: Event Synchronization
+The Relayer’s indexing engine listens for the `Subscribed` event emitted by the `SubscriptionGateway` contract, logs the successful payment, increments the executed cycle counter locally, and schedules the next billing date.
+
+---
+
+## 3. On-Chain Protection & Security Guards
+
+If the relayer is hacked, compromised, or acts maliciously, it is mathematically impossible for it to steal user funds or overcharge subscribers. The `SubscriptionGateway.sol` smart contract enforces strict, unalterable rules at the EVM execution level:
+
+```solidity
+// Enforce cycle boundary
+uint256 currentCycle = executedCycles[planId][subscriber];
+require(currentCycle < maxCycles, "Max cycles reached");
+
+// Enforce chronological billing interval
+require(block.timestamp >= nextAllowedTimestamp[planId][subscriber], "Too early for next cycle");
+```
+
+### Protection Against Double-Charging
+If the relayer attempts to trigger the subscription multiple times in a row, the transaction will revert with `"Too early for next cycle"`. The gateway strictly requires that `block.timestamp` is greater than or equal to `nextAllowedTimestamp`, which is updated *only* upon a successful subscription execution.
+
+### Protection Against Unauthorized Amounts
+The gateway contract gets the payment price directly from the contract state using the `planId` and `tierId`. The relayer cannot alter the amount charged; it can only request the contract to transfer the pre-defined, immutable tier price.
+
+### Gas Sponsorship & Refunding
+The relayer pays the initial gas fee in native tokens (like ARC) to broadcast the transaction. The gateway processes the transaction instantly. By using gasless modular wallets and paymasters, the gas fee can be refunded or fully sponsored, creating a frictionless customer checkout experience.
