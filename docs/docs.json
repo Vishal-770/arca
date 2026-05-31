@@ -10,6 +10,16 @@
   "appearance": {
     "default": "dark"
   },
+  "contextual": {
+    "options": [
+      "copy",
+      "chatgpt",
+      "claude",
+      "cursor",
+      "add-mcp",
+      "vscode"
+    ]
+  },
   "colors": {
     "primary": "#2563EB",
     "light": "#60A5FA",
