@@ -455,18 +455,6 @@ export default function LandingPage() {
                   desc: "Grant scoped, time-bound cryptographic session mandates. The automated relayer executes renewals while you maintain 100% asset custody.",
                   icon: Key,
                 },
-                {
-                  id: "smart-bridge",
-                  title: "Smart Bridge (CCTP)",
-                  desc: "Deposit and bridge USDC across multiple chains in a single transaction, ensuring instant liquidity on destination rails.",
-                  icon: Shield,
-                },
-                {
-                  id: "gasless",
-                  title: "Gasless USDC Payments",
-                  desc: "Sponsor gas or settle transaction costs directly in USDC using ERC-4337 Paymasters. No native gas tokens required.",
-                  icon: ShieldCheck,
-                },
               ].map((tab) => {
                 const TabIcon = tab.icon;
                 const isActive = activeSecurityTab === tab.id;
@@ -524,54 +512,6 @@ export default function LandingPage() {
 
             </div>
 
-          </div>
-
-          {/* Bottom Grid: 4-Column Flat Feature Row */}
-          <div className="mt-24 pt-12 border-t border-border/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                title: "You're in control",
-                desc: "We never store your private keys or recovery phrases.",
-                icon: Lock,
-              },
-              {
-                title: "Modular & flexible",
-                desc: "Add or remove security modules anytime to fit your needs.",
-                icon: LayoutGrid,
-              },
-              {
-                title: "Open & interoperable",
-                desc: "Built with open standards. Built for the future.",
-                icon: Code2,
-              },
-              {
-                title: "Works everywhere",
-                desc: "Any chain. Any device. Any application.",
-                icon: Globe,
-              },
-            ].map((feature, idx) => {
-              const HighlightIcon = feature.icon;
-              return (
-                <div 
-                  key={idx} 
-                  className={`flex flex-col gap-3 ${
-                    idx !== 0 ? "lg:border-l lg:border-border/10 lg:pl-8" : ""
-                  }`}
-                >
-                  <div className="h-8 w-8 flex items-center justify-center text-ring">
-                    <HighlightIcon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-foreground">
-                      {feature.title}
-                    </h4>
-                    <p className="text-xs text-zinc-500 mt-1 leading-relaxed font-medium">
-                      {feature.desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
           </div>
 
         </div>
