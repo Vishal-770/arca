@@ -1,59 +1,136 @@
 ---
-title: "Provision Smart Wallet"
-api: "POST /api/v1/wallets/provision"
-description: "Provision a non-custodial modular smart contract account (CPW/Safe) linked to a user profile or biometric passkey."
+title: "Modular Wallets & API Keys"
+description: "Comprehensive guide to frontend modular smart account provisioning via Circle WebAuthn and developer API Key REST endpoints."
 ---
 
-### Headers
-
-<ParamField header="x-api-key" type="string" required>
-  Your Arca Developer API Key.
-</ParamField>
-
-### Body Parameters
-
-<ParamField body="userId" type="string" required>
-  The unique developer-assigned identifier for the user (e.g. database ID, username).
-</ParamField>
-
-<ParamField body="walletType" type="string" required>
-  The target modular wallet engine: `circle_cpw`, `safe_multisig`, or `kernel_aa`.
-</ParamField>
-
-<ParamField body="passkeyCredentialId" type="string">
-  Optional biometric passkey credential ID. Required if selecting `circle_cpw` or kernel passkey signers.
-</ParamField>
-
-<ParamField body="ownerAddress" type="string">
-  Optional Externally Owned Account (EOA) address. Used if provisioning a smart contract account that delegates signature control to a specific key.
-</ParamField>
+Arca combines browser-based WebAuthn biometrics (passkeys) with Circle's Account Abstraction SDK to provision fully compliant, gasless modular smart contract accounts for users. Developers manage these configurations using secure Developer API Keys.
 
 ---
 
-### Response Fields
+## 1. Modular Smart Account SDK Integration (Frontend)
 
-<ResponseField name="success" type="boolean">
-  Indicates whether the smart wallet was successfully provisioned or retrieved.
+To build a seamless, passkey-secured, non-custodial recurring subscription experience, the Arca React SDK handles modular smart account provisioning natively in the client browser. It leverages `@circle-fin/modular-wallets-core` and Viem.
+
+### Client-Side Initialization Flow
+
+Below is the exact integration code used by the Arca checkout widget to initialize a subscriber's smart contract account using their browser WebAuthn biometric credentials, establish the RPC client, generate an ephemeral session key pair, and sign the EIP-712 mandate:
+
+```typescript
+import { createPublicClient, http, Client } from "viem";
+import { Wallet } from "ethers";
+import { toCircleSmartAccount } from "@circle-fin/modular-wallets-core";
+import { toWebAuthnAccount } from "@circle-fin/modular-wallets-core/webauthn";
+import { arcTestnet } from "@/lib/bridge_config"; // Chain ID: 5042002
+
+async function setupAutopaySubscription(session, planId, tierId, maxCycles, gatewayAddress) {
+  // 1. Instantiate the RPC provider for the target network (Arc Testnet)
+  const publicClient = createPublicClient({
+    chain: arcTestnet,
+    transport: http(arcTestnet.rpcUrls.default.http[0]),
+  });
+
+  // 2. Load the WebAuthn-based Modular Smart Account linked to the user's credential
+  const smartAccount = await toCircleSmartAccount({
+    client: publicClient as Client,
+    owner: toWebAuthnAccount({ credential: session.credential }),
+    name: session.username,
+  });
+
+  // 3. Generate a secure, local ephemeral Session Key pair for Relayer execution
+  const sessionWallet = Wallet.createRandom();
+  const sessionPublicKey = sessionWallet.address;
+  const sessionPrivateKey = sessionWallet.privateKey;
+
+  // 4. Set chronological nonces and expiration parameters
+  const nonce = Math.floor(Date.now() / 1000);
+  const deadline = Math.floor(Date.now() / 1000) + 5 * 365 * 24 * 3600; // 5-year expiration
+
+  // 5. Sign the typed EIP-712 AuthorizeSessionKey intent directly on the Smart Account
+  const signature = await smartAccount.signTypedData({
+    domain: {
+      name: "Arca Subscription Gateway",
+      version: "1",
+      chainId: 5042002, // Arc Testnet
+      verifyingContract: gatewayAddress,
+    },
+    types: {
+      AuthorizeSessionKey: [
+        { name: "subscriber", type: "address" },
+        { name: "sessionPublicKey", type: "address" },
+        { name: "planId", type: "bytes32" },
+        { name: "tierId", type: "uint256" },
+        { name: "maxCycles", type: "uint256" },
+        { name: "deadline", type: "uint256" },
+      ],
+    },
+    primaryType: "AuthorizeSessionKey",
+    message: {
+      subscriber: smartAccount.address,
+      sessionPublicKey: sessionPublicKey,
+      planId: planId,
+      tierId: BigInt(tierId),
+      maxCycles: BigInt(maxCycles),
+      deadline: BigInt(deadline),
+    },
+  });
+
+  return {
+    subscriberAddress: smartAccount.address,
+    sessionPublicKey,
+    sessionPrivateKey,
+    signature,
+    nonce,
+    deadline
+  };
+}
+```
+
+This client-side flow returns a counterfactual smart contract account address (`smartAccount.address`) that requires **zero gas tokens** from the user, as subsequent executions are relayed gaslessly by the relayer network.
+
+---
+
+## 2. Developer API Keys API Reference
+
+To query plan states, subscriber analytics, and manage transaction scopes programmatically, developers generate secure API Keys via the Arca Merchant Dashboard. These are managed backend via `/api/keys`.
+
+### Authentication Policy
+All REST requests to the Arca API server must include the generated key in the HTTP request headers:
+```http
+x-api-key: arca_live_...
+```
+
+---
+
+### A. Generate Developer API Key (POST)
+
+Creates and registers a new secure API Key, hashes the key using SHA-256 for secure database verification, and returns the raw key **exactly once** to the user.
+
+Endpoint: `POST /api/keys`
+
+#### Request Body
+
+<ParamField body="userToken" type="string" required>
+  The active developer/merchant user account identifier.
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  A descriptive label for the API Key (e.g. `Production checkout key`).
+</ParamField>
+
+<ParamField body="merchantAddress" type="string">
+  Optional EVM wallet address to scope this API Key. If provided, the key is restricted exclusively to reading/writing data for this specific merchant contract on-chain.
+</ParamField>
+
+---
+
+#### Response Fields
+
+<ResponseField name="id" type="string">
+  The unique MongoDB `ObjectId` of the generated API Key record.
 </ResponseField>
 
-<ResponseField name="walletAddress" type="string">
-  The EVM-compatible deployed contract address of the user's smart wallet.
-</ResponseField>
-
-<ResponseField name="walletType" type="string">
-  The wallet architecture type provisioned.
-</ResponseField>
-
-<ResponseField name="isDeployed" type="boolean">
-  True if the wallet contract has been deployed on-chain; false if it operates as a counterfactual address (waiting for the first transaction).
-</ResponseField>
-
-<ResponseField name="erc1271Active" type="boolean">
-  True if the contract is active and fully configured to support ERC-1271 signature validation requests.
-</ResponseField>
-
-<ResponseField name="circleWalletId" type="string">
-  The underlying Circle Programmable Wallet ID reference (returned only for `circle_cpw` type).
+<ResponseField name="rawKey" type="string">
+  The raw cryptographic developer key (starts with `arca_`). **WARNING: This is displayed only once and cannot be retrieved again.**
 </ResponseField>
 
 ---
@@ -61,13 +138,12 @@ description: "Provision a non-custodial modular smart contract account (CPW/Safe
 <RequestExample>
 
 ```bash cURL
-curl -X POST "https://api-arca.vercel.app/api/v1/wallets/provision" \
-  -H "x-api-key: arca_test_51Pj..." \
+curl -X POST "https://arca7.vercel.app/api/keys" \
   -H "Content-Type: application/json" \
   -d '{
-    "userId": "user_vishal_99",
-    "walletType": "circle_cpw",
-    "passkeyCredentialId": "credential_9a2b8c...1a2b"
+    "userToken": "merchant_user_vishal",
+    "name": "Live Payment Gateway Key",
+    "merchantAddress": "0x123abc456def7890123abc456def7890123abc45"
   }'
 ```
 
@@ -77,12 +153,67 @@ curl -X POST "https://api-arca.vercel.app/api/v1/wallets/provision" \
 
 ```json 200 OK
 {
-  "success": true,
-  "walletAddress": "0x8a3c8f8a3c8f8a3c8f8a3c8f8a3c8f8a3c8f7f2e",
-  "walletType": "circle_cpw",
-  "isDeployed": true,
-  "erc1271Active": true,
-  "circleWalletId": "w_5a8c9e...1b2c"
+  "id": "65b9e2c43a8b2c1d0e9f8a7c",
+  "rawKey": "arca_live_7a3d9f2c1b8e4f5a6c7d8e9f0a1b2c3d"
+}
+```
+
+</ResponseExample>
+
+---
+
+### B. Retrieve Active API Keys (GET)
+
+Retrieves all active, non-revoked API Keys registered for the user's account session. Hashed keys are hidden; only prefix masks are returned.
+
+Endpoint: `GET /api/keys`
+
+#### Query Parameters
+
+<ParamField query="userToken" type="string" required>
+  The developer's active session token to authenticate the list request.
+</ParamField>
+
+---
+
+#### Response Fields
+
+<ResponseField name="keys" type="array">
+  An array of active API Key metadata records:
+  <Expandable title="key metadata properties">
+    <ResponseField name="id" type="string">The database unique identifier of the key record.</ResponseField>
+    <ResponseField name="name" type="string">The name assigned to the key.</ResponseField>
+    <ResponseField name="prefix" type="string">The first 8 characters of the raw key (used to identify which key is active).</ResponseField>
+    <ResponseField name="mask" type="string">The last 4 characters of the raw key (e.g. `2c3d`).</ResponseField>
+    <ResponseField name="createdAt" type="string">ISO timestamp when the key was created.</ResponseField>
+    <ResponseField name="lastUsedAt" type="string | null">ISO timestamp of the key's last API usage. Returns `null` if unused.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://arca7.vercel.app/api/keys?userToken=merchant_user_vishal"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "keys": [
+    {
+      "id": "65b9e2c43a8b2c1d0e9f8a7c",
+      "name": "Live Payment Gateway Key",
+      "prefix": "arca_liv",
+      "mask": "2c3d",
+      "createdAt": "2024-05-25T12:00:00.000Z",
+      "lastUsedAt": "2024-05-25T14:30:22.000Z"
+    }
+  ]
 }
 ```
 
