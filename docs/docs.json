@@ -23,7 +23,23 @@
       "family": "Inter"
     }
   },
-
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@arca.com"
+      },
+      {
+        "label": "Example App",
+        "href": "https://github.com/Vishal-770/arca/tree/main/demo-app"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Launch App",
+      "href": "https://arca7.vercel.app/dashboard"
+    }
+  },
   "footer": {
     "socials": {
       "github": "https://github.com/Vishal-770/arca"
@@ -44,7 +60,8 @@
             "pages": [
               "introduction",
               "quickstart",
-              "pricing"
+              "pricing",
+              "resources"
             ]
           },
           {
