@@ -522,27 +522,6 @@ export default function LandingPage() {
                 />
               </div>
 
-              {/* Chain connection details (Flat, inline labels) */}
-              <div className="flex flex-col gap-3 w-full max-w-[450px] text-left">
-                <span className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase">Supported Networks</span>
-                <div className="flex flex-wrap items-center gap-3">
-                  {[
-                    { name: "Ethereum", icon: "/seoplia-logo.png" },
-                    { name: "Arc Network", icon: "/arc-logo.png" },
-                    { name: "Avalanche", icon: "/avalanche-logo.png" },
-                    { name: "Polygon", icon: "/polygon-logo.png" },
-                    { name: "Arbitrum", icon: "/arbitrum-logo.png" },
-                  ].map((chain, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5 bg-zinc-900/40 border border-zinc-800/40 px-3.5 py-2 rounded-full text-xs font-medium text-zinc-300">
-                      <div className="relative h-4.5 w-4.5 shrink-0">
-                        <Image src={chain.icon} alt={chain.name} fill className="object-contain" />
-                      </div>
-                      <span>{chain.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
             </div>
 
           </div>
