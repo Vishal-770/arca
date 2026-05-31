@@ -27,8 +27,8 @@ export function CopyDocumentationButton({ content }: CopyDocumentationButtonProp
       onClick={handleCopy}
       className={`font-black text-[10px] uppercase tracking-widest transition-all duration-300 border-2 ${
         copied 
-          ? "border-[#3b82f6] bg-[#3b82f6]/10 text-[#3b82f6] shadow-lg shadow-[#3b82f6]/5" 
-          : "border-border hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/5 text-muted-foreground hover:text-[#3b82f6]"
+          ? "border-[var(--ring)] bg-[var(--ring)]/10 text-[var(--ring)] shadow-lg shadow-[var(--ring)]/5" 
+          : "border-border hover:border-[var(--ring)]/40 hover:bg-[var(--ring)]/5 text-muted-foreground hover:text-[var(--ring)]"
       }`}
     >
       {copied ? (

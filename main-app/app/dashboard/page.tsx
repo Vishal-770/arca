@@ -197,8 +197,8 @@ export default function DashboardOverviewPage() {
             </div>
           }
         >
-          {loading ? <Skeleton className="h-[180px] w-full rounded-xl" /> : (
-            <div className="h-[180px]">
+          {loading ? <Skeleton className="h-[300px] w-full rounded-xl" /> : (
+            <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={revenueChart} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                   <defs>

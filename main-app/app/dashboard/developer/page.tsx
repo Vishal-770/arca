@@ -153,7 +153,7 @@ export default function DeveloperPage() {
 
         <div className="flex items-center gap-2">
           <Link href="/docs">
-            <Button variant="outline" size="sm" className="font-bold gap-1.5 h-9">
+            <Button variant="outline" size="sm" className="font-bold gap-1.5 h-9 rounded-xl">
               API Docs
               <ArrowUpRight size={13} />
             </Button>
@@ -167,7 +167,7 @@ export default function DeveloperPage() {
             }}
           >
             <DialogTrigger asChild>
-              <Button className="font-bold gap-2 h-9">
+              <Button className="font-bold gap-2 h-9 rounded-xl">
                 <Plus size={14} />
                 New Key
               </Button>

@@ -358,7 +358,7 @@ export default function WebhooksPage() {
 
         <div className="flex items-center gap-2">
           <Link href="/docs">
-            <Button variant="outline" size="sm" className="font-bold gap-1.5 h-9">
+            <Button variant="outline" size="sm" className="font-bold gap-1.5 h-9 rounded-xl">
               API Docs
               <ArrowUpRight size={13} />
             </Button>
@@ -377,12 +377,12 @@ export default function WebhooksPage() {
             }}
           >
             <DialogTrigger asChild>
-              <Button className="font-bold gap-2 h-9" disabled={plans.length === 0}>
+              <Button className="font-bold gap-2 h-9 rounded-xl" disabled={plans.length === 0}>
                 <Plus size={14} />
                 Add Webhook
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md rounded-3xl border border-border/30 shadow-2xl p-6 bg-popover">
               <DialogHeader>
                 <DialogTitle className="text-sm font-bold uppercase tracking-widest">
                   Configure Webhook Endpoint
@@ -414,12 +414,12 @@ export default function WebhooksPage() {
                       value={selectedPlanId}
                       onValueChange={(val) => setSelectedPlanId(val || "")}
                     >
-                      <SelectTrigger className="w-full bg-background border border-input h-10 px-3 rounded-lg text-xs font-semibold focus:ring-1 focus:ring-primary focus-visible:outline-none text-left flex items-center justify-between min-w-0 gap-2">
+                      <SelectTrigger className="w-full bg-muted/20 border border-border/80 h-11 px-4 rounded-xl text-xs font-bold focus:ring-1 focus:ring-primary focus-visible:outline-none text-left flex items-center justify-between min-w-0 gap-2">
                         <span className="truncate pr-4 block max-w-[280px] sm:max-w-[360px]">
                           {availablePlanOptions.find((opt) => opt.id === selectedPlanId)?.label || "Select a subscription plan"}
                         </span>
                       </SelectTrigger>
-                      <SelectContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
+                      <SelectContent className="max-w-[calc(100vw-2rem)] sm:max-w-md rounded-xl border border-border/30 shadow-xl bg-popover">
                         {availablePlanOptions.map((opt) => (
                           <SelectItem key={opt.id} value={opt.id} className="text-xs font-semibold max-w-full">
                             <span className="truncate block max-w-[260px] sm:max-w-[340px]">
@@ -450,7 +450,7 @@ export default function WebhooksPage() {
                 </div>
 
                 {/* Active Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/40">
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-muted/40 border border-border/40">
                   <div className="space-y-0.5">
                     <p className="text-xs font-bold text-foreground">Endpoint Status</p>
                     <p className="text-[9px] text-muted-foreground/60">Immediately enable or disable event deliveries.</p>
@@ -480,7 +480,7 @@ export default function WebhooksPage() {
                 <Button
                   onClick={handleCreateWebhook}
                   disabled={isSubmitting || availablePlanOptions.length === 0 || !webhookUrl.trim()}
-                  className="w-full font-bold h-9"
+                  className="w-full font-bold h-9 rounded-xl"
                 >
                   {isSubmitting ? "Configuring…" : "Deploy Webhook"}
                 </Button>
@@ -530,7 +530,7 @@ export default function WebhooksPage() {
               </p>
             </div>
             <Link href="/dashboard/plans/create">
-              <Button className="font-bold h-9 gap-2">
+              <Button className="font-bold h-9 gap-2 rounded-xl">
                 <Plus size={14} /> Deploy Plan
               </Button>
             </Link>
@@ -557,28 +557,30 @@ export default function WebhooksPage() {
               return (
                 <div
                   key={wh.id}
-                  className="flex flex-col gap-6 py-6 border-b border-border/40 last:border-b-0"
+                  className="relative group flex flex-col gap-6 p-6 rounded-3xl border border-border/30 bg-gradient-to-br from-card/65 to-card/25 backdrop-blur-xs shadow-xs hover:shadow-md hover:border-primary/25 transition-all duration-300 mb-6"
                 >
                   {/* Top info row */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-1 min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-bold text-base truncate text-foreground">
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div className="space-y-3 min-w-0">
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <span className="font-bold text-lg tracking-tight text-foreground">
                           {planTitle}
                         </span>
-                        <Layers size={13} className="text-muted-foreground/50" />
+                        <Layers size={13} className="text-muted-foreground/50 animate-pulse" />
                         <Badge
                           variant={wh.isActive ? "secondary" : "outline"}
-                          className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-lg border-none ${
+                          className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-xl border-none ${
                             wh.isActive ? "bg-blue-500/10 text-blue-500" : "bg-muted text-muted-foreground/40"
                           }`}
                         >
                           {wh.isActive ? "Active" : "Disabled"}
                         </Badge>
                       </div>
-                      <p className="font-mono text-xs text-muted-foreground break-all max-w-2xl select-all">
-                        {wh.url}
-                      </p>
+                      
+                      <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground bg-muted/30 px-3.5 py-2 rounded-xl border border-border/10 w-fit max-w-full break-all shadow-inner">
+                        <Globe size={12} className="text-muted-foreground/60 shrink-0" />
+                        <span className="select-all">{wh.url}</span>
+                      </div>
                     </div>
 
                     {/* Quick actions */}
@@ -587,7 +589,7 @@ export default function WebhooksPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleOpenEdit(wh)}
-                        className="font-bold h-8 text-[10px] uppercase gap-1.5 border-border/80"
+                        className="font-bold h-8 text-[10px] uppercase gap-1.5 border-border/80 rounded-xl"
                       >
                         <Settings2 size={12} />
                         Configure
@@ -596,7 +598,7 @@ export default function WebhooksPage() {
                         variant="ghost"
                         size="icon-sm"
                         onClick={() => setWebhookToDelete(wh)}
-                        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8 rounded-lg"
+                        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8 rounded-xl transition-colors"
                       >
                         <Trash2 size={14} />
                       </Button>
@@ -604,13 +606,13 @@ export default function WebhooksPage() {
                   </div>
 
                   {/* Cryptosecrets details row */}
-                  <div className="grid gap-4 sm:grid-cols-2 bg-muted/20 p-4 rounded-xl border border-border/20">
+                  <div className="grid gap-5 sm:grid-cols-2 bg-muted/15 p-5 rounded-2xl border border-border/10 shadow-inner">
                     <div className="space-y-1">
                       <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
                         Signing Secret
                       </span>
                       <div className="flex items-center gap-2">
-                        <code className="text-xs font-mono font-bold bg-background border border-border px-2.5 py-1 rounded-lg w-full flex items-center justify-between text-foreground">
+                        <code className="text-xs font-mono font-bold bg-background/60 border border-border/40 px-3 py-1.5 rounded-xl w-full flex items-center justify-between text-foreground">
                           {isRevealed ? wh.secret : "whsec_••••••••••••••••••••••••••••••••"}
                           <button
                             onClick={() => toggleSecretReveal(wh.id)}
@@ -623,7 +625,7 @@ export default function WebhooksPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => copyToClipboard(wh.secret, wh.id)}
-                          className="h-8 w-8 rounded-lg shrink-0 border border-border bg-background"
+                          className="h-8 w-8 rounded-xl shrink-0 border border-border/40 bg-background/80 hover:bg-background transition-all shadow-xs"
                         >
                           {isCopied ? (
                             <Check size={13} className="text-blue-500" />
@@ -670,11 +672,11 @@ export default function WebhooksPage() {
       </div>
 
       {/* ── Webhook Delivery Logs Panel ───────────────────────── */}
-      <div className="border border-border/60 bg-muted/5 rounded-[2rem] p-6 lg:p-8 space-y-8">
+      <div className="border border-border/30 bg-card/25 rounded-[2rem] p-6 lg:p-8 space-y-8 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1 text-left">
             <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
-              <Terminal size={18} className="text-primary" />
+              <Terminal size={18} className="text-primary animate-pulse" />
               Webhook Activity Logs
             </h2>
             <p className="text-xs text-muted-foreground">
@@ -686,7 +688,7 @@ export default function WebhooksPage() {
             size="sm"
             onClick={() => fetchLogs(true)}
             disabled={refreshingLogs || loadingLogs}
-            className="font-bold gap-1.5 h-8 border-border/80 shrink-0 self-start sm:self-auto"
+            className="font-bold gap-1.5 h-8 border-border/80 shrink-0 self-start sm:self-auto rounded-xl"
           >
             <RefreshCw size={12} className={`${refreshingLogs ? "animate-spin" : ""}`} />
             {refreshingLogs ? "Refreshing…" : "Refresh logs"}
@@ -708,18 +710,18 @@ export default function WebhooksPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto text-left">
-            <table className="w-full text-left border-collapse min-w-[700px]">
+          <div className="overflow-x-auto text-left -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full text-left border-separate border-spacing-y-3 min-w-[700px]">
               <thead>
-                <tr className="border-b border-border/40 pb-2">
-                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground pb-3 pl-2">Status</th>
-                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground pb-3">Event / Method</th>
-                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground pb-3">Destination URL</th>
-                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground pb-3">Time</th>
-                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground pb-3 text-right pr-2">Actions</th>
+                <tr>
+                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 pb-1 pl-4">Status</th>
+                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 pb-1">Event / Method</th>
+                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 pb-1">Destination URL</th>
+                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 pb-1">Time</th>
+                  <th className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 pb-1 text-right pr-4">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/20">
+              <tbody>
                 {logs.map((log) => {
                   const isSuccess = log.status >= 200 && log.status < 300;
                   const formattedTime = new Date(log.timestamp).toLocaleTimeString("en-US", {
@@ -734,12 +736,12 @@ export default function WebhooksPage() {
                   });
 
                   return (
-                    <tr key={log.id} className="hover:bg-muted/10 transition-colors group">
+                    <tr key={log.id} className="group transition-all duration-300">
                       {/* Status badge */}
-                      <td className="py-3.5 pl-2">
+                      <td className="py-4 pl-4 bg-muted/10 border-y border-l border-border/15 group-hover:bg-muted/20 group-hover:border-border/30 first:rounded-l-2xl transition-all duration-300">
                         <Badge
                           variant={isSuccess ? "secondary" : "destructive"}
-                          className={`text-[10px] font-black px-2 py-0.5 rounded-md border-none ${
+                          className={`text-[10px] font-black px-2.5 py-0.5 rounded-xl border-none ${
                             isSuccess
                               ? "bg-blue-500/10 text-blue-500"
                               : log.status === 0
@@ -752,37 +754,37 @@ export default function WebhooksPage() {
                       </td>
 
                       {/* Event / Method */}
-                      <td className="py-3.5">
+                      <td className="py-4 bg-muted/10 border-y border-border/15 group-hover:bg-muted/20 group-hover:border-border/30 transition-all duration-300">
                         <div className="flex flex-col">
                           <span className="text-xs font-bold text-foreground">{log.event}</span>
-                          <span className="text-[9px] font-mono text-muted-foreground/60 uppercase">POST</span>
+                          <span className="text-[9px] font-mono text-muted-foreground/60 uppercase mt-0.5">POST</span>
                         </div>
                       </td>
 
                       {/* Destination URL */}
-                      <td className="py-3.5 max-w-[220px]">
+                      <td className="py-4 bg-muted/10 border-y border-border/15 group-hover:bg-muted/20 group-hover:border-border/30 max-w-[220px] transition-all duration-300">
                         <span className="text-xs font-mono text-muted-foreground/80 truncate block select-all group-hover:text-foreground transition-colors" title={log.url}>
                           {log.url}
                         </span>
                       </td>
 
                       {/* Time and Duration */}
-                      <td className="py-3.5">
+                      <td className="py-4 bg-muted/10 border-y border-border/15 group-hover:bg-muted/20 group-hover:border-border/30 transition-all duration-300">
                         <div className="flex flex-col text-xs">
-                          <span className="font-semibold text-foreground/80">{formattedDate}, {formattedTime}</span>
-                          <span className="text-[10px] text-muted-foreground/50">{log.durationMs}ms</span>
+                          <span className="font-semibold text-foreground/85">{formattedDate}, {formattedTime}</span>
+                          <span className="text-[10px] text-muted-foreground/50 mt-0.5">{log.durationMs}ms</span>
                         </div>
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 text-right pr-2">
+                      <td className="py-4 pr-4 bg-muted/10 border-y border-r border-border/15 group-hover:bg-muted/20 group-hover:border-border/30 last:rounded-r-2xl transition-all duration-300 text-right">
                         <div className="flex items-center justify-end gap-2">
                           {log.txHash && (
                             <a
                               href={`https://testnet.arcscan.app/tx/${log.txHash}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-border/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+                              className="inline-flex items-center justify-center h-7 w-7 rounded-xl border border-border/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
                               title="View on ArcScan Explorer"
                             >
                               <ExternalLink size={12} />
@@ -792,7 +794,7 @@ export default function WebhooksPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setSelectedLogDetails(log)}
-                            className="font-bold h-7 text-[10px] uppercase border-border/40 gap-1 pl-2.5 pr-2.5"
+                            className="font-bold h-7 text-[10px] uppercase border-border/40 gap-1 pl-2.5 pr-2.5 rounded-xl"
                           >
                             <FileText size={11} />
                             Inspect
@@ -815,10 +817,10 @@ export default function WebhooksPage() {
           if (!open) setSelectedLogDetails(null);
         }}
       >
-        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto flex flex-col p-6 text-left">
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto flex flex-col p-6 text-left rounded-3xl border border-border/30 shadow-2xl bg-popover">
           <DialogHeader className="pb-3 border-b border-border/40 shrink-0">
             <DialogTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2 text-left">
-              <Terminal size={15} className="text-primary" />
+              <Terminal size={15} className="text-primary animate-pulse" />
               Delivery Inspection Detail
             </DialogTitle>
             <DialogDescription className="text-xs text-left">
@@ -829,7 +831,7 @@ export default function WebhooksPage() {
           {selectedLogDetails && (
             <div className="space-y-5 py-4 flex-1 text-left min-h-0 overflow-y-auto pr-1">
               {/* Delivery stats strip */}
-              <div className="grid grid-cols-3 gap-3 bg-muted/30 p-3.5 rounded-xl border border-border/30 text-left">
+              <div className="grid grid-cols-3 gap-3 bg-muted/30 p-4 rounded-2xl border border-border/30 text-left">
                 <div className="space-y-0.5">
                   <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/70">Response Status</span>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -860,7 +862,7 @@ export default function WebhooksPage() {
               </div>
 
               {/* Endpoint target details */}
-              <div className="space-y-1 bg-muted/10 p-3 rounded-xl border border-border/10 text-xs text-left">
+              <div className="space-y-2 bg-muted/10 p-4 rounded-2xl border border-border/10 text-xs text-left">
                 <div className="flex justify-between items-center gap-2">
                   <span className="text-muted-foreground font-semibold">Destination URL</span>
                   <span className="font-mono text-foreground break-all select-all font-medium text-right max-w-[70%]">{selectedLogDetails.url}</span>
@@ -884,7 +886,7 @@ export default function WebhooksPage() {
                       <ExternalLink size={10} />
                     </a>
                   ) : (
-                    <span className="text-muted-foreground font-mono">None</span>
+                    <span className="text-muted-foreground font-mono font-medium">None</span>
                   )}
                 </div>
               </div>
@@ -900,13 +902,13 @@ export default function WebhooksPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => navigator.clipboard.writeText(JSON.stringify(selectedLogDetails.payload, null, 2))}
-                    className="h-6 w-6 rounded-md hover:bg-muted border border-border/40"
+                    className="h-6 w-6 rounded-xl hover:bg-muted border border-border/40 transition-all"
                     title="Copy payload"
                   >
                     <Copy size={11} />
                   </Button>
                 </div>
-                <pre className="text-[10px] font-mono p-3 bg-background border border-border/60 rounded-xl overflow-x-auto max-h-56 leading-relaxed select-all">
+                <pre className="text-[10px] font-mono p-4 bg-background border border-border/60 rounded-2xl overflow-x-auto max-h-56 leading-relaxed select-all">
                   {JSON.stringify(selectedLogDetails.payload, null, 2)}
                 </pre>
               </div>
@@ -917,7 +919,7 @@ export default function WebhooksPage() {
                   <FileText size={10} />
                   Response Body (Merchant Server Output)
                 </label>
-                <div className="p-3 bg-background border border-border/60 rounded-xl max-h-36 overflow-y-auto select-all text-left">
+                <div className="p-4 bg-background border border-border/60 rounded-2xl max-h-36 overflow-y-auto select-all text-left">
                   {selectedLogDetails.responseBody ? (
                     <pre className="text-[10px] font-mono whitespace-pre-wrap break-all leading-normal text-muted-foreground text-left">
                       {selectedLogDetails.responseBody}
@@ -933,7 +935,7 @@ export default function WebhooksPage() {
           <DialogFooter className="mt-3 pt-3 border-t border-border/40 shrink-0">
             <Button
               onClick={() => setSelectedLogDetails(null)}
-              className="w-full font-bold h-9 rounded-lg"
+              className="w-full font-bold h-9 rounded-xl"
             >
               Close details
             </Button>
@@ -943,7 +945,7 @@ export default function WebhooksPage() {
 
       {/* ── Edit Modal Dialog ───────────────────────────── */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md rounded-3xl border border-border/30 shadow-2xl p-6 bg-popover">
           <DialogHeader>
             <DialogTitle className="text-sm font-bold uppercase tracking-widest">
               Modify Webhook Configuration
@@ -966,8 +968,8 @@ export default function WebhooksPage() {
               <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 Assigned Subscription Plan
               </label>
-              <div className="h-10 bg-muted/40 border border-border/40 px-3 rounded-lg flex items-center justify-between">
-                <span className="text-xs font-bold text-foreground/80">
+              <div className="h-11 bg-muted/40 border border-border/40 px-4 rounded-xl flex items-center justify-between">
+                <span className="text-xs font-bold text-foreground">
                   {planTitleMap.get(selectedPlanId.toLowerCase()) ?? "Subscription Plan"}
                 </span>
               </div>
@@ -988,7 +990,7 @@ export default function WebhooksPage() {
             </div>
 
             {/* Active Toggle */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/40">
+            <div className="flex items-center justify-between p-3.5 rounded-2xl bg-muted/40 border border-border/40">
               <div className="space-y-0.5">
                 <p className="text-xs font-bold text-foreground">Endpoint Status</p>
                 <p className="text-[9px] text-muted-foreground/60">Immediately enable or disable event deliveries.</p>
@@ -1018,7 +1020,7 @@ export default function WebhooksPage() {
             <Button
               onClick={handleUpdateWebhook}
               disabled={isSubmitting || !webhookUrl.trim()}
-              className="w-full font-bold h-9"
+              className="w-full font-bold h-9 rounded-xl"
             >
               {isSubmitting ? "Saving…" : "Save Configurations"}
             </Button>
@@ -1033,7 +1035,7 @@ export default function WebhooksPage() {
           if (!open) setWebhookToDelete(null);
         }}
       >
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm rounded-3xl border border-border/30 shadow-2xl p-6 bg-popover">
           <DialogHeader>
             <DialogTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
               <AlertTriangle className="size-4 text-destructive" />
@@ -1053,14 +1055,14 @@ export default function WebhooksPage() {
             <Button
               variant="outline"
               onClick={() => setWebhookToDelete(null)}
-              className="font-bold text-xs h-9 rounded-lg"
+              className="font-bold text-xs h-9 rounded-xl"
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteWebhook}
-              className="font-bold text-xs h-9 rounded-lg"
+              className="font-bold text-xs h-9 rounded-xl"
             >
               Confirm Delete
             </Button>
