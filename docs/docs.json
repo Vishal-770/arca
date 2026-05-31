@@ -65,16 +65,6 @@
             ]
           },
           {
-            "group": "Architecture",
-            "pages": [
-              "architecture/overview",
-              "architecture/smart-accounts",
-              "architecture/session-keys",
-              "architecture/erc-1271",
-              "architecture/autopay"
-            ]
-          },
-          {
             "group": "React SDK",
             "pages": [
               "sdk/introduction",
@@ -92,6 +82,16 @@
               "sdk/theming",
               "sdk/types",
               "sdk/example-app"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "architecture/overview",
+              "architecture/smart-accounts",
+              "architecture/session-keys",
+              "architecture/erc-1271",
+              "architecture/autopay"
             ]
           }
         ]
