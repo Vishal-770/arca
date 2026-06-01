@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const CONTRACT_ADDRESS = "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2";
+  const CONTRACT_ADDRESS = "0xf9E298Fb973077C70278C657C543502345e7E75F";
 
   // Dummy plan details
   const price = ethers.parseUnits("1", 6); // 1 USDC

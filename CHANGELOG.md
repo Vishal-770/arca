@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Contract Redeployment**: Updated default protocol fee from 2.5% (250 bps) to 0.5% (50 bps).
+- **New Contract Address**: Deployed new `SubscriptionGateway` to `0xf9E298Fb973077C70278C657C543502345e7E75F` on Arc Testnet.
+
 ### Planned
 - Auto-renewal subscriptions with Gelato Automate
 - Email notification system
@@ -99,7 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ESLint and Prettier configuration
 
 ### Deployed
-- **Contract Address**: `0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2`
+- **Contract Address**: `0xf9E298Fb973077C70278C657C543502345e7E75F`
 - **Network**: Arc Testnet (Chain ID: 5042002)
 - **Frontend**: Deployed to Vercel
 

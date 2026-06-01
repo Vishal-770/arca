@@ -19,7 +19,7 @@ contract SubscriptionGateway {
 
     IERC20 public immutable USDC;
     address public owner;
-    uint256 public feeBps = 250; // 2.5% default
+    uint256 public feeBps = 50; // 0.5% default
 
     uint256 public planNonce;
 

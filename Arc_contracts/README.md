@@ -6,7 +6,7 @@ This directory contains the Solidity smart contracts for Mecha Pay's subscriptio
 
 **Network**: Arc Testnet (Chain ID: 5042002)  
 **Contract**: `SubscriptionGateway`  
-**Address**: [`0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2`](https://testnet.arcscan.app/address/0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2)  
+**Address**: [`0xf9E298Fb973077C70278C657C543502345e7E75F`](https://testnet.arcscan.app/address/0xf9E298Fb973077C70278C657C543502345e7E75F)  
 **USDC Token**: `0x3600000000000000000000000000000000000000` (Native ERC-20)
 
 ---
@@ -46,7 +46,7 @@ The **SubscriptionGateway** contract enables merchants to create subscription pl
 ```solidity
 IERC20 public immutable USDC;           // 0x3600...0000 on Arc Testnet
 address public owner;                    // Contract owner (fee recipient)
-uint256 public feeBps;                   // Protocol fee (250 = 2.5%)
+uint256 public feeBps;                   // Protocol fee (50 = 0.5%)
 uint256 public planNonce;                // Incremental plan ID
 uint32 public lastSubTimestamp;          // Monotonic timestamp tracker
 mapping(bytes32 => Plan) public plans;   // Plan storage
@@ -183,7 +183,7 @@ pnpm hardhat ignition deploy ./ignition/modules/SubscriptionGateway.js --network
 
 **Output**:
 ```
-Deployed SubscriptionGateway to: 0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2
+Deployed SubscriptionGateway to: 0xf9E298Fb973077C70278C657C543502345e7E75F
 ```
 
 ### Deployment Module
@@ -229,10 +229,10 @@ main().catch((error) => {
 ### Verify on ArcScan
 
 ```bash
-pnpm hardhat verify --network arc-testnet 0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2 "0x3600000000000000000000000000000000000000"
+pnpm hardhat verify --network arc-testnet 0xf9E298Fb973077C70278C657C543502345e7E75F "0x3600000000000000000000000000000000000000"
 ```
 
-**Verified Contract**: [View on ArcScan](https://testnet.arcscan.app/address/0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2)
+**Verified Contract**: [View on ArcScan](https://testnet.arcscan.app/address/0xf9E298Fb973077C70278C657C543502345e7E75F)
 
 ---
 
@@ -280,7 +280,7 @@ pnpm hardhat console --network arc-testnet
 ```javascript
 const gateway = await ethers.getContractAt(
   "SubscriptionGateway",
-  "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2"
+  "0xf9E298Fb973077C70278C657C543502345e7E75F"
 );
 
 // Create a plan
@@ -303,7 +303,7 @@ const { ethers } = require("ethers");
 const provider = new ethers.JsonRpcProvider("https://rpc.testnet.arc.network");
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
-const contractAddress = "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2";
+const contractAddress = "0xf9E298Fb973077C70278C657C543502345e7E75F";
 const abi = [/* ABI from artifacts */];
 
 const contract = new ethers.Contract(contractAddress, abi, wallet);
@@ -321,13 +321,13 @@ console.log("Subscribed! TX:", receipt.hash);
 
 ```bash
 # Read plan details
-cast call 0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2 \
+cast call 0xf9E298Fb973077C70278C657C543502345e7E75F \
   "plans(bytes32)(address,uint256,uint32,string,bool)" \
   0x1a2b3c4d... \
   --rpc-url https://rpc.testnet.arc.network
 
 # Create plan
-cast send 0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2 \
+cast send 0xf9E298Fb973077C70278C657C543502345e7E75F \
   "createPlan(uint256,uint32,string)" \
   10000000 2592000 "QmHash" \
   --private-key $PRIVATE_KEY \

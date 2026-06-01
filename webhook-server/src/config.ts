@@ -15,7 +15,7 @@ export const arcTestnet: Chain = {
 export const PORT = process.env.PORT || 5000;
 export const MONGODB_URI = process.env.MONGODB_URI;
 export const MONGODB_DB = process.env.MONGODB_DB || "mecha-pay";
-export const SUBSCRIPTION_GATEWAY_ADDRESS = "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2" as Hex;
+export const SUBSCRIPTION_GATEWAY_ADDRESS = "0xf9E298Fb973077C70278C657C543502345e7E75F" as Hex;
 export const ARC_RPC_URL = "https://rpc.testnet.arc.network";
 
 if (!MONGODB_URI) {

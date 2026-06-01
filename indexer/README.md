@@ -5,9 +5,9 @@ This directory contains The Graph protocol subgraph for indexing Mecha Pay's sub
 ## 📊 Deployed Subgraph
 
 **Network**: Arc Testnet (Chain ID: 5042002)  
-**Studio URL**: [https://thegraph.com/studio/subgraph/mecha-pay](https://thegraph.com/studio/subgraph/mecha-pay)  
+**Studio URL**: [https://thegraph.com/studio/subgraph/arca](https://thegraph.com/studio/subgraph/arca)  
 **Query Endpoint**: `[HIDDEN]` (Use `NEXT_PUBLIC_SUBGRAPH_URL` environment variable)  
-**Contract**: [`0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2`](https://testnet.arcscan.app/address/0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2)
+**Contract**: [`0xf9E298Fb973077C70278C657C543502345e7E75F`](https://testnet.arcscan.app/address/0xf9E298Fb973077C70278C657C543502345e7E75F)
 
 ---
 
@@ -163,7 +163,7 @@ pnpm add -g @graphprotocol/graph-cli
 ### Authentication
 
 ```bash
-# Get deploy key from https://thegraph.com/studio/subgraph/mecha-pay
+# Get deploy key from https://thegraph.com/studio/subgraph/arca
 graph auth --studio YOUR_DEPLOY_KEY
 ```
 
@@ -201,10 +201,10 @@ cd graph-node/docker
 docker-compose up
 
 # Create local subgraph
-graph create --node http://localhost:8020/ mecha-pay
+graph create --node http://localhost:8020/ arca
 
 # Deploy locally
-graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 mecha-pay
+graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 arca
 ```
 
 ---
@@ -218,13 +218,13 @@ graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 mecha-pa
 graph build
 
 # Deploy
-graph deploy --studio mecha-pay
+graph deploy --studio arca
 ```
 
 **Deployment Output**:
 ```
 Build completed: QmPzZBXPbRPLi64G2YkZGkaGtD4Mv9EHKH3kuEYrNj8CEx
-Deployed to: https://thegraph.com/studio/subgraph/mecha-pay
+Deployed to: https://thegraph.com/studio/subgraph/arca
 Queries (HTTP): [HIDDEN]
 ```
 
@@ -236,7 +236,7 @@ Queries (HTTP): [HIDDEN]
 
 # Rebuild and redeploy
 graph build
-graph deploy --studio mecha-pay
+graph deploy --studio arca
 ```
 
 ---
@@ -245,7 +245,7 @@ graph deploy --studio mecha-pay
 
 ### Using GraphQL Playground
 
-Visit: [https://thegraph.com/studio/subgraph/mecha-pay](https://thegraph.com/studio/subgraph/mecha-pay)
+Visit: [https://thegraph.com/studio/subgraph/arca](https://thegraph.com/studio/subgraph/arca)
 
 ### Example Queries
 
@@ -467,7 +467,7 @@ dataSources:
     name: SubscriptionGateway
     network: arc-testnet
     source:
-      address: "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2"
+      address: "0xf9E298Fb973077C70278C657C543502345e7E75F"
       abi: SubscriptionGateway
       startBlock: 33756576
     mapping:

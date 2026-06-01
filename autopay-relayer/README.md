@@ -42,7 +42,7 @@ pnpm start
 ```
 
 ### Deployed Contracts Targeted:
-* **SubscriptionGateway**: `0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2`
+* **SubscriptionGateway**: `0xf9E298Fb973077C70278C657C543502345e7E75F`
 * **USDC Address (Arc Testnet)**: `0x3600000000000000000000000000000000000000`
 * **Arc Testnet RPC**: `https://rpc.testnet.arc.network`
 
@@ -60,7 +60,7 @@ Checks database connectivity and displays active subscription counts.
   "status": "healthy",
   "database": "connected",
   "blockchain": "Arc Testnet (5042002)",
-  "verifyingContract": "0x094D8A6dEDF25ee8ccFe093ac48514B83b7e73D2",
+  "verifyingContract": "0xf9E298Fb973077C70278C657C543502345e7E75F",
   "metrics": {
     "totalPreAuthorizations": 12,
     "activePreAuthorizations": 10

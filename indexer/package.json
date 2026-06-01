@@ -1,13 +1,13 @@
 {
-  "name": "mecha-pay",
+  "name": "arca",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ mecha-pay",
-    "create-local": "graph create --node http://localhost:8020/ mecha-pay",
-    "remove-local": "graph remove --node http://localhost:8020/ mecha-pay",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 mecha-pay",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ arca",
+    "create-local": "graph create --node http://localhost:8020/ arca",
+    "remove-local": "graph remove --node http://localhost:8020/ arca",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 arca",
     "test": "graph test"
   },
   "dependencies": {

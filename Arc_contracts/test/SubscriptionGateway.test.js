@@ -12,7 +12,7 @@ describe("SubscriptionGateway", function () {
   let sessionWallet;
   let mockSmartAccount;
 
-  const INITIAL_FEE_BPS = 250; // 2.5%
+  const INITIAL_FEE_BPS = 50; // 0.5%
   const PLAN_DURATION = 30 * 24 * 60 * 60; // 30 days
   const TIER_PRICES = [ethers.parseUnits("50", 6), ethers.parseUnits("100", 6)]; // 50 USDC, 100 USDC
   const TIER_LABELS = ["Basic", "Pro"];
@@ -58,7 +58,7 @@ describe("SubscriptionGateway", function () {
       expect(await gateway.USDC()).to.equal(mockUSDC.target);
     });
 
-    it("Should have a default fee of 2.5%", async function () {
+    it("Should have a default fee of 0.5%", async function () {
       expect(await gateway.feeBps()).to.equal(INITIAL_FEE_BPS);
     });
 
