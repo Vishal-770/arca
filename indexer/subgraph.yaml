@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0xf9E298Fb973077C70278C657C543502345e7E75F"
       abi: SubscriptionGateway
-      startBlock: 43961192
+      startBlock: 45015600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.9
