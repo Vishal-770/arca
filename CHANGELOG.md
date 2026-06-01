@@ -82,7 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `SubscriptionGateway` contract deployed to Arc Testnet
   - Plan creation with IPFS metadata
   - Subscription payment processing
-  - Protocol fee system (2.5% default)
+  - Protocol fee system (0.5% default)
   - Direct seller payouts
 - **Frontend Application**:
   - Next.js 16 with App Router

@@ -172,9 +172,9 @@ export default function MyPlanDetailPage() {
   const { executeTransaction } = useCircleSDK();
 
   const effectiveFeePct = useMemo(() => {
-    if (!data) return 2.5;
+    if (!data) return 0.5;
     const gross = Number(data.analytics.grossEarnings);
-    if (gross <= 0) return 2.5;
+    if (gross <= 0) return 0.5;
     return (Number(data.analytics.feeCollected) / gross) * 100;
   }, [data?.analytics.grossEarnings, data?.analytics.feeCollected]);
 
