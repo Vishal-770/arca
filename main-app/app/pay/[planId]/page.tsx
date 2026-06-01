@@ -615,7 +615,7 @@ export default function PaymentPage() {
                 const st = tierStatus[tier.id] ?? "idle";
                 const err = tierError[tier.id];
                 const isInsuf = wallet
-                  ? Number(wallet.balance) < Number(formatUnits(BigInt(tier.price), 6))
+                  ? Number(wallet.balance) < Number(formatUnits(BigInt(tier.price), 6)) + 0.01
                   : false;
                 const busy = st === "subscribing";
                 const succeeded = st === "success";
@@ -672,6 +672,18 @@ export default function PaymentPage() {
                       {err && (
                         <div className="text-xs text-destructive flex items-center gap-1.5">
                           <AlertCircle className="h-3.5 w-3.5" /> {err}
+                        </div>
+                      )}
+
+                      {isInsuf && wallet && !isOwner && !isThisTierActive && !succeeded && (
+                        <div className="text-[10px] text-amber-500 font-medium flex items-start gap-1.5 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-lg animate-in fade-in duration-300">
+                          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-bold uppercase tracking-wider text-[8px] text-amber-500/80 leading-none mb-1">Insufficient Funds</p>
+                            <p className="leading-normal">
+                              Required: <span className="font-mono font-bold">{(Number(formatUnits(BigInt(tier.price), 6)) + 0.01).toFixed(2)} USDC</span> (Price: {Number(formatUnits(BigInt(tier.price), 6)).toFixed(2)} USDC + 0.01 USDC gas reserve). Current: <span className="font-mono font-bold">{Number(wallet.balance).toFixed(4)} USDC</span>.
+                            </p>
+                          </div>
                         </div>
                       )}
                     </div>

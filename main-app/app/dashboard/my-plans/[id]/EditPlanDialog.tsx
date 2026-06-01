@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Edit3, Plus, Trash2 } from "lucide-react";
+import { Edit3, Plus, Trash2, AlertCircle } from "lucide-react";
 import { useCircleSDK } from "@/context/CircleSDKContext";
 import { useDashboardContext } from "@/app/dashboard/_components/DashboardShell";
 import { Separator } from "@/components/ui/separator";
@@ -50,6 +50,16 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const usdcBalance = useMemo(() => {
+    if (!wallet?.tokenBalances) return 0;
+    const usdcToken = wallet.tokenBalances.find(
+      (tb) => tb.symbol.toUpperCase() === "USDC"
+    );
+    return usdcToken ? parseFloat(usdcToken.amount) : 0;
+  }, [wallet]);
+
+  const hasMinUsdc = usdcBalance >= 0.01;
+
   // Default values
   const [durationDays, setDurationDays] = useState(Math.max(1, Math.floor(durationSeconds / 86400)).toString());
   const [brandName, setBrandName] = useState(metadata?.brand?.name || metadata?.name || "");
@@ -79,6 +89,11 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
   const handleSave = async () => {
     if (!wallet?.address) {
       setError("Active smart account wallet not found");
+      return;
+    }
+
+    if (usdcBalance < 0.01) {
+      setError("Insufficient USDC balance. You need at least 0.01 USDC to pay transaction gas fees.");
       return;
     }
 
@@ -256,6 +271,18 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
             )}
           </div>
 
+          {!hasMinUsdc && (
+            <div className="flex items-start gap-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-xs leading-relaxed text-amber-500">
+              <AlertCircle size={15} className="stroke-[2.5px] mt-0.5 shrink-0" />
+              <div className="space-y-1">
+                <p className="font-bold uppercase tracking-wider text-[9px] text-amber-500/80 leading-none">Gas Protection Notice</p>
+                <p className="font-medium text-amber-600/90 dark:text-amber-400/90">
+                  Your USDC balance is too low to process this update. You currently have <span className="font-mono font-bold">{usdcBalance.toFixed(4)} USDC</span>. A minimum of <span className="font-mono font-bold">0.01 USDC</span> is required to cover transaction gas fees on Arc Testnet.
+                </p>
+              </div>
+            </div>
+          )}
+
           {error && <p className="text-sm text-destructive font-medium bg-destructive/10 p-3 rounded-lg">{error}</p>}
         </div>
 
@@ -264,7 +291,7 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
             <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
               Cancel
             </Button>
-            <Button onClick={() => void handleSave()} disabled={loading}>
+            <Button onClick={() => void handleSave()} disabled={loading || !hasMinUsdc}>
               {loading ? "Processing..." : "Save & Notify Buyers"}
             </Button>
           </DialogFooter>

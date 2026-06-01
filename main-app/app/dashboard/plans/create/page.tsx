@@ -208,6 +208,16 @@ export default function CreatePlanPage() {
   const { executeTransaction } = useCircleSDK();
   const { wallet } = useDashboardContext();
 
+  const usdcBalance = useMemo(() => {
+    if (!wallet?.tokenBalances) return 0;
+    const usdcToken = wallet.tokenBalances.find(
+      (tb) => tb.symbol.toUpperCase() === "USDC"
+    );
+    return usdcToken ? parseFloat(usdcToken.amount) : 0;
+  }, [wallet]);
+
+  const hasMinUsdc = usdcBalance >= 0.01;
+
   const [step, setStep] = useState(1);
   const [brandName, setBrandName] = useState("");
   const [brandWebsite, setBrandWebsite] = useState("");
@@ -233,6 +243,11 @@ export default function CreatePlanPage() {
   const handleSubmit = async () => {
     if (!wallet?.address) {
       setError("Active smart account wallet not found");
+      return;
+    }
+
+    if (usdcBalance < 0.01) {
+      setError("Insufficient USDC balance. You need at least 0.01 USDC to pay transaction gas fees.");
       return;
     }
 
@@ -368,6 +383,21 @@ export default function CreatePlanPage() {
         </div>
       </div>
 
+      {!hasMinUsdc && (
+        <div className="mb-8 flex items-start gap-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-5 text-sm leading-relaxed text-amber-500 shadow-sm shadow-amber-500/5 animate-in fade-in duration-300">
+          <AlertCircle size={18} className="stroke-[2.5px] mt-0.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-bold uppercase tracking-widest text-[10px] text-amber-500/80 leading-none">Gas Protection Alert</p>
+            <p className="font-medium text-amber-600/90 dark:text-amber-400/90">
+              Your USDC balance is too low to process this transaction. You currently have <span className="font-mono font-bold">{usdcBalance.toFixed(4)} USDC</span>. A minimum of <span className="font-mono font-bold">0.01 USDC</span> is required to pay for the gas fees to deploy your plan on-chain.
+            </p>
+            <p className="text-xs text-amber-600/60 dark:text-amber-400/60">
+              Please bridge or top up your smart account address before continuing.
+            </p>
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="mb-8 flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4 text-sm font-medium text-red-500">
           <AlertCircle size={16} className="stroke-[2px]" />
@@ -498,7 +528,7 @@ export default function CreatePlanPage() {
                 </Button>
                 <Button
                   onClick={() => void handleSubmit()}
-                  disabled={loading || tiers.some(t => !t.price || !t.label)}
+                  disabled={loading || !hasMinUsdc || tiers.some(t => !t.price || !t.label)}
                   className="group h-10 px-5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm shadow-xl shadow-primary/5"
                 >
                   {loading ? "Creating..." : "Create Plan"}

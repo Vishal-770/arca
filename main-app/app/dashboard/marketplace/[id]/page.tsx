@@ -168,6 +168,14 @@ export default function MarketplaceDetailPage() {
   const { executeTransaction } = useCircleSDK();
   const { wallet, userCircleId } = useDashboardContext();
 
+  const usdcBalance = useMemo(() => {
+    if (!wallet?.tokenBalances) return 0;
+    const usdcToken = wallet.tokenBalances.find(
+      (tb) => tb.symbol.toUpperCase() === "USDC"
+    );
+    return usdcToken ? parseFloat(usdcToken.amount) : 0;
+  }, [wallet]);
+
   const [data, setData] = useState<PlanResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -237,6 +245,15 @@ export default function MarketplaceDetailPage() {
     return data.plan.tiers.find((t) => t.tierId === selectedTierId);
   }, [data?.plan, selectedTierId]);
 
+  const priceInUsdc = useMemo(() => {
+    if (!selectedTier) return 0;
+    return parseFloat(formatUnits(selectedTier.price, 6));
+  }, [selectedTier]);
+
+  const hasSufficientUsdc = useMemo(() => {
+    return usdcBalance >= priceInUsdc + 0.01;
+  }, [usdcBalance, priceInUsdc]);
+
   const activeFeatures = useMemo(() => {
     if (!data?.plan?.metadata) return [];
     const meta = data.plan.metadata;
@@ -258,6 +275,11 @@ export default function MarketplaceDetailPage() {
     }
     if (!data?.plan || !selectedTier) {
       setError("Select a service tier");
+      return;
+    }
+
+    if (!hasSufficientUsdc) {
+      setError(`Insufficient USDC balance. You need at least ${(priceInUsdc + 0.01).toFixed(2)} USDC (Price: ${priceInUsdc.toFixed(2)} USDC + 0.01 USDC gas reserve) to complete this transaction. Current balance: ${usdcBalance.toFixed(4)} USDC.`);
       return;
     }
 
@@ -676,19 +698,32 @@ export default function MarketplaceDetailPage() {
                 </div>
               </div>
 
-              <Separator className="bg-border/10" />
+              <Separator className="bg-border/10" />              <div className="space-y-4">
+                {wallet && !isOwnerView && !blocked && selectedTier && !hasSufficientUsdc && (
+                  <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5 space-y-2 transition-all">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Insufficient Funds</p>
+                      <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    </div>
+                    <p className="text-[11px] text-amber-600/80 leading-relaxed font-bold tracking-tight uppercase">
+                      Required: <span className="font-mono font-black">{(priceInUsdc + 0.01).toFixed(2)} USDC</span>
+                    </p>
+                    <p className="text-[10px] text-amber-600/60 leading-relaxed">
+                      Price: {priceInUsdc.toFixed(2)} USDC + 0.01 USDC for transaction gas. Your active balance is <span className="font-mono font-bold">{usdcBalance.toFixed(4)} USDC</span>. Please bridge or deposit USDC to subscribe.
+                    </p>
+                  </div>
+                )}
 
-              <div className="space-y-4">
                 <Button 
                   onClick={() => void handleBuy()}
-                  disabled={submitting || blocked || !plan.active || !wallet || !selectedTierId || isOwnerView}
+                  disabled={submitting || blocked || !plan.active || !wallet || !selectedTierId || isOwnerView || (!isOwnerView && !blocked && !hasSufficientUsdc)}
                   className="group w-full font-black uppercase tracking-[0.2em] text-[11px] h-16 rounded-2xl transition-all bg-primary text-primary-foreground border-none disabled:opacity-50"
                 >
                   {submitting ? (
                     <div className="flex items-center gap-3">
                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/20 border-t-primary-foreground" />
                        Processing...
-                    </div>
+                     </div>
                   ) : isOwnerView ? (
                     "Manage as Owner"
                   ) : blocked ? (
@@ -698,6 +733,8 @@ export default function MarketplaceDetailPage() {
                     </div>
                   ) : !wallet ? (
                     "Connect Wallet"
+                  ) : !hasSufficientUsdc ? (
+                    "Insufficient USDC"
                   ) : (
                     <>
                       Pay & Subscribe
