@@ -1,6 +1,6 @@
-# Mecha Pay Data & Interaction Architecture
+# Arca Data & Interaction Architecture
 
-This document provides a comprehensive mapping of all API endpoints and interaction patterns within the Mecha Pay ecosystem.
+This document provides a comprehensive mapping of all API endpoints and interaction patterns within the Arca ecosystem.
 
 ## 1. Backend Interaction via Circle Wallets SDK
 These endpoints use the Circle Programmable Wallets SDK (User or Developer controlled) to manage keys, authorize transactions via PIN challenges, and execute smart contract calls.
@@ -24,11 +24,11 @@ These endpoints use the Circle Programmable Wallets SDK (User or Developer contr
 | | `POST /api/bridge/resolve-tx-hash` | Polling for tx hash after challenge success. | `getTransaction` |
 | **Admin** | `POST /api/admin/set-fee` | Updates protocol-wide fee settings. | `contractExecutionChallenge` |
 | | `POST /api/admin/withdraw` | Withdraws protocol revenue to treasury. | `contractExecutionChallenge` |
-| **System** | `POST /api/keys` | Generates off-chain Mecha API keys. | Backend Auth Logic |
+| **System** | `POST /api/keys` | Generates off-chain Arca API keys. | Backend Auth Logic |
 | | `GET /api/transactions` | Retrieves transaction history via Circle. | `listTransactions` |
 
 ## 2. Read-Only Data (GraphQL & Subgraph)
-These endpoints fetch indexed data from the Mecha Subgraph. This is the source of truth for the Marketplace, Merchant Dashboard, and User History.
+These endpoints fetch indexed data from the Arca Subgraph. This is the source of truth for the Marketplace, Merchant Dashboard, and User History.
 
 | Endpoint | Purpose | Entity Queried |
 | :--- | :--- | :--- |
@@ -53,6 +53,6 @@ Used for real-time validation or data that hasn't been indexed by the subgraph y
 | Service | Purpose | Integration |
 | :--- | :--- | :--- |
 | **Filebase (IPFS)** | Plan Metadata Storage | `POST /api/subscription/upload-metadata` |
-| **Mintlify** | Public Documentation | [mecha-pay.vercel.app/docs](https://mecha-pay.vercel.app/docs) |
+| **Docs Website** | Public Documentation | `arca-demoapp.vercel.app/docs` |
 | **Circle Iris API** | CCTP Attestations | Cross-chain message verification. |
-| **OAuth Providers** | Social Login | `POST /api/oauth` (Google, Apple, etc.) |
+| **Passkey Providers** | WebAuthn Modular Wallet Auth | Passkey session-bound authentication |

@@ -1,6 +1,6 @@
 # Arc Subscription Gateway Smart Contracts
 
-This directory contains the Solidity smart contracts for Mecha Pay's subscription payment system, deployed on **Arc Testnet** where USDC is the native gas token.
+This directory contains the Solidity smart contracts for Arca's subscription payment system, deployed on **Arc Testnet** where USDC is the native gas token.
 
 ## 📜 Deployed Contract
 
@@ -383,9 +383,9 @@ module.exports = {
 
 ## 🙋 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourorg/autopay/issues)
-- **Discord**: [Join our server](https://discord.gg/mechapay)
-- **Email**: support@mechapay.com
+- **Issues**: [GitHub Issues](https://github.com/Vishal-770/arca/issues)
+- **Discord**: [Join our server](https://discord.gg/arca)
+- **Email**: support@arca.network
 
 ---
 

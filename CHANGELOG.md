@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Mecha Pay will be documented in this file.
+All notable changes to Arca will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Payment Page**: Standalone checkout experience at `/pay/[planId]`
-  - Circle wallet authentication (Google OAuth)
+  - Circle wallet authentication (Passkey WebAuthn)
   - USDC balance checking
   - Optional CCTP bridging from 15+ chains
   - Success redirects with query parameters
@@ -181,7 +181,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Repository**: [https://github.com/yourorg/autopay](https://github.com/yourorg/autopay)
 - **Website**: [https://macha-pay.vercel.app](https://macha-pay.vercel.app)
 - **Documentation**: [https://macha-pay.vercel.app/docs](https://macha-pay.vercel.app/docs)
-- **The Graph**: [https://thegraph.com/studio/subgraph/mecha-pay](https://thegraph.com/studio/subgraph/mecha-pay)
+- **The Graph**: [https://thegraph.com/studio/subgraph/arca-pay](https://thegraph.com/studio/subgraph/arca-pay)
 
 ---
 

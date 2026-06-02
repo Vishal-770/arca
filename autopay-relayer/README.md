@@ -1,4 +1,4 @@
-# ⚡ MechaPay AutoPay Relayer Server
+# ⚡ Arca AutoPay Relayer Server
 
 A standalone, dedicated Node.js Express server and background worker written in **TypeScript** to automatically scan, verify, and execute pre-authorized subscription renewals on the **Arc Testnet** using user-consented session keys.
 
@@ -16,18 +16,18 @@ A standalone, dedicated Node.js Express server and background worker written in 
 
 ## 🛠️ Setup & Installation
 
-### 1. Install Dependencies
+* **1. Install Dependencies**
 Navigate to the relayer folder and install node packages:
 ```bash
 cd autopay-relayer
 pnpm install
 ```
 
-### 2. Configuration (`.env`)
+* **2. Configuration (`.env`)**
 The server reads configuration parameters directly from its `.env` file (copied from the frontend Next.js project).
 ```env
 MONGODB_URI=mongodb+srv://...
-MONGODB_DB=mecha-pay
+MONGODB_DB=arca
 PORT=4000
 CHECK_INTERVAL_MS=3600000 # Time between automated sweep runs (e.g., 1 hour)
 ```

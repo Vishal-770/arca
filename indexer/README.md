@@ -1,6 +1,6 @@
-# Mecha Pay Subgraph
+# Arca Subgraph
 
-This directory contains The Graph protocol subgraph for indexing Mecha Pay's subscription events on Arc Testnet.
+This directory contains The Graph protocol subgraph for indexing Arca's subscription events on Arc Testnet.
 
 ## 📊 Deployed Subgraph
 
@@ -25,7 +25,7 @@ This directory contains The Graph protocol subgraph for indexing Mecha Pay's sub
 
 ## 🎯 Overview
 
-The Mecha Pay subgraph indexes all events from the SubscriptionGateway smart contract and provides a GraphQL API for querying:
+The Arca subgraph indexes all events from the SubscriptionGateway smart contract and provides a GraphQL API for querying:
 
 - **Plans**: Subscription plans created by merchants
 - **Subscriptions**: Active and expired subscriptions
@@ -509,7 +509,7 @@ dataSources:
 ## 🙋 Support
 
 - **Issues**: [GitHub Issues](https://github.com/yourorg/autopay/issues)
-- **Discord**: [Join our server](https://discord.gg/mechapay)
+- **Discord**: [Join our server](https://discord.gg/arca)
 - **The Graph Discord**: [https://discord.gg/graphprotocol](https://discord.gg/graphprotocol)
 
 ---

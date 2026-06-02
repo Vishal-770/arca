@@ -1,10 +1,10 @@
-# Contributing to Mecha Pay
+# Contributing to Arca
 
-First off, thank you for considering contributing to Mecha Pay! It's people like you that make Mecha Pay such a great tool for the Web3 community.
+First off, thank you for considering contributing to Arca! It's people like you that make Arca such a great tool for the Web3 community.
 
 ## 🌟 Code of Conduct
 
-This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to support@mechapay.com.
+This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to support@arca.network.
 
 ### Our Standards
 
@@ -340,9 +340,9 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-**Thank you for contributing to Mecha Pay! Every contribution, no matter how small, is valuable. 💙**
+**Thank you for contributing to Arca! Every contribution, no matter how small, is valuable. 💙**
 
-Questions? Reach out to us at support@mechapay.com or join our [Discord](https://discord.gg/mechapay).
+Questions? Reach out to us at support@arca.network or join our [Discord](https://discord.gg/arca).
 
 
 

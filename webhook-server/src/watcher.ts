@@ -120,8 +120,8 @@ export async function startOnChainWebhookListener() {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  "User-Agent": "MechaPay-Webhook-Dispatcher/1.0",
-                  "X-MechaPay-Signature": signatureHeader,
+                  "User-Agent": "Arca-Webhook-Dispatcher/1.0",
+                  "X-Arca-Signature": signatureHeader,
                 },
                 body: payloadString,
                 signal: controller.signal,

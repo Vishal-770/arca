@@ -15,7 +15,7 @@ We release patches for security vulnerabilities for the following versions:
 
 ## 🚨 Reporting a Vulnerability
 
-We take the security of Mecha Pay seriously. If you discover a security vulnerability, please follow these steps:
+We take the security of Arca seriously. If you discover a security vulnerability, please follow these steps:
 
 ### Preferred Method: Private Disclosure
 
@@ -23,7 +23,7 @@ We take the security of Mecha Pay seriously. If you discover a security vulnerab
 
 Instead, please report security issues via:
 
-1. **Email**: security@mechapay.com
+1. **Email**: security@arca.network
 2. **Subject**: [SECURITY] Brief description
 3. **Include**:
    - Description of the vulnerability
@@ -95,9 +95,9 @@ Instead, please report security issues via:
 
 ### Wallet Security
 
-**Circle User-Controlled Wallets**:
+**Circle Modular Wallets**:
 - ✅ **MPC Architecture**: Private keys split across multiple parties
-- ✅ **OAuth Authentication**: Google login, no password management
+- ✅ **Passkey Authentication**: Secure WebAuthn, no password management
 - ✅ **PIN Protection**: 6-digit PIN required for all transactions
 - ✅ **Device Binding**: Wallets tied to device tokens
 - ✅ **Non-Custodial**: Users own keys via MPC shares
@@ -105,7 +105,7 @@ Instead, please report security issues via:
 
 **Best Practices for Users**:
 - Keep your PIN secure (never share)
-- Use a strong Google account with 2FA enabled
+- Use secure device-bound Passkeys for authentication
 - Don't share device tokens or user tokens
 - Verify transaction details before confirming
 
@@ -158,7 +158,7 @@ Before going live:
 - [ ] Store API keys in environment variables, never in code
 - [ ] Use HTTPS for all API calls
 - [ ] Implement rate limiting on your end
-- [ ] Validate all user inputs before sending to Mecha Pay APIs
+- [ ] Validate all user inputs before sending to Arca APIs
 - [ ] Handle errors gracefully (don't expose sensitive info)
 - [ ] Monitor for unusual activity (unexpected subscriptions)
 - [ ] Set up alerts for high-value transactions
@@ -243,10 +243,10 @@ Before going live:
 
 ## 📞 Contact
 
-- **Security Email**: security@mechapay.com
-- **General Support**: support@mechapay.com
-- **Discord**: [Join our server](https://discord.gg/mechapay)
-- **Twitter**: [@MechaPay](https://twitter.com/mechapay)
+- **Security Email**: security@arca.network
+- **General Support**: support@arca.network
+- **Discord**: [Join our server](https://discord.gg/arca)
+- **Twitter**: [@ArcaProtocol](https://twitter.com/arca)
 
 ---
 
@@ -263,4 +263,4 @@ We would like to thank the following security researchers for responsibly disclo
 
 ---
 
-*Mecha Pay is committed to the security and privacy of our users. Thank you for helping us keep our platform safe.*
+*Arca is committed to the security and privacy of our users. Thank you for helping us keep our platform safe.*
