@@ -24,6 +24,15 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -100,6 +109,7 @@ export default function PaymentPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [wallet, setWallet]           = useState<{ id: string; address: string; balance: string } | null>(null);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   // Per-tier tx state
   const [tierStatus, setTierStatus] = useState<Record<string, TierTxStatus>>({});
@@ -444,16 +454,44 @@ export default function PaymentPage() {
                   <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Connected</span>
                 </div>
                 <span className="h-2.5 w-px bg-border/30" />
-                <button
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to log out?")) {
-                      clearSession();
-                    }
-                  }}
-                  className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  Logout
-                </button>
+                <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+                  <DialogTrigger asChild>
+                    <button
+                      className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    >
+                      Logout
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="border border-border/80 bg-background p-6 rounded-2xl max-w-sm">
+                    <DialogHeader className="space-y-2">
+                      <DialogTitle className="text-sm font-bold text-foreground">
+                        Confirm Logout
+                      </DialogTitle>
+                      <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
+                        Are you sure you want to log out? This will terminate your active payment gateway session.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-6 flex flex-row gap-3 justify-end">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowLogoutDialog(false)}
+                        className="h-9 px-4 font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          clearSession();
+                          setShowLogoutDialog(false);
+                        }}
+                        className="h-9 px-4 font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer"
+                      >
+                        Logout
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
             <ModeToggle />
