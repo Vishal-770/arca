@@ -31,7 +31,7 @@ export default async function DashboardPage() {
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <span className="font-bold tracking-tight text-lg text-foreground">
-                Mecha Pay
+                Arca
               </span>
             </div>
             

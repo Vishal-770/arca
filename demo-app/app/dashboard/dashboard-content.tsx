@@ -39,11 +39,11 @@ function DashboardContentInner({ userId }: { userId: string }) {
     <div className="max-w-3xl mx-auto">
       {isProperTier ? (
         /* Subscribed state: Show active plan header and render the video directly */
-        <div className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border/80 pb-3">
-            <div className="space-y-0.5">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-widest block">Active Protocol Plan</span>
-              <h2 className="text-lg font-black text-foreground">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between border-b border-border/30 pb-4">
+            <div className="space-y-1 text-left">
+              <span className="text-[9px] font-bold text-[#70717D] uppercase tracking-[0.2em] block">Active Protocol Plan</span>
+              <h2 className="text-xl font-black text-foreground tracking-tight">
                 {isPlus ? "Plus Tier — 4K UHD Streaming" : "Basic Tier — Premium HD Streaming"}
               </h2>
             </div>
@@ -51,7 +51,7 @@ function DashboardContentInner({ userId }: { userId: string }) {
               href="/billing"
               className={cn(
                 buttonVariants({ variant: "outline" }),
-                "flex items-center gap-1.5 border-border cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-all shadow-sm"
+                "flex items-center gap-1.5 border border-border/80 cursor-pointer text-xs font-bold px-4 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all shadow-sm"
               )}
             >
               <CreditCard className="h-3.5 w-3.5" />
@@ -59,7 +59,7 @@ function DashboardContentInner({ userId }: { userId: string }) {
             </Link>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border border-border bg-black shadow-2xl">
+          <div className="rounded-2xl overflow-hidden border border-border bg-black shadow-2xl shadow-black/30">
             <video 
               controls 
               playsInline
@@ -78,16 +78,16 @@ function DashboardContentInner({ userId }: { userId: string }) {
         </div>
       ) : (
         /* Unsubscribed state: Show clean unified lock card */
-        <Card className="border border-border bg-card/30 rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-xl mx-auto shadow-xl">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-muted border border-border flex items-center justify-center text-muted-foreground shadow-inner">
-            <Tv className="h-8 w-8 text-primary animate-pulse" />
+        <Card className="border border-border/80 bg-card/25 backdrop-blur-md rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-xl mx-auto shadow-2xl shadow-black/10 hover:border-[#70717D]/30 transition-all duration-300">
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-[#70717D]/10 border border-[#70717D]/20 flex items-center justify-center text-[#70717D] shadow-inner animate-pulse-subtle">
+            <Tv className="h-8 w-8 text-primary" />
           </div>
           
           <div className="space-y-2">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Active Protocol Plan</span>
-            <h3 className="text-xl font-bold text-foreground">Free Tier — Locked</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
-              Please subscribe to the Basic Tier or higher on <Link href="/billing" className="text-primary hover:underline font-semibold">`/billing`</Link> to unlock streaming.
+            <span className="text-[9px] font-bold text-[#70717D] uppercase tracking-[0.2em] block">Active Protocol Plan</span>
+            <h3 className="text-xl font-black text-foreground tracking-tight">Free Tier — Locked</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
+              Please subscribe to the Basic Tier or higher on <Link href="/billing" className="text-primary hover:underline font-semibold">`/billing`</Link> to unlock premium streaming access.
             </p>
           </div>
 
@@ -96,10 +96,10 @@ function DashboardContentInner({ userId }: { userId: string }) {
               href="/billing"
               className={cn(
                 buttonVariants({ variant: "default" }),
-                "inline-flex items-center gap-2 cursor-pointer font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.02] transition-all"
+                "inline-flex items-center gap-2 cursor-pointer font-bold px-6 py-3 rounded-xl bg-white text-black hover:bg-zinc-100 transition-all hover:scale-[1.02] shadow-xl shadow-white/5 text-xs uppercase tracking-wider font-extrabold"
               )}
             >
-              <CreditCard className="h-4 w-4" />
+              <CreditCard className="h-4 w-4 shrink-0" />
               Subscribe on Billing
             </Link>
           </div>

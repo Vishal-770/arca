@@ -50,7 +50,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mecha Pay — Protocol Gating Portal",
+  title: "Arca — Protocol Gating Portal",
   description: "Secure and instant blockchain-gated subscription platform.",
 };
 
