@@ -199,7 +199,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-3 lg:gap-5">
-            <Link href="/login" className="flex h-10 items-center justify-center gap-2 rounded-full bg-foreground/10 px-6 text-sm font-semibold text-foreground hover:bg-foreground hover:text-background transition-colors">
+            <Link href="/login" className="flex h-10 items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-black hover:bg-zinc-100 transition-colors">
               <span>Launch App</span>
               <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -221,7 +221,7 @@ export default function LandingPage() {
                   transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <span className="block">USDC-Native</span>
-                  <span className="block text-primary">Membership</span>
+                  <span className="block text-[#70717D]">Membership</span>
                   <span className="block">Infrastructure.</span>
                 </motion.h1>
                 
@@ -243,7 +243,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
               >
-                <Link href="/login" className="flex h-12 px-6 items-center justify-center gap-2 rounded-full bg-ring text-white font-semibold text-sm hover:bg-ring/90 transition-colors">
+                <Link href="/login" className="flex h-12 px-6 items-center justify-center gap-2 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-100 transition-colors">
                   <span>Open Console</span>
                   <ArrowUpRight className="h-4 w-4 stroke-[2.5px]" />
                 </Link>
@@ -290,7 +290,7 @@ export default function LandingPage() {
           >
 
           <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif">
-            USDC-Native. <br/><span className="text-ring">Arc-Powered.</span>
+            USDC-Native. <br/><span className="text-[#70717D]">Arc-Powered.</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
             Arca is the membership infrastructure for the Arc network. By combining Circle&apos;s Programmable Wallets with CCTP bridging, we&apos;ve eliminated gas complexity, allowing users to pay entirely in USDC while developers enjoy sub-second finality.
@@ -429,7 +429,7 @@ export default function LandingPage() {
           <div className="flex flex-col mb-20 max-w-3xl">
             <span className="text-ring text-xs font-bold uppercase tracking-[0.2em] mb-4">Secure By Design</span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1] font-serif">
-              Modular wallets. <br/>Security that adapts <span className="text-ring">to you.</span>
+              Modular wallets. <br/>Security that adapts <span className="text-[#70717D]">to you.</span>
             </h2>
             <p className="text-zinc-400 font-medium text-base sm:text-lg mt-6 leading-relaxed">
               You own your assets. We provide the tools to keep them protected — your way, not ours.
@@ -581,7 +581,7 @@ export default function LandingPage() {
           viewport={{ once: true }}
           transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
         >
-           <Link href="/dashboard/bridge" className="flex h-14 px-8 items-center justify-center gap-2 rounded-full bg-ring text-sm font-bold text-white hover:bg-ring/90 transition-colors">
+           <Link href="/dashboard/bridge" className="flex h-14 px-8 items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-black hover:bg-zinc-100 transition-colors">
               <span>Open Bridge Console</span>
               <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
            </Link>
@@ -602,7 +602,7 @@ export default function LandingPage() {
 
             <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-foreground leading-[1.1] font-serif">
               Pure Efficiency. <br/>
-              <span className="text-ring">Zero Waste.</span>
+              <span className="text-[#70717D]">Zero Waste.</span>
             </h2>
             <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
               Traditional payment rails eat into your margins with hidden fees and expensive gas costs. Arca redefines protocol economics.
@@ -722,13 +722,13 @@ export default function LandingPage() {
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
         >
           <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground leading-tight font-serif">
-            One-Click Payments. <br/><span className="text-ring">Integrates in Seconds.</span>
+            One-Click Payments. <br/><span className="text-[#70717D]">Integrates in Seconds.</span>
           </h2>
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
             Arca offers a zero-friction, pre-built checkout widget for your client application. Drop in a single React component to accept USDC subscriptions instantly, with automatic wallet provisioning, passkey security, native bridging, and real-time access gating.
           </p>
           <div className="flex gap-4 mt-6">
-            <Link href="/docs" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-ring text-sm font-bold text-white hover:bg-ring/90 transition-colors">
+            <Link href="/docs" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-black hover:bg-zinc-100 transition-colors">
               <span>Explore SDK Docs</span>
               <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
             </Link>
@@ -818,16 +818,16 @@ export default function LandingPage() {
                   <div className="flex flex-col">
                     <span className="text-zinc-500 text-[8px] font-bold uppercase tracking-wider">Total volume (USD)</span>
                     <span className="text-xl font-bold tracking-tight text-foreground mt-1">$24,530,890</span>
-                    <span className="text-[8px] font-bold text-[#10b981] mt-0.5 flex items-center gap-0.5">
+                    <span className="text-[8px] font-bold text-[#70717D] mt-0.5 flex items-center gap-0.5">
                       ↑ 18.4% <span className="text-zinc-500 font-medium">vs last month</span>
                     </span>
                     
-                    {/* Glowing Green line */}
-                    <svg className="w-full h-10 stroke-[#10b981] fill-none mt-2" viewBox="0 0 160 50">
+                    {/* Glowing Slate line */}
+                    <svg className="w-full h-10 stroke-[#70717D] fill-none mt-2" viewBox="0 0 160 50">
                       <defs>
                         <linearGradient id="chart-glow-green-bento" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#10b981" stopOpacity="0.1" />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                          <stop offset="0%" stopColor="#70717D" stopOpacity="0.1" />
+                          <stop offset="100%" stopColor="#70717D" stopOpacity="0" />
                         </linearGradient>
                       </defs>
                       <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5" strokeWidth="1.5" strokeLinecap="round" />
@@ -848,7 +848,7 @@ export default function LandingPage() {
                       <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
                         <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="3" />
                         <circle cx="18" cy="18" r="16" fill="none" stroke="var(--ring)" strokeWidth="3" strokeDasharray="100" strokeDashoffset="12.8" strokeLinecap="round" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke="#10b981" strokeWidth="3" strokeDasharray="100" strokeDashoffset="50" strokeLinecap="round" />
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="#70717D" strokeWidth="3" strokeDasharray="100" strokeDashoffset="50" strokeLinecap="round" />
                       </svg>
                       <span className="text-[7px] font-bold text-zinc-400">98%</span>
                     </div>
@@ -1093,7 +1093,7 @@ export default function LandingPage() {
               
               <div className="flex flex-col">
                 <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-foreground mb-4 leading-[1.15] font-serif">
-                  The future of commerce <br/>runs on <span className="text-ring">ARCA</span>.
+                  The future of commerce <br/>runs on <span className="text-[#70717D]">ARCA</span>.
                 </h2>
                 <p className="text-zinc-400 text-sm font-medium leading-relaxed max-w-md">
                   Integrate beautiful, predictable USDC subscriptions in seconds. Zero friction checkouts powered by Circle MPC wallets and unified liquidity.
@@ -1101,7 +1101,7 @@ export default function LandingPage() {
               </div>
 
               <div className="flex items-center gap-4">
-                <Link href="/login" className="inline-flex h-10 items-center justify-center rounded-full bg-ring px-6 text-sm font-semibold text-white hover:bg-ring/90 transition-all duration-300">
+                <Link href="/login" className="inline-flex h-10 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-black hover:bg-zinc-100 transition-all duration-300">
                   Start building
                 </Link>
                 <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex h-10 items-center justify-center rounded-full border border-border px-6 text-sm font-semibold text-foreground hover:bg-muted transition-all duration-300">

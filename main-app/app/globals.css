@@ -37,13 +37,13 @@
   --border: #D9DDE2;
   --input: #D9DDE2;
 
-  --ring: #1FA99C;
+  --ring: #70717D;
 
   --chart-1: #0E1A2B;
-  --chart-2: #1FA99C;
-  --chart-3: #4EC8BC;
-  --chart-4: #8FDCD4;
-  --chart-5: #D8F6F2;
+  --chart-2: #70717D;
+  --chart-3: #8B8D99;
+  --chart-4: #A4A6B2;
+  --chart-5: #C1C3CC;
 
   --sidebar: #FFFFFF;
   --sidebar-foreground: #17253A;
@@ -55,7 +55,7 @@
   --sidebar-accent-foreground: #17253A;
 
   --sidebar-border: #D9DDE2;
-  --sidebar-ring: #1FA99C;
+  --sidebar-ring: #70717D;
 
   --font-sans: "Söhne", var(--font-geist-sans), "Inter", sans-serif;
   --font-serif: "Canela", var(--font-cormorant-garamond), serif;
@@ -115,25 +115,25 @@
   --border: #1D2A3D;
   --input: #1D2A3D;
 
-  --ring: #1FA99C;
+  --ring: #70717D;
 
-  --chart-1: #1FA99C;
-  --chart-2: #4EC8BC;
-  --chart-3: #6FD1C8;
-  --chart-4: #A3E5DE;
-  --chart-5: #D8F6F2;
+  --chart-1: #70717D;
+  --chart-2: #8B8D99;
+  --chart-3: #A4A6B2;
+  --chart-4: #C1C3CC;
+  --chart-5: #E2E4EB;
 
   --sidebar: #07111E;
   --sidebar-foreground: #FFFFFF;
 
-  --sidebar-primary: #1FA99C;
+  --sidebar-primary: #70717D;
   --sidebar-primary-foreground: #07111E;
 
   --sidebar-accent: #101B2D;
   --sidebar-accent-foreground: #FFFFFF;
 
   --sidebar-border: #1D2A3D;
-  --sidebar-ring: #1FA99C;
+  --sidebar-ring: #70717D;
 
   --font-sans: "Söhne", var(--font-geist-sans), "Inter", sans-serif;
   --font-serif: "Canela", var(--font-cormorant-garamond), serif;

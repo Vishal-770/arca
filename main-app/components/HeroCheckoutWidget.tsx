@@ -152,8 +152,8 @@ export default function HeroCheckoutWidget() {
       {/* Success state */}
       {step === "success" && (
         <div className="flex flex-col items-center justify-center py-4 text-center">
-          <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/5 animate-bounce">
-            <Check className="w-7 h-7 text-emerald-400 stroke-[3px]" />
+          <div className="w-14 h-14 rounded-full bg-[#70717D]/10 border border-[#70717D]/30 flex items-center justify-center mb-4 shadow-lg shadow-[#70717D]/5 animate-bounce">
+            <Check className="w-7 h-7 text-[#70717D] stroke-[3px]" />
           </div>
           
           <h4 className="text-lg font-bold text-foreground">Subscription Successful!</h4>
@@ -168,7 +168,7 @@ export default function HeroCheckoutWidget() {
             </div>
             <div className="text-right">
               <span className="text-[9px] text-muted-foreground font-bold uppercase block">Gas Fee</span>
-              <span className="text-[10px] text-emerald-400 font-bold block">0.00 USDC (Sponsored)</span>
+              <span className="text-[10px] text-[#70717D] font-bold block">0.00 USDC (Sponsored)</span>
             </div>
           </div>
 

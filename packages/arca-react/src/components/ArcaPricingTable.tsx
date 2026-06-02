@@ -118,7 +118,7 @@ export const ArcaPricingTable = ({
 
   const handleSelect = (tierId: string) => {
     const rUrl = encodeURIComponent(redirectUrl || window.location.href);
-    const checkoutUrl = `${portalUrl}/pay/${planId}?userId=${userId || ""}&redirectUrl=${rUrl}&apiKey=${apiKey || ""}`;
+    const checkoutUrl = `https://arca7.vercel.app/pay/${planId}?userId=${userId || ""}&redirectUrl=${rUrl}`;
     window.location.href = checkoutUrl;
   };
 

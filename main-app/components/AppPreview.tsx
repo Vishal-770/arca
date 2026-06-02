@@ -52,7 +52,7 @@ export default function AppPreview() {
           className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-bold tracking-tighter text-foreground leading-[1.05] max-w-4xl mb-8 font-serif"
         >
           The New Standard <br/>
-          <span className="text-ring">
+          <span className="text-[#70717D]">
             For Onchain Payments
           </span>
         </motion.h2>
@@ -77,7 +77,7 @@ export default function AppPreview() {
           viewport={{ once: true, margin: "-100px" }}
           className="flex flex-col sm:flex-row items-center gap-4 mb-24 w-full sm:w-auto"
         >
-          <Link href="/login" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-ring text-sm font-bold text-white hover:opacity-90 transition-opacity">
+          <Link href="/login" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-black hover:bg-zinc-100 transition-colors">
             <span>Get Started</span>
             <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
           </Link>

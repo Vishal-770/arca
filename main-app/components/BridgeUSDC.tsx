@@ -20,6 +20,7 @@ import {
   formatUnits,
   parseUnits,
   encodeFunctionData,
+  getAddress,
   type Log,
 } from "viem";
 import {
@@ -29,6 +30,12 @@ import {
   optimismSepolia,
   polygonAmoy,
   unichainSepolia,
+  lineaSepolia,
+  seiTestnet,
+  worldchainSepolia,
+  inkSepolia,
+  xdcTestnet,
+  codexTestnet,
 } from "viem/chains";
 import { arcTestnet, customSepolia, monadTestnet } from "@/lib/privy_config";
 import { useQuery } from "@tanstack/react-query";
@@ -128,9 +135,15 @@ type BridgeChain =
   | "Optimism_Sepolia"
   | "Polygon_Amoy_Testnet"
   | "Unichain_Sepolia"
-  | "Monad_Testnet";
+  | "Monad_Testnet"
+  | "Linea_Sepolia"
+  | "Sei_Testnet"
+  | "WorldChain_Sepolia"
+  | "Ink_Testnet"
+  | "XDC_Apothem"
+  | "Codex_Testnet";
 
-const SUPPORTED_CHAINS = [
+const RAW_SUPPORTED_CHAINS = [
   {
     name: "Arc Testnet",
     identifier: "Arc_Testnet" as BridgeChain,
@@ -228,7 +241,66 @@ const SUPPORTED_CHAINS = [
     symbol: "MON",
     icon: "https://ethglobal.storage/static/faucet/monad-testnet.png",
   },
+  {
+    name: "Linea Sepolia",
+    identifier: "Linea_Sepolia" as BridgeChain,
+    viemChain: lineaSepolia,
+    usdcAddress: "0xFEce4462D57bD51A6A552365A011b95f0E16d9B7",
+    decimals: 6,
+    symbol: "Linea",
+    icon: "https://ethglobal.storage/static/faucet/linea-sepolia.png",
+  },
+  {
+    name: "Sei Testnet",
+    identifier: "Sei_Testnet" as BridgeChain,
+    viemChain: seiTestnet,
+    usdcAddress: "0x4fCF1784B31630811181f670Aea7A7bEF803eaED",
+    decimals: 6,
+    symbol: "Sei",
+    icon: "/sei-logo.png",
+  },
+  {
+    name: "World Chain",
+    identifier: "WorldChain_Sepolia" as BridgeChain,
+    viemChain: worldchainSepolia,
+    usdcAddress: "0x66145f38cBAC35Ca6F1Dfb4914dF98F1614aeA88",
+    decimals: 6,
+    symbol: "World",
+    icon: "https://ethglobal.storage/static/faucet/world-chain-sepolia.png",
+  },
+  {
+    name: "Ink Testnet",
+    identifier: "Ink_Testnet" as BridgeChain,
+    viemChain: inkSepolia,
+    usdcAddress: "0xFabab97dCE620294D2B0b0e46C68964e326300Ac",
+    decimals: 6,
+    symbol: "Ink",
+    icon: "https://inkonchain.com/logo/ink-mark-light.webp",
+  },
+  {
+    name: "XDC Apothem",
+    identifier: "XDC_Apothem" as BridgeChain,
+    viemChain: xdcTestnet,
+    usdcAddress: "0xb5AB69F7bBada22B28e79C8FFAECe55eF1c771D4",
+    decimals: 6,
+    symbol: "XDC",
+    icon: "/xdc-faucet-logo.png",
+  },
+  {
+    name: "Codex Testnet",
+    identifier: "Codex_Testnet" as BridgeChain,
+    viemChain: codexTestnet,
+    usdcAddress: "0x6d7f141b6819C2c9CC2f818e6ad549E7Ca090F8f",
+    decimals: 6,
+    symbol: "Codex",
+    icon: "/codex-logo.png",
+  },
 ];
+
+const SUPPORTED_CHAINS = RAW_SUPPORTED_CHAINS.map((chain) => ({
+  ...chain,
+  usdcAddress: chain.usdcAddress ? getAddress(chain.usdcAddress) : undefined,
+}));
 
 const TOKEN_MESSENGER_ABI = [
   {
@@ -314,6 +386,30 @@ const CCTP_CONFIG: Record<BridgeChain, { messenger: string; domain: number }> =
     Monad_Testnet: {
       messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
       domain: 15,
+    },
+    Linea_Sepolia: {
+      messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      domain: 11,
+    },
+    Sei_Testnet: {
+      messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      domain: 16,
+    },
+    WorldChain_Sepolia: {
+      messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      domain: 14,
+    },
+    Ink_Testnet: {
+      messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      domain: 21,
+    },
+    XDC_Apothem: {
+      messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      domain: 18,
+    },
+    Codex_Testnet: {
+      messenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      domain: 12,
     },
   };
 
@@ -493,11 +589,9 @@ export default function BridgeUSDC({
       cache[chain.identifier] = createPublicClient({
         chain: chain.viemChain,
         transport: http(undefined, {
-          batch: true,
           retryCount: 2,
           retryDelay: 1000,
         }),
-        batch: { multicall: true },
       });
     });
     return cache as Record<BridgeChain, ReturnType<typeof createPublicClient>>;

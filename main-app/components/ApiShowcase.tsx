@@ -34,7 +34,7 @@ export default function ApiShowcase() {
           </div>
           
           <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif">
-            Seamless Data <br/><span className="text-ring">Via REST API</span>
+            Seamless Data <br/><span className="text-[#70717D]">Via REST API</span>
           </h2>
           
           <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
@@ -58,7 +58,7 @@ export default function ApiShowcase() {
           <div className="mt-8">
             <Link 
               href="/docs" 
-              className="flex h-14 w-full sm:w-fit px-8 items-center justify-center gap-2 rounded-full bg-ring text-sm font-bold text-white hover:opacity-90 transition-opacity"
+              className="flex h-14 w-full sm:w-fit px-8 items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-black hover:bg-zinc-100 transition-colors"
             >
               <span>API Reference</span>
               <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
@@ -117,7 +117,7 @@ export default function ApiShowcase() {
 
           {/* Floating Tag */}
           <div className="absolute -bottom-5 -right-2 sm:-right-6 px-4 py-2 sm:px-6 sm:py-3 bg-background border border-border/40 rounded-full shadow-2xl flex items-center gap-3 z-30">
-             <div className="h-2 w-2 rounded-full bg-[#27c93f]" />
+             <div className="h-2 w-2 rounded-full bg-[#70717D] animate-pulse" />
              <span className="text-[10px] sm:text-xs font-semibold text-zinc-300">Real-time Hook Active</span>
           </div>
         </div>

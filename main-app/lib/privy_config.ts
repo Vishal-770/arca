@@ -6,6 +6,12 @@ import {
   polygonAmoy,
   unichainSepolia,
   sepolia,
+  lineaSepolia,
+  seiTestnet,
+  worldchainSepolia,
+  inkSepolia,
+  xdcTestnet,
+  codexTestnet,
 } from "viem/chains";
 
 export const arcTestnet = {
@@ -60,6 +66,12 @@ export const config = {
     polygonAmoy,
     unichainSepolia,
     monadTestnet,
+    lineaSepolia,
+    seiTestnet,
+    worldchainSepolia,
+    inkSepolia,
+    xdcTestnet,
+    codexTestnet,
   ],
 };
 
