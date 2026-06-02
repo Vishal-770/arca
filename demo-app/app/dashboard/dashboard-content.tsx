@@ -61,6 +61,8 @@ function DashboardContentInner({ userId }: { userId: string }) {
 
           <div className="rounded-2xl overflow-hidden border border-border bg-black shadow-none">
             <video 
+              key={isPlus ? "4k" : "hd"}
+              src={isPlus ? "/4k.mp4" : "/hd.mp4"}
               controls 
               playsInline
               className="w-full aspect-video rounded-2xl outline-none animate-fade-in"
@@ -68,10 +70,6 @@ function DashboardContentInner({ userId }: { userId: string }) {
               muted
               loop
             >
-              <source 
-                src={isPlus ? "/4k.mp4" : "/hd.mp4"} 
-                type="video/mp4" 
-              />
               Your browser does not support the video tag.
             </video>
           </div>
