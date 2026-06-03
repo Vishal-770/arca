@@ -22,28 +22,73 @@ const apiFeatureDetails = [
   }
 ]
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1] as const
+    }
+  }
+};
+
 export default function ApiShowcase() {
   return (
     <div className="relative w-full py-12 z-20">
       <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
         
         {/* Left Side: Content */}
-        <div className="flex flex-col gap-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-background border border-border/40 rounded-full w-fit mb-2">
+        <motion.div 
+          className="flex flex-col gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.div 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-background border border-border/40 rounded-full w-fit mb-2"
+            variants={itemVariants}
+          >
             <span className="text-zinc-300 text-xs font-semibold tracking-wide">Developer Suite</span>
-          </div>
+          </motion.div>
           
-          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif">
+          <motion.h2 
+            className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif"
+            variants={itemVariants}
+          >
             Seamless Data <br/><span className="text-[#70717D]">Via REST API</span>
-          </h2>
+          </motion.h2>
           
-          <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
+          <motion.p 
+            className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl"
+            variants={itemVariants}
+          >
             Integrate real-time subscription status and plan metadata directly into your backend or proprietary dashboard using our standardized REST endpoints.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col gap-6 mt-4">
+          <motion.div 
+            className="flex flex-col gap-6 mt-4"
+            variants={containerVariants}
+          >
             {apiFeatureDetails.map((feature, i) => (
-              <div key={i} className="flex gap-4 items-start">
+              <motion.div 
+                key={i} 
+                className="flex gap-4 items-start"
+                variants={itemVariants}
+              >
                 <div className="p-2.5 rounded-xl bg-background border border-border/40 shrink-0">
                   {feature.icon}
                 </div>
@@ -51,11 +96,11 @@ export default function ApiShowcase() {
                   <span className="text-foreground font-bold text-base">{feature.title}</span>
                   <span className="text-zinc-400 text-sm leading-relaxed">{feature.description}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="mt-8">
+          <motion.div className="mt-8" variants={itemVariants}>
             <Link 
               href="/docs" 
               className="flex h-14 w-full sm:w-fit px-8 items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-black hover:bg-zinc-100 transition-colors"
@@ -63,11 +108,17 @@ export default function ApiShowcase() {
               <span>API Reference</span>
               <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Right Side: API Preview */}
-        <div className="relative group perspective-[2000px]">
+        <motion.div 
+          className="relative group perspective-[2000px]"
+          initial={{ opacity: 0, y: 32, rotateX: 8 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="relative bg-background border border-border/40 rounded-2xl shadow-2xl overflow-hidden w-full max-w-xl mx-auto">
              {/* Terminal-like header */}
              <div className="w-full h-12 bg-background border-b border-border/20 flex items-center justify-between px-4 z-20">
@@ -116,11 +167,17 @@ export default function ApiShowcase() {
           </div>
 
           {/* Floating Tag */}
-          <div className="absolute -bottom-5 -right-2 sm:-right-6 px-4 py-2 sm:px-6 sm:py-3 bg-background border border-border/40 rounded-full shadow-2xl flex items-center gap-3 z-30">
+          <motion.div 
+            className="absolute -bottom-5 -right-2 sm:-right-6 px-4 py-2 sm:px-6 sm:py-3 bg-background border border-border/40 rounded-full shadow-2xl flex items-center gap-3 z-30"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+          >
              <div className="h-2 w-2 rounded-full bg-[#70717D] animate-pulse" />
              <span className="text-[10px] sm:text-xs font-semibold text-zinc-300">Real-time Hook Active</span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
       </div>
     </div>

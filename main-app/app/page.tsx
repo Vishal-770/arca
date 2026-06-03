@@ -122,6 +122,29 @@ export default function LandingPage() {
   const [activeDocTab, setActiveDocTab] = useState("Overview");
   const [activeSecurityTab, setActiveSecurityTab] = useState("passkey");
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.05,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 28 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.85,
+        ease: [0.16, 1, 0.3, 1] as const,
+      },
+    },
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -185,11 +208,15 @@ export default function LandingPage() {
           <div className="absolute bottom-0 left-0 w-full h-48 bg-linear-to-t from-background via-background/80 to-transparent z-10 pointer-events-none" />
         </div>
 
-        {/* Navbar Implementation - Clean */}
-        <header 
-          className={`fixed top-0 left-0 right-0 z-50 w-full px-6 py-4 lg:px-10 lg:py-6 flex items-center justify-between transition-all duration-300 ease-in-out bg-transparent ${
-            isNavVisible ? 'translate-y-0' : '-translate-y-full'
-          }`}
+        {/* Navbar Implementation - Smooth Framer-Motion transition */}
+        <motion.header 
+          className="fixed top-0 left-0 right-0 z-50 w-full px-6 py-4 lg:px-10 lg:py-6 flex items-center justify-between bg-transparent"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ 
+            opacity: booted ? 1 : 0, 
+            y: isNavVisible ? 0 : -80 
+          }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="flex items-center gap-3">
             <div className="relative w-9 h-9">
@@ -204,21 +231,24 @@ export default function LandingPage() {
               <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
-        </header>
+        </motion.header>
 
         {/* Hero Content */}
         <div className="relative z-20 flex-1 flex flex-col justify-center w-full px-8 sm:px-16 lg:pl-36 lg:pr-12 xl:pl-64 xl:pr-16 pb-20 pt-32 lg:pt-40">
           <div className="flex flex-col items-start text-left max-w-4xl w-full">
             
-            {/* Left Side: Typography & CTAs */}
-            <div className="flex flex-col items-start text-left relative z-30 w-full">
+            {/* Left Side: Typography & CTAs (Staggered) */}
+            <motion.div 
+              className="flex flex-col items-start text-left relative z-30 w-full"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
               <div className="flex flex-col mb-10 relative">
                 <motion.h1 
                   className="text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] xl:text-[5.5rem] font-extrabold tracking-tighter leading-[1.05] text-foreground font-serif"
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  variants={itemVariants}
                 >
                   <span className="block">USDC-Native</span>
                   <span className="block text-[#70717D]">Membership</span>
@@ -227,10 +257,7 @@ export default function LandingPage() {
                 
                 <motion.p 
                   className="mt-8 text-base sm:text-lg lg:text-xl text-muted-foreground font-medium leading-relaxed max-w-2xl"
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                  variants={itemVariants}
                 >
                   Integrate beautiful, predictable subscription checkouts in seconds. Zero friction, drop-in React SDK widgets powered by Circle Programmable Wallets, CCTP, and the Arc blockchain.
                 </motion.p>
@@ -238,10 +265,7 @@ export default function LandingPage() {
               
               <motion.div 
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                variants={itemVariants}
               >
                 <Link href="/login" className="flex h-12 px-6 items-center justify-center gap-2 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-100 transition-colors">
                   <span>Open Console</span>
@@ -255,10 +279,7 @@ export default function LandingPage() {
               {/* Trust Indicators */}
               <motion.div 
                 className="mt-14 flex items-center gap-6 opacity-60"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                variants={itemVariants}
               >
                 <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Powered by</span>
                 <div className="flex items-center gap-6">
@@ -267,7 +288,7 @@ export default function LandingPage() {
                   <span className="text-sm font-bold text-foreground tracking-wide">CCTP</span>
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
             
           </div>
         </div>
@@ -283,81 +304,91 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 px-6 sm:px-12 lg:px-20 w-full">
           <motion.div
             className="flex-1 flex flex-col gap-6 max-w-2xl w-full"
-            initial={{ opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
           >
+            <motion.h2 
+              className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif"
+              variants={itemVariants}
+            >
+              USDC-Native. <br/><span className="text-[#70717D]">Arc-Powered.</span>
+            </motion.h2>
+            
+            <motion.p 
+              className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4"
+              variants={itemVariants}
+            >
+              Arca is the membership infrastructure for the Arc network. By combining Circle&apos;s Programmable Wallets with CCTP bridging, we&apos;ve eliminated gas complexity, allowing users to pay entirely in USDC while developers enjoy sub-second finality.
+            </motion.p>
+            
+            <motion.div 
+              className="grid grid-cols-2 gap-8 mt-4 lg:mt-8"
+              variants={containerVariants}
+            >
+               <motion.div className="flex flex-col gap-2 border-l border-border/40 pl-4 lg:pl-6" variants={itemVariants}>
+                  <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">USDC Gas</span>
+                  <span className="text-zinc-500 text-xs sm:text-sm font-semibold">Native Execution</span>
+               </motion.div>
+               <motion.div className="flex flex-col gap-2 border-l border-border/40 pl-4 lg:pl-6" variants={itemVariants}>
+                  <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">CCTP</span>
+                  <span className="text-zinc-500 text-xs sm:text-sm font-semibold">Unified Liquidity</span>
+               </motion.div>
+            </motion.div>
+          </motion.div>
 
-          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif">
-            USDC-Native. <br/><span className="text-[#70717D]">Arc-Powered.</span>
-          </h2>
-          <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
-            Arca is the membership infrastructure for the Arc network. By combining Circle&apos;s Programmable Wallets with CCTP bridging, we&apos;ve eliminated gas complexity, allowing users to pay entirely in USDC while developers enjoy sub-second finality.
-          </p>
-          <div className="grid grid-cols-2 gap-8 mt-4 lg:mt-8">
-             <div className="flex flex-col gap-2 border-l border-border/40 pl-4 lg:pl-6">
-                <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">USDC Gas</span>
-                <span className="text-zinc-500 text-xs sm:text-sm font-semibold">Native Execution</span>
-             </div>
-             <div className="flex flex-col gap-2 border-l border-border/40 pl-4 lg:pl-6">
-                <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">CCTP</span>
-                <span className="text-zinc-500 text-xs sm:text-sm font-semibold">Unified Liquidity</span>
-             </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="hidden lg:flex flex-1 w-full items-center justify-center relative mt-16 lg:mt-0 h-112.5 lg:h-150 pointer-events-none"
-          initial={{ opacity: 0, x: 32 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-        >
-          <div className="relative w-[320px] h-50 z-10 lg:right-10 pointer-events-auto perspective-[2000px]">
-            <CardSwap width={320} height={200} cardDistance={40} verticalDistance={50}>
-              <Card className="bg-card border border-border/40 shadow-2xl rounded-2xl flex flex-col justify-between p-6">
-                <div className="flex justify-between items-center text-foreground">
-                  <div className="flex items-center gap-3">
-                    <Coins className="w-5 h-5 text-ring"/> 
-                    <span className="text-sm font-semibold tracking-wide">CCTP Bridge</span>
+          <motion.div
+            className="hidden lg:flex flex-1 w-full items-center justify-center relative mt-16 lg:mt-0 h-112.5 lg:h-150 pointer-events-none"
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+          >
+            <div className="relative w-[320px] h-50 z-10 lg:right-10 pointer-events-auto perspective-[2000px]">
+              <CardSwap width={320} height={200} cardDistance={40} verticalDistance={50}>
+                <Card className="bg-card border border-border/40 shadow-2xl rounded-2xl flex flex-col justify-between p-6">
+                  <div className="flex justify-between items-center text-foreground">
+                    <div className="flex items-center gap-3">
+                      <Coins className="w-5 h-5 text-ring"/> 
+                      <span className="text-sm font-semibold tracking-wide">CCTP Bridge</span>
+                    </div>
+                    <span className="text-xs font-semibold text-muted-foreground bg-muted border border-border/40 px-2.5 py-1 rounded-full">15+ Chains</span>
                   </div>
-                  <span className="text-xs font-semibold text-muted-foreground bg-muted border border-border/40 px-2.5 py-1 rounded-full">15+ Chains</span>
-                </div>
-                <div>
-                  <div className="text-muted-foreground text-xs font-semibold tracking-wide mb-1">Bridging Fee</div>
-                  <div className="text-4xl font-bold tracking-tighter text-foreground">0.<span className="text-muted-foreground/60">00</span> <span className="text-xl text-muted-foreground/60 font-medium tracking-normal">USDC</span></div>
-                </div>
-              </Card>
-              <Card className="bg-card border border-border/40 shadow-2xl rounded-2xl flex flex-col justify-between p-6">
-                <div className="flex justify-between items-center text-foreground">
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-5 h-5 text-ring"/> 
-                    <span className="text-sm font-semibold tracking-wide">MPC Wallets</span>
+                  <div>
+                    <div className="text-muted-foreground text-xs font-semibold tracking-wide mb-1">Bridging Fee</div>
+                    <div className="text-4xl font-bold tracking-tighter text-foreground">0.<span className="text-muted-foreground/60">00</span> <span className="text-xl text-muted-foreground/60 font-medium tracking-normal">USDC</span></div>
                   </div>
-                  <span className="text-xs font-semibold text-muted-foreground bg-muted border border-border/40 px-2.5 py-1 rounded-full">Non-Custodial</span>
-                </div>
-                <div>
-                  <div className="text-muted-foreground text-xs font-semibold tracking-wide mb-1">Key Management</div>
-                  <div className="text-4xl font-bold tracking-tighter text-foreground">Circle<span className="text-xl text-muted-foreground/60 font-medium tracking-normal ml-1">SDK</span></div>
-                </div>
-              </Card>
-              <Card className="bg-card border border-border/40 shadow-2xl rounded-2xl flex flex-col justify-between p-6">
-                <div className="flex justify-between items-center text-foreground">
-                  <div className="flex items-center gap-3">
-                    <Zap className="w-5 h-5 text-ring"/> 
-                    <span className="text-sm font-semibold tracking-wide">Execution</span>
+                </Card>
+                <Card className="bg-card border border-border/40 shadow-2xl rounded-2xl flex flex-col justify-between p-6">
+                  <div className="flex justify-between items-center text-foreground">
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-5 h-5 text-ring"/> 
+                      <span className="text-sm font-semibold tracking-wide">MPC Wallets</span>
+                    </div>
+                    <span className="text-xs font-semibold text-muted-foreground bg-muted border border-border/40 px-2.5 py-1 rounded-full">Non-Custodial</span>
                   </div>
-                  <span className="text-xs font-semibold text-muted-foreground bg-muted border border-border/40 px-2.5 py-1 rounded-full">Arc Network</span>
-                </div>
-                <div>
-                  <div className="text-muted-foreground text-xs font-semibold tracking-wide mb-1">Finality</div>
-                  <div className="text-4xl font-bold tracking-tighter text-foreground">&lt; 1.<span className="text-muted-foreground/60">0s</span></div>
-                </div>
-              </Card>
-            </CardSwap>
-          </div>
-        </motion.div>
+                  <div>
+                    <div className="text-muted-foreground text-xs font-semibold tracking-wide mb-1">Key Management</div>
+                    <div className="text-4xl font-bold tracking-tighter text-foreground">Circle<span className="text-xl text-muted-foreground/60 font-medium tracking-normal ml-1">SDK</span></div>
+                  </div>
+                </Card>
+                <Card className="bg-card border border-border/40 shadow-2xl rounded-2xl flex flex-col justify-between p-6">
+                  <div className="flex justify-between items-center text-foreground">
+                    <div className="flex items-center gap-3">
+                      <Zap className="w-5 h-5 text-ring"/> 
+                      <span className="text-sm font-semibold tracking-wide">Execution</span>
+                    </div>
+                    <span className="text-xs font-semibold text-muted-foreground bg-muted border border-border/40 px-2.5 py-1 rounded-full">Arc Network</span>
+                  </div>
+                  <div>
+                    <div className="text-muted-foreground text-xs font-semibold tracking-wide mb-1">Finality</div>
+                    <div className="text-4xl font-bold tracking-tighter text-foreground">&lt; 1.<span className="text-muted-foreground/60">0s</span></div>
+                  </div>
+                </Card>
+              </CardSwap>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -367,23 +398,43 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
             
-            {/* Left Content column */}
-            <div className="flex flex-col lg:col-span-4 max-w-md">
-              <span className="text-zinc-500 text-xs font-bold uppercase tracking-[0.18em] mb-4">Enterprise Trust</span>
-              <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-foreground leading-[1.1] font-serif">
+            {/* Left Content column (Staggered) */}
+            <motion.div 
+              className="flex flex-col lg:col-span-4 max-w-md"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              <motion.span className="text-zinc-500 text-xs font-bold uppercase tracking-[0.18em] mb-4" variants={itemVariants}>Enterprise Trust</motion.span>
+              <motion.h2 
+                className="text-3xl sm:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-foreground leading-[1.1] font-serif"
+                variants={itemVariants}
+              >
                 Security. Compliance.<br/>Reliability. Built-in.
-              </h2>
-              <p className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal">
+              </motion.h2>
+              <motion.p 
+                className="text-zinc-400 text-sm mt-4 leading-relaxed font-normal"
+                variants={itemVariants}
+              >
                 ARCA meets the highest standards of security and compliance so you can build with confidence.
-              </p>
-              <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-ring hover:text-ring/80 text-sm font-semibold mt-6 transition-colors group">
-                <span>View security</span>
-                <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-              </Link>
-            </div>
+              </motion.p>
+              <motion.div variants={itemVariants}>
+                <Link href="https://arca7.vercel.app/docs" target="_blank" className="inline-flex items-center gap-1.5 text-ring hover:text-ring/80 text-sm font-semibold mt-6 transition-colors group">
+                  <span>View security</span>
+                  <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+                </Link>
+              </motion.div>
+            </motion.div>
             
-            {/* Right Horizontal Layout column */}
-            <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-0 w-full relative">
+            {/* Right Horizontal Layout column (Staggered Grid) */}
+            <motion.div 
+              className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-0 w-full relative"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {[
                 { name: "SOC 2 Type II", desc: "MPC Insulated", icon: Soc2Icon },
                 { name: "EU MiCA", desc: "Circle USDC Rails", icon: MicaIcon },
@@ -392,8 +443,9 @@ export default function LandingPage() {
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div 
+                  <motion.div 
                     key={idx} 
+                    variants={itemVariants}
                     className={`flex flex-col items-center text-center px-4 ${
                       idx !== 0 ? "md:border-l md:border-border/10" : ""
                     }`}
@@ -403,44 +455,55 @@ export default function LandingPage() {
                     </div>
                     <span className="text-foreground font-bold text-sm tracking-tight">{item.name}</span>
                     <span className="text-zinc-500 text-xs font-semibold mt-1">{item.desc}</span>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
 
           </div>
         </div>
       </section>
 
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <AppPreview />
-      </motion.div>
+      <AppPreview />
 
       {/* Interactive Modular Wallet Security Section */}
       <section id="wallet-security" className="relative w-full bg-background py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           
-          {/* Header Area */}
-          <div className="flex flex-col mb-20 max-w-3xl">
-            <span className="text-ring text-xs font-bold uppercase tracking-[0.2em] mb-4">Secure By Design</span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1] font-serif">
+          {/* Header Area (Staggered) */}
+          <motion.div 
+            className="flex flex-col mb-20 max-w-3xl"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.span className="text-ring text-xs font-bold uppercase tracking-[0.2em] mb-4" variants={itemVariants}>Secure By Design</motion.span>
+            <motion.h2 
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1] font-serif"
+              variants={itemVariants}
+            >
               Modular wallets. <br/>Security that adapts <span className="text-[#70717D]">to you.</span>
-            </h2>
-            <p className="text-zinc-400 font-medium text-base sm:text-lg mt-6 leading-relaxed">
+            </motion.h2>
+            <motion.p 
+              className="text-zinc-400 font-medium text-base sm:text-lg mt-6 leading-relaxed"
+              variants={itemVariants}
+            >
               You own your assets. We provide the tools to keep them protected — your way, not ours.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Grid Layout (Flat, borderless, cardless) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
-            {/* Left Column: Vertical Interactive Options (col-span-6) */}
-            <div className="lg:col-span-6 flex flex-col gap-6">
+            {/* Left Column: Vertical Interactive Options (Staggered Buttons) */}
+            <motion.div 
+              className="lg:col-span-6 flex flex-col gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {[
                 {
                   id: "passkey",
@@ -459,8 +522,9 @@ export default function LandingPage() {
                 const TabIcon = tab.icon;
                 const isActive = activeSecurityTab === tab.id;
                 return (
-                  <button
+                  <motion.button
                     key={tab.id}
+                    variants={itemVariants}
                     onClick={() => setActiveSecurityTab(tab.id)}
                     className={`group text-left flex items-start gap-5 py-4 px-2 border-l-2 transition-all duration-300 ${
                       isActive
@@ -490,13 +554,19 @@ export default function LandingPage() {
                         {tab.desc}
                       </span>
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })}
-            </div>
+            </motion.div>
 
-            {/* Right Column: Flat visual presentation (col-span-6) */}
-            <div className="lg:col-span-6 flex flex-col items-center lg:items-end justify-center w-full">
+            {/* Right Column: Flat visual presentation (Slide-up) */}
+            <motion.div 
+              className="lg:col-span-6 flex flex-col items-center lg:items-end justify-center w-full"
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            >
               
               {/* Image Frame (Flat, transparent, borderless) */}
               <div className="relative w-full max-w-[450px] aspect-square select-none">
@@ -510,7 +580,7 @@ export default function LandingPage() {
                 />
               </div>
 
-            </div>
+            </motion.div>
 
           </div>
 
@@ -520,28 +590,44 @@ export default function LandingPage() {
       {/* Multi-Chain Bridge Showcase Section */}
       <section id="bridge" className="relative w-full bg-background py-24 lg:py-32 px-6 sm:px-12 lg:px-20 z-20">
         
+        {/* Header Staggered */}
         <motion.div
           className="relative z-10 flex flex-col items-center text-center mb-16 gap-6"
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
         >
-
-          <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-foreground max-w-4xl font-serif">
+          <motion.h2 
+            className="text-5xl lg:text-7xl font-bold tracking-tighter text-foreground max-w-4xl font-serif"
+            variants={itemVariants}
+          >
             Bridge USDC <br/><span className="text-zinc-500">Across Every Chain</span>
-          </h2>
-          <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl max-w-3xl mt-4">
+          </motion.h2>
+          <motion.p 
+            className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl max-w-3xl mt-4"
+            variants={itemVariants}
+          >
             Arca integrates natively with Circle CCTP to provide seamless, secure, and instant USDC transfers across 15+ testnet ecosystems. No wrappers, no compromises.
-          </p>
+          </motion.p>
         </motion.div>
 
+        {/* 15 Chains Staggered Grid */}
         <motion.div
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-7xl mx-auto relative z-10"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.04,
+                delayChildren: 0.05,
+              }
+            }
+          }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
         >
           {[
             { name: "Arc Testnet", icon: "/arc-logo.png" },
@@ -560,8 +646,19 @@ export default function LandingPage() {
             { name: "Monad Testnet", icon: "https://ethglobal.storage/static/faucet/monad-testnet.png" },
             { name: "Codex Testnet", icon: "/codex-logo.png" },
           ].map((chain, i) => (
-            <div 
+            <motion.div 
               key={i} 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { 
+                  opacity: 1, 
+                  y: 0,
+                  transition: {
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1]
+                  }
+                }
+              }}
               className="group relative flex flex-col items-center justify-center p-8 rounded-2xl bg-background border border-border/40 hover:bg-background/80 transition-colors"
             >
               <div className="relative w-10 h-10 mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
@@ -575,7 +672,7 @@ export default function LandingPage() {
               <span className="text-xs font-semibold text-zinc-400 text-center">
                 {chain.name}
               </span>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
@@ -599,28 +696,36 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-20 relative z-10">
           <motion.div
             className="flex-1 flex flex-col gap-6 w-full"
-            initial={{ opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
           >
-
-            <h2 className="text-5xl lg:text-7xl font-bold tracking-tighter text-foreground leading-[1.1] font-serif">
+            <motion.h2 
+              className="text-5xl lg:text-7xl font-bold tracking-tighter text-foreground leading-[1.1] font-serif"
+              variants={itemVariants}
+            >
               Pure Efficiency. <br/>
               <span className="text-[#70717D]">Zero Waste.</span>
-            </h2>
-            <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl">
+            </motion.h2>
+            <motion.p 
+              className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4 max-w-xl"
+              variants={itemVariants}
+            >
               Traditional payment rails eat into your margins with hidden fees and expensive gas costs. Arca redefines protocol economics.
-            </p>
+            </motion.p>
           </motion.div>
 
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          <motion.div 
+            className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+          >
             <motion.div
               className="group relative overflow-hidden p-8 rounded-3xl bg-background border border-border/40 hover:bg-background/80 hover:border-ring/30 transition-all duration-500"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              variants={itemVariants}
             >
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                 <Coins className="w-32 h-32 text-ring -mr-8 -mt-8" />
@@ -634,10 +739,7 @@ export default function LandingPage() {
             
             <motion.div
               className="group relative overflow-hidden p-8 rounded-3xl bg-background border border-border/40 hover:bg-background/80 hover:border-ring/30 transition-all duration-500"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              variants={itemVariants}
             >
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                 <Zap className="w-32 h-32 text-ring -mr-8 -mt-8" />
@@ -651,10 +753,7 @@ export default function LandingPage() {
             
             <motion.div
               className="group relative overflow-hidden p-8 rounded-3xl bg-background border border-border/40 hover:bg-background/80 hover:border-ring/30 transition-all duration-500 md:col-span-2"
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+              variants={itemVariants}
             >
               <div className="absolute inset-0 bg-linear-to-r from-ring/0 via-ring/5 to-ring/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
@@ -671,7 +770,7 @@ export default function LandingPage() {
                 <p className="text-sm text-zinc-400 font-medium leading-relaxed max-w-lg">No wrapped assets. Move canonical USDC seamlessly between Ethereum, Base, Polygon, and 15+ others via official burn-and-mint logic.</p>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -680,9 +779,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20 px-6 sm:px-12 lg:px-20 w-full">
           <motion.div
             className="flex-1 w-full max-w-3xl mx-auto flex items-center justify-center relative perspective-[2000px]"
-            initial={{ opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           >
           <Terminal className="bg-background border border-border/40 shadow-2xl h-[520px] w-full max-w-3xl">
@@ -717,32 +816,36 @@ export default function LandingPage() {
               {'}'}
             </AnimatedSpan>
           </Terminal>
-        </motion.div>
+          </motion.div>
 
         <motion.div
           className="flex-1 flex flex-col gap-6 max-w-2xl w-full mt-16 lg:mt-0"
-          initial={{ opacity: 0, x: 32 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
         >
-          <h2 className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground leading-tight font-serif">
+          <motion.h2 
+            className="text-5xl lg:text-6xl font-bold tracking-tighter text-foreground leading-tight font-serif"
+            variants={itemVariants}
+          >
             One-Click Payments. <br/><span className="text-[#70717D]">Integrates in Seconds.</span>
-          </h2>
-          <p className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4">
+          </motion.h2>
+          <motion.p 
+            className="text-zinc-400 font-medium leading-relaxed text-lg md:text-xl mt-2 lg:mt-4"
+            variants={itemVariants}
+          >
             Arca offers a zero-friction, pre-built checkout widget for your client application. Drop in a single React component to accept USDC subscriptions instantly, with automatic wallet provisioning, passkey security, native bridging, and real-time access gating.
-          </p>
-          <div className="flex gap-4 mt-6">
+          </motion.p>
+          <motion.div className="flex gap-4 mt-6" variants={itemVariants}>
             <Link href="/docs" className="flex h-14 w-full sm:w-auto px-8 items-center justify-center gap-2 rounded-full bg-white text-sm font-bold text-black hover:bg-zinc-100 transition-colors">
               <span>Explore SDK Docs</span>
               <ArrowUpRight className="h-4 w-4 stroke-[3px]" />
             </Link>
-          </div>
+          </motion.div>
         </motion.div>
         </div>
       </section>
-
-
 
       {/* Infrastructure & Resources Bento Grid Section */}
       <section id="infrastructure" className="relative w-full bg-background pt-24 pb-16 px-6 sm:px-12 lg:px-20 z-20 overflow-hidden">
@@ -780,25 +883,49 @@ export default function LandingPage() {
           {/* Seamless Separator divider for perfect flow continuity */}
           <div className="w-full h-[1px] bg-border/20 my-20 lg:my-28" />
           
-          {/* Section Header */}
-          <div className="flex flex-col mb-16 gap-4 max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-[0.15em] text-ring">Infrastructure & Resources</span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif">
+          {/* Section Header (Staggered) */}
+          <motion.div 
+            className="flex flex-col mb-16 gap-4 max-w-3xl"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.span className="text-xs font-bold uppercase tracking-[0.15em] text-ring" variants={itemVariants}>Infrastructure & Resources</motion.span>
+            <motion.h2 
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter text-foreground font-serif"
+              variants={itemVariants}
+            >
               Built for Scale. <br/>Equipped for Developers.
-            </h2>
-            <p className="text-zinc-400 font-medium leading-relaxed text-base md:text-lg">
+            </motion.h2>
+            <motion.p 
+              className="text-zinc-400 font-medium leading-relaxed text-base md:text-lg"
+              variants={itemVariants}
+            >
               Explore our global network architecture, real-time transaction intelligence layer, and interactive documentation hubs.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Bento Grid Container - Unified Connected Grid */}
-          <div className="flex flex-col rounded-[2.5rem] border border-border/30 overflow-hidden bg-background shadow-2xl">
+          <motion.div 
+            className="flex flex-col rounded-[2.5rem] border border-border/30 overflow-hidden bg-background shadow-2xl"
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          >
             
             {/* Top Row: Tile 1 & Tile 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-border/30 border-b border-border/30">
             
               {/* Tile 1: Real-time Analytics (col-span-1 lg:col-span-7) */}
-              <div className="relative group overflow-hidden bg-background p-8 lg:p-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 hover:bg-muted/5 transition-all duration-500 min-h-[360px] col-span-1 lg:col-span-7">
+              <motion.div 
+                className="relative group overflow-hidden bg-background p-8 lg:p-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 hover:bg-muted/5 transition-all duration-500 min-h-[360px] col-span-1 lg:col-span-7"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              >
                 
                 <div className="flex flex-col flex-1 max-w-sm relative z-10 justify-between h-full">
                   <div>
@@ -835,8 +962,24 @@ export default function LandingPage() {
                           <stop offset="100%" stopColor="#70717D" stopOpacity="0" />
                         </linearGradient>
                       </defs>
-                      <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5" strokeWidth="1.5" strokeLinecap="round" />
-                      <path d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5 L 160 50 L 0 50 Z" fill="url(#chart-glow-green-bento)" strokeWidth="0" />
+                      <motion.path 
+                        d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5" 
+                        strokeWidth="1.5" 
+                        strokeLinecap="round" 
+                        initial={{ pathLength: 0 }}
+                        whileInView={{ pathLength: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                      />
+                      <motion.path 
+                        d="M 0 40 Q 20 25 40 35 T 80 15 T 120 25 T 160 5 L 160 50 L 0 50 Z" 
+                        fill="url(#chart-glow-green-bento)" 
+                        strokeWidth="0" 
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.0, delay: 0.8 }}
+                      />
                     </svg>
                   </div>
                   
@@ -852,17 +995,49 @@ export default function LandingPage() {
                     <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
                       <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
                         <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="3" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke="var(--ring)" strokeWidth="3" strokeDasharray="100" strokeDashoffset="12.8" strokeLinecap="round" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke="#70717D" strokeWidth="3" strokeDasharray="100" strokeDashoffset="50" strokeLinecap="round" />
+                        <motion.circle 
+                          cx="18" 
+                          cy="18" 
+                          r="16" 
+                          fill="none" 
+                          stroke="var(--ring)" 
+                          strokeWidth="3" 
+                          strokeDasharray="100" 
+                          initial={{ strokeDashoffset: 100 }}
+                          whileInView={{ strokeDashoffset: 12.8 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                          strokeLinecap="round" 
+                        />
+                        <motion.circle 
+                          cx="18" 
+                          cy="18" 
+                          r="16" 
+                          fill="none" 
+                          stroke="#70717D" 
+                          strokeWidth="3" 
+                          strokeDasharray="100" 
+                          initial={{ strokeDashoffset: 100 }}
+                          whileInView={{ strokeDashoffset: 50 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                          strokeLinecap="round" 
+                        />
                       </svg>
                       <span className="text-[7px] font-bold text-zinc-400">98%</span>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Tile 2: Global Coverage (col-span-1 lg:col-span-5) */}
-              <div className="relative group overflow-hidden bg-background p-8 lg:p-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 hover:bg-muted/5 transition-all duration-500 min-h-[360px] col-span-1 lg:col-span-5">
+              <motion.div 
+                className="relative group overflow-hidden bg-background p-8 lg:p-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 hover:bg-muted/5 transition-all duration-500 min-h-[360px] col-span-1 lg:col-span-5"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              >
                 {/* Card Inner Glow */}
                 <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_-20%,rgba(31, 169, 156,0.05),transparent_50%) pointer-events-none" />
                 
@@ -884,18 +1059,30 @@ export default function LandingPage() {
                 </div>
                 
                 {/* Minimalist Globe graphic */}
-                <div className="relative w-full max-w-[160px] h-[160px] flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-500 shrink-0 mx-auto select-none pointer-events-none relative z-10">
+                <motion.div 
+                  className="relative w-full max-w-[160px] h-[160px] flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-500 shrink-0 mx-auto select-none pointer-events-none relative z-10"
+                  initial={{ scale: 0.85, rotate: -15, opacity: 0 }}
+                  whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                >
                   <Image src="/globle.png" alt="Global Coverage" fill className="object-contain" />
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
             </div>
 
             {/* Bottom Row: Tile 3 */}
             <div className="w-full">
 
-              {/* Tile 3: Interactive Developer Documentation */}
-              <div className="relative overflow-hidden bg-background p-8 lg:p-10">
+              {/* Tile 3: Interactive Developer Documentation (Fade-up) */}
+              <motion.div 
+                className="relative overflow-hidden bg-background p-8 lg:p-10"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              >
               {/* Card Inner Glow */}
               <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_-10%,rgba(31, 169, 156,0.03),transparent_40%) pointer-events-none" />
               
@@ -1077,18 +1264,24 @@ export default function LandingPage() {
                 </div>
 
               </div>
+              </motion.div>
             </div>      
-          </div>
-        </div>
+          </motion.div>
 
             {/* Seamless Separator divider for perfect flow continuity */}
             <div className="w-full h-[1px] bg-border/20 my-20 lg:my-28" />
           
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16">
+          <motion.div 
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+          >
             
             {/* Left Block: Brand, CTA, and Description */}
-            <div className="flex flex-col gap-6 lg:col-span-5 pr-0 lg:pr-8">
+            <motion.div className="flex flex-col gap-6 lg:col-span-5 pr-0 lg:pr-8" variants={itemVariants}>
               <div className="flex items-center gap-3">
                 <div className="relative w-8 h-8">
                   <Image src="/logo.png" alt="Arca Logo" fill className="object-contain dark:invert" unoptimized />
@@ -1113,13 +1306,13 @@ export default function LandingPage() {
                   Explore Docs
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right Block: Platform, Developers, Stay Updated */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:col-span-7">
               
               {/* Platform Column */}
-              <div className="flex flex-col gap-4">
+              <motion.div className="flex flex-col gap-4" variants={itemVariants}>
                 <h4 className="text-foreground font-semibold text-xs tracking-wider uppercase">Platform</h4>
                 <div className="flex flex-col gap-3">
                   <Link href="/dashboard" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Subscriptions</Link>
@@ -1128,10 +1321,10 @@ export default function LandingPage() {
                   <Link href="/dashboard/autopay" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Treasury</Link>
                   <Link href="#features" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Pricing</Link>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Developers Column */}
-              <div className="flex flex-col gap-4">
+              <motion.div className="flex flex-col gap-4" variants={itemVariants}>
                 <h4 className="text-foreground font-semibold text-xs tracking-wider uppercase">Developers</h4>
                 <div className="flex flex-col gap-3">
                   <Link href="https://arca7.vercel.app/docs" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Documentation</Link>
@@ -1140,10 +1333,10 @@ export default function LandingPage() {
                   <Link href="https://github.com/Vishal-770/arca" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Changelog</Link>
                   <Link href="https://testnet.arcscan.net" target="_blank" className="text-zinc-400 text-sm hover:text-white transition-colors duration-200">Status</Link>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Newsletter & Socials Column */}
-              <div className="flex flex-col gap-4">
+              <motion.div className="flex flex-col gap-4" variants={itemVariants}>
                 <h4 className="text-foreground font-semibold text-xs tracking-wider uppercase">Stay updated</h4>
                 <p className="text-zinc-400 text-xs font-medium leading-relaxed">
                   Get updates on new products, features, and more.
@@ -1171,14 +1364,20 @@ export default function LandingPage() {
                     <Github className="h-4 w-4" />
                   </Link>
                 </div>
-              </div>
+              </motion.div>
 
             </div>
 
-          </div>
+          </motion.div>
 
           {/* Bottom Copyright & Selector Bar */}
-          <div className="relative pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 z-10 border-t border-border/40">
+          <motion.div 
+            className="relative pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 z-10 border-t border-border/40"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+          >
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
               <span className="text-zinc-500 text-xs font-medium">
                 © 2026 ARCA. All rights reserved.
@@ -1195,7 +1394,7 @@ export default function LandingPage() {
               <span>English</span>
               <ChevronDown className="h-3 w-3" />
             </button>
-          </div>
+          </motion.div>
 
         </div>
       </section>
