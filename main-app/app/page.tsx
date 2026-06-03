@@ -565,7 +565,12 @@ export default function LandingPage() {
               className="group relative flex flex-col items-center justify-center p-8 rounded-2xl bg-background border border-border/40 hover:bg-background/80 transition-colors"
             >
               <div className="relative w-10 h-10 mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
-                 <Image src={chain.icon} alt={chain.name} fill className="object-contain" />
+                <Image 
+                  src={chain.icon} 
+                  alt={chain.name} 
+                  fill 
+                  className={`object-contain ${chain.name === "Linea Sepolia" ? "invert" : ""}`} 
+                />
               </div>
               <span className="text-xs font-semibold text-zinc-400 text-center">
                 {chain.name}
