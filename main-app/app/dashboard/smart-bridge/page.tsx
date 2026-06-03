@@ -516,7 +516,6 @@ export default function SmartBridgePage() {
         amount: depositAmount,
         from: {
           adapter,
-          allocations: { amount: depositAmount, chain: kitChain as KitChain },
         },
         to: {
           adapter,
