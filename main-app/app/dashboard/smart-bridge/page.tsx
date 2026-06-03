@@ -512,9 +512,8 @@ export default function SmartBridgePage() {
       await ensureWalletChainAdded("Arc_Testnet");
 
       setStep(2, "pending", "Spending USDC to your Arc Testnet modular wallet…");
-      const netAmount = routeInfo ? routeInfo.net : amount;
       const result = await spend(kitContext, {
-        amount: netAmount,
+        amount: depositAmount,
         from: {
           adapter,
           allocations: { amount: depositAmount, chain: kitChain as KitChain },
