@@ -39,7 +39,7 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
       {!exit && (
         <motion.div
           key="boot"
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background"
+          className="dark fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#07111E]"
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -61,20 +61,20 @@ export default function BootScreen({ onComplete }: { onComplete: () => void }) {
                   unoptimized
                 />
               </div>
-              <span className="text-lg font-semibold tracking-[0.25em] text-foreground">
+              <span className="text-lg font-semibold tracking-[0.25em] text-white">
                 ARCA
               </span>
             </motion.div>
 
             {/* Minimal Progress Bar */}
             <motion.div
-              className="w-24 h-[1.5px] bg-muted rounded-full overflow-hidden"
+              className="w-24 h-[1.5px] bg-zinc-800 rounded-full overflow-hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.15, duration: 0.4 }}
             >
               <motion.div
-                className="h-full bg-[var(--ring)]"
+                className="h-full bg-[#70717D]"
                 style={{ width: `${progress}%` }}
                 transition={{ ease: "easeOut" }}
               />

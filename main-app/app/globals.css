@@ -87,6 +87,7 @@
 
 .dark {
   /* Dark Theme */
+  color-scheme: dark;
 
   --background: #07111E;
   --foreground: #FFFFFF;
