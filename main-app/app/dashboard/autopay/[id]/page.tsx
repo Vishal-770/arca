@@ -836,8 +836,8 @@ export default function AutoPayDetailPage() {
 
       {/* ── Cryptographic Revocation Confirmation Dialog ── */}
       {showRevokeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-background border border-border p-8 space-y-6 rounded-full shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-background border border-border p-6 md:p-8 space-y-6 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200">
             
             {/* Warning Icon and Header */}
             <div className="space-y-3 font-sans">
@@ -854,7 +854,7 @@ export default function AutoPayDetailPage() {
             </div>
 
             {/* Structured details block */}
-            <div className="border border-border/40 p-5 space-y-3 text-[10px] font-mono rounded-full">
+            <div className="border border-border/40 p-4 md:p-5 space-y-3 text-[10px] font-mono rounded-xl bg-muted/20">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground uppercase font-bold">Plan ID:</span>
                 <span className="font-bold text-foreground truncate max-w-[200px] select-all font-mono">
@@ -875,7 +875,7 @@ export default function AutoPayDetailPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground uppercase font-bold">Next Renewal:</span>
-                <span className="font-bold text-foreground font-mono font-mono">
+                <span className="font-bold text-foreground font-mono">
                   {new Date(Number(sub.lastEndTime) * 1000).toLocaleDateString(undefined, {
                     month: "short",
                     day: "numeric",
@@ -890,14 +890,14 @@ export default function AutoPayDetailPage() {
               <button
                 disabled={actionLoading}
                 onClick={() => setShowRevokeModal(false)}
-                className="flex-1 h-10 border border-border bg-transparent text-xs font-mono font-bold uppercase tracking-wider hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-full"
+                className="flex-1 h-10 border border-border bg-transparent text-xs font-mono font-bold uppercase tracking-wider hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
               >
                 Cancel
               </button>
               <button
                 disabled={actionLoading}
                 onClick={handleDisableAutoPay}
-                className="flex-1 h-10 bg-destructive text-destructive-foreground text-xs font-mono font-bold uppercase tracking-wider hover:opacity-90 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center gap-2"
+                className="flex-1 h-10 bg-destructive text-destructive-foreground text-xs font-mono font-bold uppercase tracking-wider hover:opacity-90 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg flex items-center justify-center gap-2"
               >
                 {actionLoading ? (
                   <>
