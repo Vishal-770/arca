@@ -209,9 +209,6 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
 
   const loginWithPasskey = useCallback(async (existingUser?: string) => {
     if (!passkeyTransport) throw new Error("Passkey transport not initialized.");
-    
-    const resolvedUser = existingUser?.trim() || localStorage.getItem("circle_username") || "";
-    if (!resolvedUser) throw new Error("Username is required to find passkey.");
 
     const cred = await toWebAuthnCredential({
       transport: passkeyTransport,
@@ -219,6 +216,28 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     });
 
     const { publicClient } = getClients("Arc_Testnet");
+
+    // Resolve username: prioritize typed value, then try to decode userHandle from the WebAuthn credential
+    let resolvedUser = existingUser?.trim();
+
+    if (!resolvedUser && (cred as any).userHandle) {
+      try {
+        const hex = (cred as any).userHandle;
+        if (hex && hex.startsWith("0x")) {
+          resolvedUser = Buffer.from(hex.slice(2), "hex").toString("utf8").trim();
+        } else if (hex) {
+          resolvedUser = hex.trim();
+        }
+      } catch (e) {
+        console.error("Failed to decode userHandle from passkey:", e);
+      }
+    }
+
+    // Fall back to localStorage, and finally a default session name
+    if (!resolvedUser) {
+      resolvedUser = localStorage.getItem("circle_username") || "arca_user";
+    }
+
     const acct = await toCircleSmartAccount({
       client: publicClient as Client,
       owner: toWebAuthnAccount({ credential: cred }),

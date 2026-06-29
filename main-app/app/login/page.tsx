@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useCircleSDK } from "@/context/CircleSDKContext";
-import { KeyRound, Wallet, Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
+import { KeyRound, Wallet, Loader2, ShieldAlert, ShieldCheck, Sun, Moon } from "lucide-react";
 
 export default function LoginPage() {
   return (
@@ -32,7 +32,11 @@ function LoginSkeleton() {
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { theme, resolvedTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
   
   const {
     session,
@@ -46,6 +50,12 @@ function LoginContent() {
   const [activeAction, setActiveAction] = useState<"register" | "login" | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState<"unlock" | "register">("unlock");
+
+  const handleTabChange = (tab: "unlock" | "register") => {
+    setActiveTab(tab);
+    setErrorMsg(null);
+  };
 
   // Prevent SSR hydration mismatch for theme-dependent assets
   useEffect(() => {
@@ -102,11 +112,6 @@ function LoginContent() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (!usernameInput.trim()) {
-      setErrorMsg("Please enter a username.");
-      return;
-    }
-
     setErrorMsg(null);
     setIsLoading(true);
     setActiveAction("login");
@@ -127,12 +132,12 @@ function LoginContent() {
   const globeImage = isDark ? "/globe-dark.png" : "/globe-light.png";
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-background font-mulish overflow-x-hidden relative">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-background font-sans overflow-x-hidden relative">
       
-      {/* LEFT SIDE: Strict 50% Full-bleed Visual Panel */}
-      <div className="w-full lg:w-1/2 hidden lg:block relative overflow-hidden lg:h-screen bg-slate-50 dark:bg-zinc-950 border-r border-border/40 transition-colors duration-300">
+      {/* LEFT SIDE: Full-bleed Visual Panel with Glassmorphic Overlay */}
+      <div className="w-full lg:w-1/2 hidden lg:block relative overflow-hidden lg:h-screen bg-secondary/50 border-r border-border/40 transition-colors duration-300">
         
-        {/* Full-bleed Globe Visual Showcase - Flat (No scale, no spin) */}
+        {/* Full-bleed Globe Visual Showcase */}
         {mounted && (
           <Image
             src={globeImage}
@@ -140,17 +145,17 @@ function LoginContent() {
             fill
             priority
             unoptimized
-            className="object-cover opacity-90"
+            className="object-cover opacity-90 transition-opacity duration-500"
           />
         )}
         
-        {/* Understated Dynamic Vignette Overlay (Uses semantic background variables) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/25 to-background/40 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_center,rgba(94,190,255,0.02)_0%,transparent_70%)] pointer-events-none" />
+        {/* Understated Dynamic Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-background/50 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_center,rgba(94,190,255,0.015)_0%,transparent_70%)] pointer-events-none" />
 
         {/* Floating Brand Overlay */}
-        <div className="absolute top-12 left-12 flex items-center gap-3.5 z-20">
-          <div className="relative w-9 h-9">
+        <div className="absolute top-12 left-12 flex items-center gap-3 z-20">
+          <div className="relative w-8 h-8">
             <Image 
               src="/logo.png" 
               alt="ARCA Logo" 
@@ -160,16 +165,16 @@ function LoginContent() {
               className="object-contain dark:invert"
             />
           </div>
-          <span className="text-xl font-bold uppercase tracking-wider text-foreground font-sans">
+          <span className="text-lg font-bold tracking-widest text-foreground uppercase font-sans">
             ARCA
           </span>
         </div>
 
-        {/* Bottom Feature Card Overlaid on Image - Elegant Borderless Line */}
-        <div className="absolute bottom-12 left-12 right-12 z-20 max-w-xl border-t border-border/40 pt-8">
+        {/* Bottom Feature Card Overlaid on Image - Premium Glassmorphism */}
+        <div className="absolute bottom-12 left-12 right-12 z-20 max-w-xl backdrop-blur-md bg-card/25 border border-border/10 rounded-2xl p-8 shadow-xl">
           <div className="space-y-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold tracking-tight text-foreground font-sans leading-snug">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground font-sans leading-snug">
                 The Protocol for <br />
                 Modern Payments.
               </h2>
@@ -178,17 +183,17 @@ function LoginContent() {
               </p>
             </div>
             
-            <div className="grid grid-cols-3 gap-6 pt-5 border-t border-border/40">
+            <div className="grid grid-cols-3 gap-6 pt-5 border-t border-border/10">
               <div>
-                <div className="text-xs font-semibold text-foreground tracking-wider uppercase font-sans">Passkeys</div>
+                <div className="text-xs font-bold text-foreground tracking-wider uppercase">Passkeys</div>
                 <div className="text-[11px] text-muted-foreground mt-1.5 leading-snug">Device biometrics</div>
               </div>
               <div>
-                <div className="text-xs font-semibold text-foreground tracking-wider uppercase font-sans">USDC Gas</div>
+                <div className="text-xs font-bold text-foreground tracking-wider uppercase">USDC Gas</div>
                 <div className="text-[11px] text-muted-foreground mt-1.5 leading-snug">Native gas execution</div>
               </div>
               <div>
-                <div className="text-xs font-semibold text-foreground tracking-wider uppercase font-sans">CCTP Bridge</div>
+                <div className="text-xs font-bold text-foreground tracking-wider uppercase">CCTP Bridge</div>
                 <div className="text-[11px] text-muted-foreground mt-1.5 leading-snug">Official burn & mint</div>
               </div>
             </div>
@@ -197,9 +202,24 @@ function LoginContent() {
 
       </div>
 
-      {/* RIGHT SIDE: Strict 50% Highly Polished Login Form Panel - Clean & Flat */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-between p-8 md:p-12 relative overflow-hidden bg-background lg:h-screen">
+      {/* RIGHT SIDE: Highly Polished Login Form Panel - Clean, Minimal & Flat */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-between p-8 md:p-12 relative overflow-hidden bg-background lg:h-screen transition-colors duration-300">
         
+        {/* Theme Toggle Button */}
+        <div className="absolute top-8 right-8 z-30">
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            className="flex items-center justify-center w-9 h-9 rounded-xl border border-border bg-background hover:bg-muted/60 text-foreground transition-colors duration-200 cursor-pointer shadow-sm"
+          >
+            {mounted && resolvedTheme === "dark" ? (
+              <Sun className="w-4 h-4 text-amber-500" />
+            ) : (
+              <Moon className="w-4 h-4 text-indigo-500" />
+            )}
+          </button>
+        </div>
+
         {/* Mobile Header: Logo + App Name */}
         <div className="flex items-center justify-between lg:hidden z-20 mb-8">
           <div className="flex items-center gap-3">
@@ -213,7 +233,7 @@ function LoginContent() {
                 className="object-contain dark:invert"
               />
             </div>
-            <span className="text-xl font-bold uppercase tracking-wider text-foreground font-sans">
+            <span className="text-lg font-bold tracking-widest text-foreground uppercase font-sans">
               ARCA
             </span>
           </div>
@@ -227,7 +247,7 @@ function LoginContent() {
           <div className="space-y-8">
             
             <div className="space-y-2 text-center lg:text-left">
-              <h2 className="text-2xl font-semibold text-foreground tracking-tight font-sans">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight font-sans">
                 Sign in to your account
               </h2>
               <p className="text-muted-foreground text-xs leading-relaxed">
@@ -235,72 +255,108 @@ function LoginContent() {
               </p>
             </div>
 
+            {/* Tabs Selector - Premium Underline Navigation Design */}
+            <div className="flex border-b border-border/60 w-full">
+              <button
+                type="button"
+                onClick={() => handleTabChange("unlock")}
+                disabled={isLoading}
+                className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all duration-200 cursor-pointer flex-1 text-center ${
+                  activeTab === "unlock"
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Unlock Account
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("register")}
+                disabled={isLoading}
+                className={`pb-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all duration-200 cursor-pointer flex-1 text-center ${
+                  activeTab === "register"
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Register Device
+              </button>
+            </div>
+
             {/* Error banner */}
             {errorMsg && (
               <div className="rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3.5 text-xs text-destructive flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                <ShieldAlert className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <ShieldAlert className="w-4.5 h-4.5 flex-shrink-0 mt-0.5" />
                 <span className="font-semibold leading-relaxed">{errorMsg}</span>
               </div>
             )}
 
-            {/* Username Input - Sleek Bottom Line Only */}
-            <div className="space-y-2">
-              <label htmlFor="username" className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                placeholder="e.g. alice, merchant.arca"
-                value={usernameInput}
-                onChange={(e) => {
-                  setUsernameInput(e.target.value);
-                  setErrorMsg(null);
-                }}
-                disabled={isLoading}
-                autoComplete="username"
-                className="w-full border-b border-border bg-transparent px-2 py-3.5 text-base text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground transition-colors duration-200"
-              />
-            </div>
-
-            <div className="flex flex-col gap-4 pt-2">
-              {/* Unlock Account (Login) */}
-              <button
-                onClick={handleLogin}
-                disabled={!isReady || isLoading || !usernameInput.trim()}
-                className="group relative w-full flex items-center justify-center gap-3 rounded-full border border-border bg-background hover:bg-primary/5 hover:border-primary/40 px-6 py-3.5 text-sm font-bold text-foreground transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.99] cursor-pointer"
-              >
-                {isLoading && activeAction === "login" ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Wallet className="h-5 w-5" />
-                )}
-                <span>Unlock Smart Account</span>
-              </button>
-
-              <div className="relative my-2">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border" />
+            {/* Tab conditional views */}
+            {activeTab === "unlock" ? (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <div className="text-center lg:text-left space-y-1">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Unlock directly using your stored device credentials. Your passkey client resolves account identifiers automatically.
+                  </p>
                 </div>
-                <div className="relative flex justify-center text-[10px] uppercase font-extrabold tracking-widest">
-                  <span className="bg-background px-3 text-muted-foreground/60">New Device?</span>
-                </div>
+
+                {/* Unlock Account Button - Premium Elevation */}
+                <button
+                  onClick={handleLogin}
+                  disabled={!isReady || isLoading}
+                  className="group relative w-full flex items-center justify-center gap-2.5 rounded-xl border border-border bg-background hover:bg-muted/60 px-6 py-3.5 text-xs font-extrabold uppercase tracking-widest text-foreground transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 shadow-sm hover:shadow cursor-pointer"
+                >
+                  {isLoading && activeAction === "login" ? (
+                    <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                  ) : (
+                    <Wallet className="h-4.5 w-4.5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  )}
+                  <span>Unlock Smart Account</span>
+                </button>
               </div>
+            ) : (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <div className="text-center lg:text-left space-y-1">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Choose a unique username to bind a new cryptographic passkey to this device and build your smart account.
+                  </p>
+                </div>
 
-              {/* Create Account (Register) */}
-              <button
-                onClick={handleRegister}
-                disabled={!isReady || isLoading || !usernameInput.trim()}
-                className="w-full flex items-center justify-center gap-3 rounded-full bg-primary text-primary-foreground px-6 py-3.5 text-sm font-bold hover:bg-primary/95 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.99] cursor-pointer shadow-sm shadow-primary/10"
-              >
-                {isLoading && activeAction === "register" ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <KeyRound className="h-5 w-5" />
-                )}
-                <span>Register Device Passkey</span>
-              </button>
-            </div>
+                {/* Username Input - Sleek Enclosed Input */}
+                <div className="space-y-2">
+                  <label htmlFor="username" className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    type="text"
+                    placeholder="e.g. alice, merchant.arca"
+                    value={usernameInput}
+                    onChange={(e) => {
+                      setUsernameInput(e.target.value);
+                      setErrorMsg(null);
+                    }}
+                    disabled={isLoading}
+                    autoComplete="username"
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all duration-200 shadow-inner"
+                  />
+                </div>
+
+                {/* Create Account (Register) Button - High Contrast Premium */}
+                <button
+                  onClick={handleRegister}
+                  disabled={!isReady || isLoading || !usernameInput.trim()}
+                  className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-primary text-primary-foreground px-6 py-3.5 text-xs font-extrabold uppercase tracking-widest hover:bg-primary/90 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 shadow-md shadow-primary/5 cursor-pointer"
+                >
+                  {isLoading && activeAction === "register" ? (
+                    <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                  ) : (
+                    <KeyRound className="h-4.5 w-4.5" />
+                  )}
+                  <span>Register Device Passkey</span>
+                </button>
+              </div>
+            )}
 
             {/* Sponsorship Badge */}
             <div className="relative pt-2">
