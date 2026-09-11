@@ -51,6 +51,34 @@ export async function GET(req: NextRequest) {
 
     const userId = session.userId;
     const { db } = await connectToDatabase();
+
+    const id = req.nextUrl.searchParams.get("id");
+    if (id) {
+      if (!ObjectId.isValid(id)) {
+        return NextResponse.json({ error: "Invalid webhook ID" }, { status: 400 });
+      }
+      const webhook = await db.collection("webhook_endpoints").findOne({
+        _id: new ObjectId(id),
+        userId,
+      });
+      if (!webhook) {
+        return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
+      }
+      return NextResponse.json({
+        webhook: {
+          id: webhook._id.toString(),
+          userId: webhook.userId,
+          planId: webhook.planId,
+          url: webhook.url,
+          secret: webhook.secret,
+          events: webhook.events,
+          isActive: webhook.isActive,
+          createdAt: webhook.createdAt,
+          updatedAt: webhook.updatedAt,
+        },
+      });
+    }
+
     const webhooks = await db
       .collection("webhook_endpoints")
       .find({ userId })

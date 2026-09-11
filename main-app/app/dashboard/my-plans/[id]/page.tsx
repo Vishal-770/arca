@@ -9,6 +9,7 @@ import { useCircleSDK } from "@/context/CircleSDKContext";
 import { encodeFunctionData } from "viem";
 
 import { SUBSCRIPTION_GATEWAY_ADDRESS } from "@/lib/subscription";
+import { formatTransactionError } from "@/lib/errors";
 import {
   Table,
   TableBody,
@@ -221,7 +222,7 @@ export default function MyPlanDetailPage() {
 
       setData({ ...data, plan: { ...data.plan, active } });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(formatTransactionError(err));
     } finally {
       setToggling(false);
     }

@@ -8,6 +8,7 @@ import { useDashboardContext } from "@/app/dashboard/_components/DashboardShell"
 import { useCircleSDK } from "@/context/CircleSDKContext";
 import { SUBSCRIPTION_GATEWAY_ADDRESS, ARC_USDC_ADDRESS } from "@/lib/subscription";
 import { encodeFunctionData } from "viem";
+import { formatTransactionError } from "@/lib/errors";
 
 import { 
   ArrowLeft, 
@@ -365,7 +366,7 @@ export default function MarketplaceDetailPage() {
       setSuccessMsg(`Successfully subscribed to ${selectedTier.label}`);
       setEligibility({ eligible: false, reason: "ACTIVE", remainingSeconds: Number(data.plan.duration) });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(formatTransactionError(err));
     } finally {
       setSubmitting(false);
     }

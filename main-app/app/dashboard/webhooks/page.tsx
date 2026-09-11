@@ -16,14 +16,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -48,9 +40,7 @@ import {
   Layers,
   CheckCircle2,
   Settings2,
-  RefreshCw,
   ExternalLink,
-  FileText,
   Terminal,
   Search,
   RotateCcw,
@@ -88,19 +78,6 @@ type WebhookEndpoint = {
   updatedAt: string;
 };
 
-type WebhookLog = {
-  id: string;
-  event: string;
-  url: string;
-  status: number;
-  statusText?: string;
-  durationMs: number;
-  timestamp: string;
-  txHash?: string;
-  payload?: any;
-  responseBody?: string;
-};
-
 type StatusFilter = "all" | "active" | "inactive";
 
 export default function WebhooksPage() {
@@ -133,12 +110,6 @@ export default function WebhooksPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Webhook Delivery Logs states
-  const [logs, setLogs] = useState<WebhookLog[]>([]);
-  const [loadingLogs, setLoadingLogs] = useState(true);
-  const [refreshingLogs, setRefreshingLogs] = useState(false);
-  const [selectedLogDetails, setSelectedLogDetails] = useState<WebhookLog | null>(null);
-
   // Fetch all webhooks configured for this user
   const fetchWebhooks = async () => {
     try {
@@ -151,24 +122,6 @@ export default function WebhooksPage() {
       console.error("Failed to fetch webhooks", err);
     } finally {
       setLoadingWebhooks(false);
-    }
-  };
-
-  // Fetch delivery logs
-  const fetchLogs = async (silent = false) => {
-    if (!silent) setLoadingLogs(true);
-    else setRefreshingLogs(true);
-    try {
-      const res = await fetch("/api/webhooks/logs");
-      const data = await res.json();
-      if (data.logs) {
-        setLogs(data.logs);
-      }
-    } catch (err) {
-      console.error("Failed to fetch logs", err);
-    } finally {
-      setLoadingLogs(false);
-      setRefreshingLogs(false);
     }
   };
 
@@ -190,7 +143,6 @@ export default function WebhooksPage() {
   useEffect(() => {
     if (sessionUserToken) {
       void fetchWebhooks();
-      void fetchLogs();
     }
   }, [sessionUserToken]);
 
@@ -401,9 +353,8 @@ export default function WebhooksPage() {
       total,
       active,
       disabled,
-      logsCount: logs.length,
     };
-  }, [webhooks, logs]);
+  }, [webhooks]);
 
   const isLoading = loadingWebhooks || loadingPlans;
 
@@ -509,20 +460,20 @@ export default function WebhooksPage() {
           </div>
         </div>
 
-        {/* Total Deliveries */}
+        {/* Disabled / Paused Endpoints */}
         <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Delivery Logs
+              Disabled
             </span>
-            <Terminal className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+            <Clock className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
           </div>
           <div>
             <p className="text-2xl font-bold font-mono tracking-tight text-foreground leading-none">
-              {stats.logsCount}
+              {stats.disabled}
             </p>
             <p className="text-[11px] text-muted-foreground mt-2">
-              Logged execution attempts
+              Paused or inactive endpoints
             </p>
           </div>
         </div>
@@ -683,7 +634,18 @@ export default function WebhooksPage() {
                         </Badge>
                       </div>
 
-                      <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-2.5 text-xs gap-1.5 rounded-lg border-border/50 hover:bg-muted/50"
+                        >
+                          <Link href={`/dashboard/webhooks/${wh.id}`}>
+                            <Terminal size={12} />
+                            View Logs
+                          </Link>
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
@@ -806,165 +768,7 @@ export default function WebhooksPage() {
         </div>
       )}
 
-      {/* ── Webhook Delivery Logs Section ─────────────────────── */}
-      <div className="rounded-xl border border-border/30 bg-muted/10 p-5 sm:p-6 flex flex-col gap-4 mt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-base font-bold tracking-tight text-foreground flex items-center gap-2">
-              <Terminal size={16} className="text-primary" />
-              Webhook Activity Logs
-            </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Real-time delivery attempts and status history of on-chain checkout events.
-            </p>
-          </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fetchLogs(true)}
-            disabled={refreshingLogs || loadingLogs}
-            className="h-8 px-3 text-xs gap-1.5 rounded-lg border-border/60 hover:bg-muted/50 self-start sm:self-auto"
-          >
-            <RefreshCw size={12} className={refreshingLogs ? "animate-spin" : ""} />
-            {refreshingLogs ? "Refreshing…" : "Refresh Logs"}
-          </Button>
-        </div>
-
-        {loadingLogs ? (
-          <div className="py-12 text-center rounded-xl border border-border/20 bg-muted/10">
-            <p className="text-xs text-muted-foreground animate-pulse font-mono uppercase tracking-widest">
-              Loading activity logs…
-            </p>
-          </div>
-        ) : logs.length === 0 ? (
-          <div className="py-12 text-center rounded-xl border border-dashed border-border/40 bg-muted/20 p-6">
-            <Clock size={22} className="text-muted-foreground/40 mx-auto mb-2" />
-            <p className="text-xs font-semibold text-foreground">No recent delivery logs found</p>
-            <p className="text-[11px] text-muted-foreground mt-1 max-w-sm mx-auto">
-              Logs will appear automatically once subscription checkout events are dispatched to your endpoints.
-            </p>
-          </div>
-        ) : (
-          <div className="rounded-xl border border-border/30 bg-background/50 overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table className="w-full">
-                <TableHeader className="bg-muted/40 border-b border-border/20">
-                  <TableRow className="hover:bg-transparent border-none">
-                    <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground py-3 pl-4 w-[110px]">
-                      Status
-                    </TableHead>
-                    <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground py-3 w-[180px]">
-                      Event / Method
-                    </TableHead>
-                    <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground py-3">
-                      Destination URL
-                    </TableHead>
-                    <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground py-3 w-[180px]">
-                      Time / Latency
-                    </TableHead>
-                    <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground py-3 pr-4 text-right w-[140px]">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {logs.map((log) => {
-                    const isSuccess = log.status >= 200 && log.status < 300;
-                    const formattedTime = new Date(log.timestamp).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    });
-                    const formattedDate = new Date(log.timestamp).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    });
-
-                    return (
-                      <TableRow
-                        key={log.id}
-                        className="hover:bg-muted/20 transition-colors"
-                      >
-                        <TableCell className="py-3 pl-4">
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "font-mono text-[10px] px-2 py-0.5 rounded-md font-semibold",
-                              isSuccess
-                                ? "bg-primary/10 text-primary border-primary/20"
-                                : "bg-destructive/10 text-destructive border-destructive/20"
-                            )}
-                          >
-                            {log.status === 0 ? "FAILED" : log.status}
-                          </Badge>
-                        </TableCell>
-
-                        <TableCell className="py-3">
-                          <div className="flex flex-col">
-                            <span className="text-xs font-semibold text-foreground">
-                              {log.event}
-                            </span>
-                            <span className="text-[10px] font-mono text-muted-foreground uppercase">
-                              POST
-                            </span>
-                          </div>
-                        </TableCell>
-
-                        <TableCell className="py-3 max-w-[240px]">
-                          <span
-                            className="text-xs font-mono text-muted-foreground truncate block select-all"
-                            title={log.url}
-                          >
-                            {log.url}
-                          </span>
-                        </TableCell>
-
-                        <TableCell className="py-3 text-xs text-muted-foreground">
-                          <div className="flex flex-col">
-                            <span className="font-medium text-foreground">
-                              {formattedDate}, {formattedTime}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
-                              {log.durationMs}ms latency
-                            </span>
-                          </div>
-                        </TableCell>
-
-                        <TableCell className="py-3 pr-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            {log.txHash && (
-                              <a
-                                href={`https://testnet.arcscan.app/tx/${log.txHash}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-border/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                title="View transaction on ArcScan"
-                              >
-                                <ExternalLink size={12} />
-                              </a>
-                            )}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setSelectedLogDetails(log)}
-                              className="h-7 px-2.5 text-xs rounded-lg gap-1 border-border/50 hover:bg-muted/50"
-                            >
-                              <FileText size={11} />
-                              Inspect
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* ── Add Webhook Dialog ───────────────────────────────────── */}
       <Dialog
@@ -1044,25 +848,6 @@ export default function WebhooksPage() {
               <p className="text-[11px] text-muted-foreground">
                 Must be an HTTPS endpoint accepting POST requests with JSON payload.
               </p>
-            </div>
-
-            {/* Active Toggle */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-muted/20 border border-border/20">
-              <div className="space-y-0.5">
-                <p className="text-xs font-semibold text-foreground">Endpoint Active</p>
-                <p className="text-[11px] text-muted-foreground">
-                  Deliver webhook alerts immediately upon creation.
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant={isActiveToggle ? "default" : "outline"}
-                size="sm"
-                onClick={() => setIsActiveToggle(!isActiveToggle)}
-                className="h-7 px-3 text-xs rounded-lg font-mono font-semibold"
-              >
-                {isActiveToggle ? "Active" : "Disabled"}
-              </Button>
             </div>
           </div>
 
@@ -1228,165 +1013,6 @@ export default function WebhooksPage() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Log Inspection Dialog ─────────────────────────────────── */}
-      <Dialog
-        open={!!selectedLogDetails}
-        onOpenChange={(open) => {
-          if (!open) setSelectedLogDetails(null);
-        }}
-      >
-        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto flex flex-col p-6 rounded-2xl border-border/30 bg-background/95 backdrop-blur-xl">
-          <DialogHeader className="pb-3 border-b border-border/30 shrink-0 text-left space-y-1">
-            <DialogTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-              <Terminal size={15} className="text-primary" />
-              Delivery Inspection Detail
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Event ID:{" "}
-              <span className="font-mono text-foreground font-semibold">
-                {selectedLogDetails?.payload?.id || "N/A"}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedLogDetails && (
-            <div className="space-y-4 py-3 flex-1 min-h-0 overflow-y-auto text-left">
-              {/* Delivery stats strip */}
-              <div className="grid grid-cols-3 gap-3 bg-muted/20 p-3.5 rounded-xl border border-border/20">
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Response Status
-                  </span>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span
-                      className={cn(
-                        "size-2 rounded-full",
-                        selectedLogDetails.status >= 200 && selectedLogDetails.status < 300
-                          ? "bg-primary"
-                          : "bg-destructive"
-                      )}
-                    />
-                    <span className="text-xs font-bold text-foreground">
-                      {selectedLogDetails.status === 0
-                        ? "Failed / Timeout"
-                        : `${selectedLogDetails.status} ${selectedLogDetails.statusText ?? ""}`}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Latency
-                  </span>
-                  <p className="text-xs font-bold text-foreground mt-0.5 font-mono">
-                    {selectedLogDetails.durationMs}ms
-                  </p>
-                </div>
-
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Timestamp
-                  </span>
-                  <p className="text-xs font-medium text-muted-foreground mt-0.5 font-mono">
-                    {new Date(selectedLogDetails.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </p>
-                </div>
-              </div>
-
-              {/* Destination & Tx info */}
-              <div className="space-y-2 bg-muted/20 p-3.5 rounded-xl border border-border/20 text-xs">
-                <div className="flex justify-between items-center gap-2">
-                  <span className="text-muted-foreground font-medium">Destination URL</span>
-                  <span className="font-mono text-foreground break-all select-all font-semibold text-right max-w-[70%]">
-                    {selectedLogDetails.url}
-                  </span>
-                </div>
-                <Separator className="my-1.5 opacity-40" />
-                <div className="flex justify-between items-center gap-2">
-                  <span className="text-muted-foreground font-medium">Signature Method</span>
-                  <span className="text-foreground font-semibold font-mono">HMAC-SHA256 (t, v1)</span>
-                </div>
-                <Separator className="my-1.5 opacity-40" />
-                <div className="flex justify-between items-center gap-2">
-                  <span className="text-muted-foreground font-medium">On-Chain Tx Hash</span>
-                  {selectedLogDetails.txHash ? (
-                    <a
-                      href={`https://testnet.arcscan.app/tx/${selectedLogDetails.txHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-primary hover:underline flex items-center gap-1 font-semibold truncate max-w-[70%]"
-                    >
-                      {selectedLogDetails.txHash.slice(0, 16)}...
-                      <ExternalLink size={10} />
-                    </a>
-                  ) : (
-                    <span className="text-muted-foreground font-mono">None</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Request JSON payload */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <Terminal size={11} />
-                    Request Payload (Body JSON)
-                  </label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      navigator.clipboard.writeText(
-                        JSON.stringify(selectedLogDetails.payload, null, 2)
-                      )
-                    }
-                    className="h-6 px-2 text-[11px] rounded-lg gap-1 border border-border/40 hover:bg-muted"
-                    title="Copy payload"
-                  >
-                    <Copy size={10} />
-                    Copy
-                  </Button>
-                </div>
-                <pre className="text-[11px] font-mono p-3 bg-muted/20 border border-border/30 rounded-xl overflow-x-auto max-h-52 leading-relaxed select-all text-foreground">
-                  {JSON.stringify(selectedLogDetails.payload, null, 2)}
-                </pre>
-              </div>
-
-              {/* Response Body */}
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <FileText size={11} />
-                  Response Body (Merchant Server Output)
-                </label>
-                <div className="p-3 bg-muted/20 border border-border/30 rounded-xl max-h-32 overflow-y-auto select-all">
-                  {selectedLogDetails.responseBody ? (
-                    <pre className="text-[11px] font-mono whitespace-pre-wrap break-all leading-normal text-muted-foreground">
-                      {selectedLogDetails.responseBody}
-                    </pre>
-                  ) : (
-                    <span className="text-xs text-muted-foreground italic">
-                      No response body returned from destination server.
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <DialogFooter className="mt-2 pt-3 border-t border-border/20 shrink-0">
-            <Button
-              onClick={() => setSelectedLogDetails(null)}
-              className="w-full sm:w-auto h-8.5 px-4 text-xs font-semibold rounded-lg"
-            >
-              Close Details
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

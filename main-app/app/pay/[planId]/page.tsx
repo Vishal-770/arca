@@ -22,9 +22,9 @@ import {
   Wallet,
   Copy,
   Check,
-  Sparkles,
   ArrowDownUp,
 } from "lucide-react";
+import { formatTransactionError } from "@/lib/errors";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -331,7 +331,7 @@ export default function PaymentPage() {
       setTierStatus((p) => ({ ...p, [tid]: "error" }));
       setTierError((p) => ({
         ...p,
-        [tid]: err instanceof Error ? err.message : "Transaction failed",
+        [tid]: formatTransactionError(err),
       }));
     }
   };

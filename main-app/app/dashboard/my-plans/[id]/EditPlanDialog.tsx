@@ -19,6 +19,7 @@ import { useCircleSDK } from "@/context/CircleSDKContext";
 import { useDashboardContext } from "@/app/dashboard/_components/DashboardShell";
 import { encodeFunctionData } from "viem";
 import { SUBSCRIPTION_GATEWAY_ADDRESS, normalizeIpfsUri } from "@/lib/subscription";
+import { formatTransactionError } from "@/lib/errors";
 
 type EditPlanDialogProps = {
   planId: string;
@@ -168,7 +169,7 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
       setOpen(false);
       if (onSuccess) onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update plan");
+      setError(formatTransactionError(err));
     } finally {
       setLoading(false);
     }

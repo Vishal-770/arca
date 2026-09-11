@@ -30,6 +30,7 @@ import {
   type P256Credential,
 } from "viem/account-abstraction";
 import { SUPPORTED_CHAINS, arcTestnet } from "@/lib/bridge_config";
+import { formatTransactionError } from "@/lib/errors";
 
 // ─── Constants & Configurations ──────────────────────────────────────────────
 
@@ -205,104 +206,112 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
 
   // Passkey actions
   const registerPasskey = useCallback(async (newUser: string) => {
-    if (!passkeyTransport) throw new Error("Passkey transport not initialized.");
-    const trimmed = newUser.trim();
-    if (!trimmed) throw new Error("Username cannot be empty.");
+    try {
+      if (!passkeyTransport) throw new Error("Passkey transport not initialized.");
+      const trimmed = newUser.trim();
+      if (!trimmed) throw new Error("Username cannot be empty.");
 
-    const cred = await toWebAuthnCredential({
-      transport: passkeyTransport,
-      mode: WebAuthnMode.Register,
-      username: trimmed,
-    });
-
-    const { publicClient } = getClients("Arc_Testnet");
-    const acct = await toCircleSmartAccount({
-      client: publicClient as Client,
-      owner: toWebAuthnAccount({ credential: cred }),
-      name: trimmed,
-    });
-
-    localStorage.setItem("circle_credential", JSON.stringify(cred));
-    localStorage.setItem("circle_username", trimmed);
-    
-    setCredential(cred);
-    setUsername(trimmed);
-    setWalletAddress(acct.address);
-    setIsReady(true);
-
-    // Establish verified server session with WebAuthn credential
-    await fetch("/api/auth/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      const cred = await toWebAuthnCredential({
+        transport: passkeyTransport,
+        mode: WebAuthnMode.Register,
         username: trimmed,
-        walletAddress: acct.address,
-        credential: {
-          id: cred.id,
-          publicKey: cred.publicKey,
-        },
-      }),
-    }).catch((e) => console.error("Failed to establish server session on register:", e));
+      });
+
+      const { publicClient } = getClients("Arc_Testnet");
+      const acct = await toCircleSmartAccount({
+        client: publicClient as Client,
+        owner: toWebAuthnAccount({ credential: cred }),
+        name: trimmed,
+      });
+
+      localStorage.setItem("circle_credential", JSON.stringify(cred));
+      localStorage.setItem("circle_username", trimmed);
+      
+      setCredential(cred);
+      setUsername(trimmed);
+      setWalletAddress(acct.address);
+      setIsReady(true);
+
+      // Establish verified server session with WebAuthn credential
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: trimmed,
+          walletAddress: acct.address,
+          credential: {
+            id: cred.id,
+            publicKey: cred.publicKey,
+          },
+        }),
+      }).catch((e) => console.error("Failed to establish server session on register:", e));
+    } catch (err) {
+      throw new Error(formatTransactionError(err));
+    }
   }, [passkeyTransport, getClients]);
 
   const loginWithPasskey = useCallback(async (existingUser?: string) => {
-    if (!passkeyTransport) throw new Error("Passkey transport not initialized.");
+    try {
+      if (!passkeyTransport) throw new Error("Passkey transport not initialized.");
 
-    const cred = await toWebAuthnCredential({
-      transport: passkeyTransport,
-      mode: WebAuthnMode.Login,
-    });
+      const cred = await toWebAuthnCredential({
+        transport: passkeyTransport,
+        mode: WebAuthnMode.Login,
+      });
 
-    const { publicClient } = getClients("Arc_Testnet");
+      const { publicClient } = getClients("Arc_Testnet");
 
-    // Resolve username: prioritize typed value, then try to decode userHandle from the WebAuthn credential
-    let resolvedUser = existingUser?.trim();
+      // Resolve username: prioritize typed value, then try to decode userHandle from the WebAuthn credential
+      let resolvedUser = existingUser?.trim();
 
-    if (!resolvedUser && (cred as any).userHandle) {
-      try {
-        const hex = (cred as any).userHandle;
-        if (hex && hex.startsWith("0x")) {
-          resolvedUser = Buffer.from(hex.slice(2), "hex").toString("utf8").trim();
-        } else if (hex) {
-          resolvedUser = hex.trim();
+      if (!resolvedUser && (cred as any).userHandle) {
+        try {
+          const hex = (cred as any).userHandle;
+          if (hex && hex.startsWith("0x")) {
+            resolvedUser = Buffer.from(hex.slice(2), "hex").toString("utf8").trim();
+          } else if (hex) {
+            resolvedUser = hex.trim();
+          }
+        } catch (e) {
+          console.error("Failed to decode userHandle from passkey:", e);
         }
-      } catch (e) {
-        console.error("Failed to decode userHandle from passkey:", e);
       }
+
+      // Fall back to localStorage, and finally a default session name
+      if (!resolvedUser) {
+        resolvedUser = localStorage.getItem("circle_username") || "arca_user";
+      }
+
+      const acct = await toCircleSmartAccount({
+        client: publicClient as Client,
+        owner: toWebAuthnAccount({ credential: cred }),
+        name: resolvedUser,
+      });
+
+      localStorage.setItem("circle_credential", JSON.stringify(cred));
+      localStorage.setItem("circle_username", resolvedUser);
+
+      setCredential(cred);
+      setUsername(resolvedUser);
+      setWalletAddress(acct.address);
+      setIsReady(true);
+
+      // Establish verified server session with WebAuthn credential
+      await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: resolvedUser,
+          walletAddress: acct.address,
+          credential: {
+            id: cred.id,
+            publicKey: cred.publicKey,
+          },
+        }),
+      }).catch((e) => console.error("Failed to establish server session on login:", e));
+    } catch (err) {
+      throw new Error(formatTransactionError(err));
     }
-
-    // Fall back to localStorage, and finally a default session name
-    if (!resolvedUser) {
-      resolvedUser = localStorage.getItem("circle_username") || "arca_user";
-    }
-
-    const acct = await toCircleSmartAccount({
-      client: publicClient as Client,
-      owner: toWebAuthnAccount({ credential: cred }),
-      name: resolvedUser,
-    });
-
-    localStorage.setItem("circle_credential", JSON.stringify(cred));
-    localStorage.setItem("circle_username", resolvedUser);
-
-    setCredential(cred);
-    setUsername(resolvedUser);
-    setWalletAddress(acct.address);
-    setIsReady(true);
-
-    // Establish verified server session with WebAuthn credential
-    await fetch("/api/auth/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: resolvedUser,
-        walletAddress: acct.address,
-        credential: {
-          id: cred.id,
-          publicKey: cred.publicKey,
-        },
-      }),
-    }).catch((e) => console.error("Failed to establish server session on login:", e));
   }, [passkeyTransport, getClients]);
 
   const clearSession = useCallback(() => {
@@ -324,43 +333,47 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     _sponsorGas: boolean = true,
     chainKey: string = "Arc_Testnet"
   ) => {
-    if (!credential || !username) {
-      throw new Error("No active smart account session. Register or login first.");
+    try {
+      if (!credential || !username) {
+        throw new Error("No active smart account session. Register or login first.");
+      }
+
+      const { publicClient, bundlerClient } = getClients(chainKey);
+
+      const smartAccount = await toCircleSmartAccount({
+        client: publicClient as Client,
+        owner: toWebAuthnAccount({ credential }),
+        name: username,
+      });
+
+      // Use Circle's gas price oracle — Arc Testnet bundler requires >= 1 gwei maxPriorityFeePerGas.
+      // Viem's default fee estimation returns ~0.002 gwei which the bundler rejects.
+      // We only set gas PRICES here; gas LIMITS are left to the bundler to auto-estimate.
+      const gasPrices = await getUserOperationGasPrice(publicClient as Client);
+      const maxFeePerGas = BigInt(gasPrices.medium.maxFeePerGas);
+      const maxPriorityFeePerGas = BigInt(gasPrices.medium.maxPriorityFeePerGas);
+
+      const userOpHash = await bundlerClient.sendUserOperation({
+        account: smartAccount,
+        calls,
+        paymaster: true,
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+        // Do NOT set verificationGasLimit / callGasLimit / preVerificationGas manually.
+        // Manual overrides invalidate the bundler's paymasterData signature (causes AA23).
+      });
+
+      const { receipt } = await bundlerClient.waitForUserOperationReceipt({
+        hash: userOpHash,
+      });
+
+      return {
+        userOpHash,
+        txHash: receipt.transactionHash,
+      };
+    } catch (err) {
+      throw new Error(formatTransactionError(err));
     }
-
-    const { publicClient, bundlerClient } = getClients(chainKey);
-
-    const smartAccount = await toCircleSmartAccount({
-      client: publicClient as Client,
-      owner: toWebAuthnAccount({ credential }),
-      name: username,
-    });
-
-    // Use Circle's gas price oracle — Arc Testnet bundler requires >= 1 gwei maxPriorityFeePerGas.
-    // Viem's default fee estimation returns ~0.002 gwei which the bundler rejects.
-    // We only set gas PRICES here; gas LIMITS are left to the bundler to auto-estimate.
-    const gasPrices = await getUserOperationGasPrice(publicClient as Client);
-    const maxFeePerGas = BigInt(gasPrices.medium.maxFeePerGas);
-    const maxPriorityFeePerGas = BigInt(gasPrices.medium.maxPriorityFeePerGas);
-
-    const userOpHash = await bundlerClient.sendUserOperation({
-      account: smartAccount,
-      calls,
-      paymaster: true,
-      maxFeePerGas,
-      maxPriorityFeePerGas,
-      // Do NOT set verificationGasLimit / callGasLimit / preVerificationGas manually.
-      // Manual overrides invalidate the bundler's paymasterData signature (causes AA23).
-    });
-
-    const { receipt } = await bundlerClient.waitForUserOperationReceipt({
-      hash: userOpHash,
-    });
-
-    return {
-      userOpHash,
-      txHash: receipt.transactionHash,
-    };
   }, [credential, username, getClients]);
 
   // Client-Side Contract Reading Helper

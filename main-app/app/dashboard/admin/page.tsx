@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { formatUnits } from "ethers";
 import { SUBSCRIPTION_GATEWAY_ADDRESS, ARC_RPC_URL } from "@/lib/subscription";
+import { formatTransactionError } from "@/lib/errors";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -221,7 +222,7 @@ export default function AdminDashboardPage() {
       setNewFee("");
       void fetchStats();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Update failed");
+      setError(formatTransactionError(err));
     } finally {
       setProcessing(false);
     }
@@ -267,7 +268,7 @@ export default function AdminDashboardPage() {
       setWithdrawAmount("");
       void fetchStats();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Withdrawal failed");
+      setError(formatTransactionError(err));
     } finally {
       setProcessing(false);
     }

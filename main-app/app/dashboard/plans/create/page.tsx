@@ -14,6 +14,7 @@ import {
 import { createPublicClient, encodeFunctionData, http, parseUnits } from "viem";
 import { arcTestnet } from "@/lib/bridge_config";
 import { Button } from "@/components/ui/button";
+import { formatTransactionError } from "@/lib/errors";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -354,7 +355,7 @@ export default function CreatePlanPage() {
       setPlanDurationDays("30");
       setStep(1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(formatTransactionError(err));
     } finally {
       setLoading(false);
     }
