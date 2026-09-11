@@ -108,8 +108,8 @@ export default function SubscriptionDetailPage() {
       try {
         setLoading(true);
         const [subRes, notifRes] = await Promise.all([
-          fetch(`/api/subscription/my-subscriptions/${params.id}?subscriber=${wallet.address}&userToken=${sessionUserToken}`, { cache: "no-store" }),
-          fetch(`/api/subscription/notifications?subscriber=${wallet.address}&userToken=${sessionUserToken}`, { cache: "no-store" })
+          fetch(`/api/subscription/my-subscriptions/${params.id}?subscriber=${wallet.address}`, { cache: "no-store" }),
+          fetch("/api/subscription/notifications", { cache: "no-store" })
         ]);
 
         const subJson = await subRes.json();

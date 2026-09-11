@@ -12,7 +12,7 @@ export const SESSION_COOKIE_NAME = "arca_session";
 export const DEFAULT_SESSION_DURATION = 7 * 24 * 60 * 60; // 7 days in seconds
 
 function getSecretKey(): string {
-  const secret = process.env.SESSION_SECRET || process.env.NEXT_PUBLIC_PRIVY_API_KEY;
+  const secret = process.env.SESSION_SECRET;
   if (!secret) {
     if (process.env.NODE_ENV === "production") {
       throw new Error("SESSION_SECRET must be defined in production environment");
