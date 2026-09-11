@@ -13,7 +13,7 @@ export default function PaymentLayout({
 }>) {
   return (
     <PaymentProvider>
-      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
         {children}
       </div>
     </PaymentProvider>

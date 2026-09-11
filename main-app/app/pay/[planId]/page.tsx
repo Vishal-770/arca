@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCircleSDK } from "@/context/CircleSDKContext";
-import { formatUnits, parseUnits, createPublicClient, http, encodeFunctionData } from "viem";
+import { formatUnits, createPublicClient, http, encodeFunctionData } from "viem";
 import { arcTestnet } from "@/lib/bridge_config";
 import { SUBSCRIPTION_GATEWAY_ADDRESS, ARC_USDC_ADDRESS } from "@/lib/subscription";
 import { cn } from "@/lib/utils";
@@ -15,14 +15,19 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  ArrowDownUp,
   ChevronRight,
   ExternalLink,
   Zap,
   Lock,
   LogOut,
+  Wallet,
+  Copy,
+  Check,
+  Sparkles,
+  ArrowDownUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -81,12 +86,12 @@ function humanDuration(s: string) {
   const d = Math.floor(sec / 86400);
   if (d >= 1) return `${d} day${d !== 1 ? "s" : ""}`;
   const h = Math.floor(sec / 3600);
-  if (h >= 1) return `${h}h`;
-  return `${Math.max(Math.floor(sec / 60), 1)}m`;
+  if (h >= 1) return `${h} hour${h !== 1 ? "s" : ""}`;
+  return `${Math.max(Math.floor(sec / 60), 1)} min`;
 }
 
-const trunc   = (v: string) => `${v.slice(0, 6)}…${v.slice(-4)}`;
-const fmt6    = (v: string) =>
+const trunc = (v: string) => `${v.slice(0, 6)}…${v.slice(-4)}`;
+const fmt6 = (v: string) =>
   Number(formatUnits(BigInt(v), 6)).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -94,26 +99,27 @@ const fmt6    = (v: string) =>
 
 /* ══════════════════════════════════════════════════════ */
 export default function PaymentPage() {
-  const params       = useParams();
+  const params = useParams();
   const searchParams = useSearchParams();
-  const router       = useRouter();
+  const router = useRouter();
   const { session, executeTransaction, isReady, clearSession } = useCircleSDK();
 
-  const planId      = params.planId as string;
-  const userId      = searchParams.get("userId") ?? "";
+  const planId = params.planId as string;
+  const userId = searchParams.get("userId") ?? "";
   const redirectUrl = searchParams.get("redirectUrl") ?? "";
 
   /* ── State ── */
-  const [plan, setPlan]           = useState<Plan | null>(null);
-  const [loading, setLoading]     = useState(true);
+  const [plan, setPlan] = useState<Plan | null>(null);
+  const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const [wallet, setWallet]           = useState<{ id: string; address: string; balance: string } | null>(null);
+  const [wallet, setWallet] = useState<{ id: string; address: string; balance: string } | null>(null);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [copiedAddress, setCopiedAddress] = useState(false);
 
   // Per-tier tx state
   const [tierStatus, setTierStatus] = useState<Record<string, TierTxStatus>>({});
-  const [tierError, setTierError]   = useState<Record<string, string>>({});
+  const [tierError, setTierError] = useState<Record<string, string>>({});
   const [subscription, setSubscription] = useState<{
     status: "ACTIVE" | "EXPIRED";
     remainingSeconds: number;
@@ -124,14 +130,14 @@ export default function PaymentPage() {
 
   // Success state — which tier was just purchased
   const [succeededTier, setSucceededTier] = useState<Tier | null>(null);
-  const [countdown, setCountdown]         = useState(3);
+  const [countdown, setCountdown] = useState(3);
 
   /* ── Redirect countdown after success ── */
   useEffect(() => {
     if (!succeededTier) return;
     setCountdown(3);
     const tick = setInterval(() => {
-      setCountdown(p => {
+      setCountdown((p) => {
         if (p <= 1) {
           clearInterval(tick);
           const dest = redirectUrl
@@ -165,7 +171,11 @@ export default function PaymentPage() {
   }, [planId]);
 
   /* ── Load wallet ── */
-  const { data: walletBalance = "0", refetch: refetchWalletBalance, isLoading: walletLoading } = useQuery({
+  const {
+    data: walletBalance = "0",
+    refetch: refetchWalletBalance,
+    isLoading: walletLoading,
+  } = useQuery({
     queryKey: ["walletBalance", session?.walletAddress],
     queryFn: async () => {
       if (!session?.walletAddress) return "0";
@@ -227,8 +237,8 @@ export default function PaymentPage() {
     if (!session || !wallet || !plan) return;
 
     const tid = tier.id;
-    setTierError(p => ({ ...p, [tid]: "" }));
-    setTierStatus(p => ({ ...p, [tid]: "subscribing" }));
+    setTierError((p) => ({ ...p, [tid]: "" }));
+    setTierStatus((p) => ({ ...p, [tid]: "subscribing" }));
 
     try {
       const erc20Abi = [
@@ -238,10 +248,10 @@ export default function PaymentPage() {
           stateMutability: "nonpayable",
           inputs: [
             { name: "spender", type: "address" },
-            { name: "amount", type: "uint256" }
+            { name: "amount", type: "uint256" },
           ],
-          outputs: [{ name: "", type: "bool" }]
-        }
+          outputs: [{ name: "", type: "bool" }],
+        },
       ] as const;
 
       const subscriptionGatewayAbi = [
@@ -252,14 +262,14 @@ export default function PaymentPage() {
           inputs: [
             { name: "planId", type: "bytes32" },
             { name: "tierId", type: "uint256" },
-            { name: "buyerData", type: "string" }
+            { name: "buyerData", type: "string" },
           ],
-          outputs: []
-        }
+          outputs: [],
+        },
       ] as const;
 
       const requiredAmount = BigInt(tier.price);
-      
+
       const approveData = encodeFunctionData({
         abi: erc20Abi,
         functionName: "approve",
@@ -272,7 +282,7 @@ export default function PaymentPage() {
         args: [
           plan.planId as `0x${string}`,
           BigInt(tier.tierId),
-          userId || wallet.address
+          userId || wallet.address,
         ],
       });
 
@@ -284,15 +294,15 @@ export default function PaymentPage() {
         {
           to: SUBSCRIPTION_GATEWAY_ADDRESS as `0x${string}`,
           data: subscribeData,
-        }
+        },
       ];
 
       await executeTransaction(calls, false, "Arc_Testnet");
       void refetchWalletBalance();
 
-      // Aggressive Polling for Indexer Sync
-      setTierStatus(p => ({ ...p, [tid]: "success" }));
-      
+      // Polling for Indexer Sync
+      setTierStatus((p) => ({ ...p, [tid]: "success" }));
+
       let attempts = 0;
       const poll = setInterval(async () => {
         attempts++;
@@ -309,35 +319,42 @@ export default function PaymentPage() {
               setSubscription(data.subscription);
             }
           }
-        } catch { /* continue */ }
-        
-        if (attempts > 30) { // 60 seconds max
+        } catch {
+          /* continue */
+        }
+
+        if (attempts > 30) {
           clearInterval(poll);
-          // If still not found, we'll just let the success screen show anyway
           setSucceededTier(tier);
         }
       }, 2000);
-
     } catch (err) {
-      setTierStatus(p => ({ ...p, [tid]: "error" }));
-      setTierError(p => ({
+      setTierStatus((p) => ({ ...p, [tid]: "error" }));
+      setTierError((p) => ({
         ...p,
         [tid]: err instanceof Error ? err.message : "Transaction failed",
       }));
     }
   };
 
-  const activeTiers = plan?.tiers.filter(t => t.active) ?? [];
+  const copyAddress = () => {
+    if (!wallet?.address) return;
+    navigator.clipboard.writeText(wallet.address);
+    setCopiedAddress(true);
+    setTimeout(() => setCopiedAddress(false), 2000);
+  };
+
+  const activeTiers = plan?.tiers.filter((t) => t.active) ?? [];
   const brandName = plan?.metadata?.brand?.name;
-  const planName  = plan?.metadata?.name ?? "Subscription Protocol";
+  const planName = plan?.metadata?.name ?? "Subscription Plan";
 
   /* ── Loading ── */
   if (!isReady || loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+      <div className="min-h-[75vh] flex flex-col items-center justify-center bg-background gap-3">
         <Loader2 className="h-6 w-6 text-primary animate-spin" />
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground animate-pulse font-mono">
-          Syncing Registry…
+        <p className="text-xs text-muted-foreground font-mono animate-pulse">
+          Loading checkout details…
         </p>
       </div>
     );
@@ -346,24 +363,22 @@ export default function PaymentPage() {
   /* ── Load error ── */
   if (loadError) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="max-w-md w-full space-y-8 text-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="text-destructive">
-              <AlertCircle className="h-8 w-8" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-destructive">Registry Vault Fault</p>
-              <h2 className="text-xl font-extrabold tracking-tight">Plan Not Found</h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">{loadError}</p>
-            </div>
+      <div className="min-h-[75vh] flex items-center justify-center p-6 bg-background">
+        <div className="max-w-md w-full rounded-2xl border border-destructive/20 bg-destructive/5 p-6 text-center space-y-4">
+          <div className="size-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
+            <AlertCircle className="size-5" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-base font-bold text-foreground">Plan Unavailable</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">{loadError}</p>
           </div>
           <Button
             onClick={() => window.location.reload()}
             variant="outline"
-            className="w-full h-10 font-bold text-xs uppercase tracking-wider rounded-md border-border hover:bg-muted"
+            size="sm"
+            className="h-8.5 px-4 text-xs font-semibold rounded-lg"
           >
-            Retry Registry Link
+            Retry Loading
           </Button>
         </div>
       </div>
@@ -373,63 +388,65 @@ export default function PaymentPage() {
   /* ── Success screen ── */
   if (succeededTier) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6">
-        <div className="max-w-md w-full space-y-8 text-center">
-          <div className="flex flex-col items-center gap-4 animate-fade-in">
-            <div className="h-12 w-12 flex items-center justify-center text-primary">
-              <CheckCircle2 className="h-8 w-8" />
-            </div>
-            <div className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">
-                Payment Settled
-              </p>
-              <h2 className="text-2xl font-extrabold tracking-tight">Subscription Active</h2>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                Thank you for your payment. Your subscription credentials have been registered on Arc Testnet.
-              </p>
-            </div>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center bg-background p-6">
+        <div className="max-w-md w-full rounded-2xl border border-border/30 bg-muted/10 p-6 sm:p-8 text-center space-y-6">
+          <div className="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+            <CheckCircle2 className="size-6" />
           </div>
 
-          <div className="divide-y divide-border/30 border-t border-b border-border/30 text-xs py-2 max-w-sm mx-auto">
-            <div className="py-3 flex justify-between">
-              <span className="text-muted-foreground font-medium">Product</span>
+          <div className="space-y-1">
+            <Badge variant="outline" className="text-[10px] font-mono px-2 py-0.5 bg-primary/10 text-primary border-primary/20">
+              Payment Completed
+            </Badge>
+            <h2 className="text-xl font-bold tracking-tight text-foreground pt-1">
+              Subscription Active
+            </h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Your payment has settled on Arc Testnet. You now have full access to this plan.
+            </p>
+          </div>
+
+          <div className="divide-y divide-border/20 rounded-xl border border-border/20 bg-background/50 text-xs overflow-hidden">
+            <div className="p-3 flex justify-between items-center">
+              <span className="text-muted-foreground font-medium">Subscription</span>
               <span className="font-semibold text-foreground">{planName}</span>
             </div>
-            <div className="py-3 flex justify-between">
-              <span className="text-muted-foreground font-medium">Billing Plan</span>
+            <div className="p-3 flex justify-between items-center">
+              <span className="text-muted-foreground font-medium">Selected Tier</span>
               <span className="font-semibold text-foreground">{succeededTier.label}</span>
             </div>
-            <div className="py-3 flex justify-between">
+            <div className="p-3 flex justify-between items-center">
               <span className="text-muted-foreground font-medium">Amount Paid</span>
-              <span className="font-semibold text-foreground font-mono">${fmt6(succeededTier.price)} USDC</span>
+              <span className="font-semibold text-foreground font-mono">
+                ${fmt6(succeededTier.price)} USDC
+              </span>
             </div>
-            <div className="py-3 flex justify-between">
+            <div className="p-3 flex justify-between items-center">
               <span className="text-muted-foreground font-medium">Billing Cycle</span>
-              <span className="font-semibold text-foreground">{plan ? humanDuration(plan.duration) : "—"}</span>
+              <span className="font-semibold text-foreground">
+                {plan ? humanDuration(plan.duration) : "—"}
+              </span>
             </div>
           </div>
 
-          <div className="space-y-4 max-w-sm mx-auto">
-            <div className="h-[2px] bg-muted overflow-hidden">
-              <div 
-                className="h-full bg-primary transition-all duration-1000 ease-out" 
+          <div className="space-y-2">
+            <div className="h-1.5 w-full bg-muted/40 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-1000 ease-out rounded-full"
                 style={{ width: `${(countdown / 3) * 100}%` }}
               />
             </div>
-            <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
               <span>Redirecting</span>
-              <span className="font-bold font-mono text-foreground">{countdown}s</span>
+              <span className="font-bold text-foreground">{countdown}s</span>
             </div>
           </div>
 
-          <div className="pt-4">
-            <Link 
-              href={redirectUrl ? decodeURIComponent(redirectUrl) : "/dashboard/subscriptions"}
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline"
-            >
-              Continue to Application <ArrowRight className="h-3.5 w-3.5" />
+          <Button asChild size="sm" className="w-full h-9 text-xs font-semibold rounded-lg gap-1.5">
+            <Link href={redirectUrl ? decodeURIComponent(redirectUrl) : "/dashboard/subscriptions"}>
+              Continue to Application <ArrowRight className="size-3.5" />
             </Link>
-          </div>
+          </Button>
         </div>
       </div>
     );
@@ -437,57 +454,66 @@ export default function PaymentPage() {
 
   /* ── Main UI ── */
   return (
-    <main className="min-h-screen bg-background text-foreground py-12 md:py-24 px-6 sm:px-8">
-      <div className="max-w-4xl mx-auto space-y-12 animate-fade-in">
-        
-        {/* Top Header / Nav */}
-        <div className="flex items-center justify-between pb-6">
+    <div className="w-full flex flex-col flex-1">
+      {/* ── Top Header / Nav ── */}
+      <header className="border-b border-border/20 bg-background/80 backdrop-blur-md sticky top-0 z-30 w-full">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
-            <Zap className="h-4 w-4 text-foreground fill-foreground/10" />
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] font-sans text-foreground">Arca</span>
+            <div className="size-6 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+              <Zap className="size-3.5 fill-current" />
+            </div>
+            <span className="text-xs font-bold tracking-tight text-foreground">Arca</span>
+            <span className="text-muted-foreground/40 font-mono text-xs">/</span>
+            <span className="text-xs text-muted-foreground font-medium">Checkout</span>
           </Link>
-          <div className="flex items-center gap-4">
-            {session && (
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Connected</span>
+
+          <div className="flex items-center gap-3">
+            {session && wallet && (
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/30 border border-border/30 text-xs font-mono">
+                  <span className="size-2 rounded-full bg-primary inline-block" />
+                  <span className="text-foreground font-medium">{trunc(wallet.address)}</span>
                 </div>
-                <span className="h-2.5 w-px bg-border/30" />
+
                 <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
                   <DialogTrigger asChild>
-                    <button
-                      className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground rounded-lg gap-1.5"
                     >
-                      Logout
-                    </button>
+                      <LogOut className="size-3.5" />
+                      <span className="hidden sm:inline">Disconnect</span>
+                    </Button>
                   </DialogTrigger>
-                  <DialogContent className="border border-border/80 bg-background p-6 rounded-2xl max-w-sm">
-                    <DialogHeader className="space-y-2">
-                      <DialogTitle className="text-sm font-bold text-foreground">
-                        Confirm Logout
+                  <DialogContent className="sm:max-w-sm rounded-2xl border-border/30 bg-background/95 backdrop-blur-xl p-6">
+                    <DialogHeader className="text-left space-y-1">
+                      <DialogTitle className="text-sm font-bold uppercase tracking-wider text-foreground">
+                        Disconnect Wallet
                       </DialogTitle>
-                      <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
-                        Are you sure you want to log out? This will terminate your active payment gateway session.
+                      <DialogDescription className="text-xs text-muted-foreground">
+                        Are you sure you want to disconnect? You will need to sign in again to complete checkout.
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="mt-6 flex flex-row gap-3 justify-end">
+                    <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-4 pt-3 border-t border-border/20">
                       <Button
                         variant="outline"
+                        size="sm"
                         onClick={() => setShowLogoutDialog(false)}
-                        className="h-9 px-4 font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer"
+                        className="h-8.5 px-3 text-xs rounded-lg"
                       >
                         Cancel
                       </Button>
                       <Button
                         variant="destructive"
+                        size="sm"
                         onClick={() => {
                           clearSession();
                           setShowLogoutDialog(false);
                         }}
-                        className="h-9 px-4 font-bold text-xs uppercase tracking-wider rounded-xl cursor-pointer"
+                        className="h-8.5 px-4 text-xs font-semibold rounded-lg"
                       >
-                        Logout
+                        Disconnect
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -497,209 +523,196 @@ export default function PaymentPage() {
             <ModeToggle />
           </div>
         </div>
+      </header>
 
-        {/* Brand & Plan Details Header */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            {brandName && (
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+      {/* ── Main Container ── */}
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12 w-full flex flex-col gap-8">
+        {/* Plan Header Info */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            {brandName ? (
+              <Badge variant="secondary" className="text-xs font-medium px-2.5 py-0.5 rounded-md">
                 {brandName}
-              </span>
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="text-xs font-medium px-2.5 py-0.5 rounded-md">
+                Arca Verified Plan
+              </Badge>
             )}
+
             {brandName && plan?.metadata?.brand?.website && (
               <a
                 href={plan.metadata.brand.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[10px] font-bold uppercase tracking-wider text-primary hover:underline flex items-center gap-1 transition-colors"
+                className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1 transition-colors"
               >
-                Visit Site <ExternalLink className="h-3 w-3" />
+                Merchant Website <ExternalLink className="size-3" />
               </a>
             )}
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">{planName}</h1>
-          {plan?.metadata?.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
-              {plan.metadata.description}
-            </p>
-          )}
-        </div>
 
-        {/* Billing Overview Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-6 border-t border-b border-border/30 text-xs">
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Billing Period</span>
-            <p className="font-semibold text-foreground text-sm">{plan ? humanDuration(plan.duration) : "—"}</p>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              {planName}
+            </h1>
+            {plan?.metadata?.description && (
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
+                {plan.metadata.description}
+              </p>
+            )}
           </div>
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Settlement Token</span>
-            <p className="font-semibold text-foreground text-sm">USDC (ERC-20)</p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Network</span>
-            <div className="flex items-center gap-1.5 text-foreground font-semibold text-sm">
-              <ShieldCheck className="h-4 w-4 text-primary" />
-              <span>Arc Testnet</span>
+
+          {/* Quick Metrics Bar */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div className="rounded-xl border border-border/20 bg-muted/10 p-3.5 flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Billing Cycle
+              </span>
+              <span className="text-xs font-semibold text-foreground">
+                Every {plan ? humanDuration(plan.duration) : "—"}
+              </span>
+            </div>
+
+            <div className="rounded-xl border border-border/20 bg-muted/10 p-3.5 flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Settlement Token
+              </span>
+              <span className="text-xs font-semibold text-foreground">
+                USDC (Circle ERC-20)
+              </span>
+            </div>
+
+            <div className="rounded-xl border border-border/20 bg-muted/10 p-3.5 flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Network & Gas
+              </span>
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <ShieldCheck className="size-3.5 text-primary" />
+                Arc Testnet · Gas Sponsored
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Wallet / Payment Method Info */}
-        <div className="space-y-6">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-            Payment Method
-          </h2>
-
-          {!session ? (
-            <div className="py-12 text-center space-y-6">
-              <div className="space-y-2">
-                <p className="text-sm font-bold uppercase tracking-widest text-foreground">Secure Sign-In Required</p>
-                <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
-                  Connect your secure developer or user wallet to verify credentials and complete your payment on Arc Testnet.
-                </p>
-              </div>
-              <Button
-                onClick={() => {
-                  const here = `${window.location.pathname}${window.location.search}`;
-                  router.push(`/login?redirect=${encodeURIComponent(here)}`);
-                }}
-                className="px-8 h-10 text-[10px] font-bold uppercase tracking-wider rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
-              >
-                Connect Wallet
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {/* Active Wallet Balance */}
-              <div className="space-y-2">
-                <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Your Balance</p>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-3xl font-bold font-mono tracking-tight text-foreground">
-                    {walletLoading ? "…" : wallet ? Number(wallet.balance).toFixed(2) : "0.00"}
-                  </span>
-                  <span className="text-xs font-bold text-muted-foreground">USDC</span>
-                </div>
-                <p className="text-[11px] font-mono text-muted-foreground/60">
-                  Address: {wallet ? trunc(wallet.address) : "—"}
-                </p>
-              </div>
-
-              {/* Top Up / Bridge */}
-              <div className="space-y-3 sm:border-l sm:border-border/20 sm:pl-8 flex flex-col justify-between">
-                <div className="space-y-1">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">Funding Pipeline</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">Deposit or bridge canonical USDC instantly to your Arc blockchain wallet set.</p>
-                </div>
-                <div className="pt-2">
-                  <Sheet>
-                     <SheetTrigger asChild>
-                       <button className="text-[10px] font-bold uppercase tracking-wider text-primary hover:underline text-left flex items-center gap-1.5 transition-colors cursor-pointer">
-                         Bridge USDC <ChevronRight className="h-3.5 w-3.5" />
-                       </button>
-                     </SheetTrigger>
-                     <SheetContent className="w-full sm:max-w-md overflow-y-auto bg-background border-l border-border/30">
-                       <SheetHeader>
-                         <SheetTitle>Bridge USDC</SheetTitle>
-                         <SheetDescription className="text-xs">Bridge canonical USDC instantly to your Arc blockchain wallet set.</SheetDescription>
-                       </SheetHeader>
-                       <div className="mt-6">
-                         <BridgeUSDC isCompact={true} defaultDestChain="Arc_Testnet" />
-                       </div>
-                     </SheetContent>
-                  </Sheet>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Existing Alert Statuses (Left-Border Bar Layout) */}
+        {/* Existing Alerts */}
         {isActiveSub && (
-          <div className="border-l-2 border-blue-500 pl-4 py-2 space-y-1 text-blue-500 transition-all">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0" />
-              <p className="text-[10px] font-bold uppercase tracking-wider">Active Subscription Found</p>
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="size-4 text-primary shrink-0" />
+              <div>
+                <p className="text-xs font-semibold text-foreground">
+                  Active Subscription Found
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Remaining time: <span className="font-mono font-semibold text-foreground">{humanDuration(String(subscription?.remainingSeconds ?? 0))}</span>
+                </p>
+              </div>
             </div>
-            <p className="text-xs leading-relaxed">
-              You have an active subscription for this plan. Remaining cycle duration:{" "}
-              <span className="font-bold font-mono">{humanDuration(String(subscription?.remainingSeconds ?? 0))}</span>
-            </p>
+            <Button asChild variant="outline" size="sm" className="h-8 px-3 text-xs rounded-lg border-primary/30 text-primary shrink-0">
+              <Link href="/dashboard/subscriptions">View Subscriptions</Link>
+            </Button>
           </div>
         )}
 
         {isOwner && (
-          <div className="border-l-2 border-primary pl-4 py-2 space-y-1 text-primary transition-all">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 shrink-0" />
-              <p className="text-[10px] font-bold uppercase tracking-wider">Ownership Detected</p>
-            </div>
-            <p className="text-xs leading-relaxed">
-              You are the creator of this protocol contract. Subscription actions are deactivated for the owner address.
+          <div className="rounded-xl border border-border/30 bg-muted/20 p-4 flex items-center gap-3">
+            <ShieldCheck className="size-4 text-primary shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              You are the creator of this subscription plan. Subscribing is disabled for the owner wallet address.
             </p>
           </div>
         )}
 
-        {/* Tier Selection (Open Stack separated by border rows) */}
-        <div className="space-y-6">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-            Select Subscription Tier
-          </h2>
+        {/* 2-Column Checkout Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Tiers Selection */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
+                Select Pricing Tier
+              </h2>
+              <span className="text-xs text-muted-foreground font-mono">
+                {activeTiers.length} {activeTiers.length === 1 ? "option" : "options"} available
+              </span>
+            </div>
 
-          {activeTiers.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No active tiers are configured in the plan registry.</p>
-          ) : (
-            <div className="divide-y divide-border/30 border-t border-b border-border/30">
-              {activeTiers.map(tier => {
-                const st = tierStatus[tier.id] ?? "idle";
-                const err = tierError[tier.id];
-                const isInsuf = wallet
-                  ? Number(wallet.balance) < Number(formatUnits(BigInt(tier.price), 6)) + 0.01
-                  : false;
-                const busy = st === "subscribing";
-                const succeeded = st === "success";
+            {activeTiers.length === 0 ? (
+              <div className="py-12 text-center rounded-xl border border-border/20 bg-muted/10 p-6">
+                <p className="text-xs text-muted-foreground">
+                  No active pricing tiers are configured for this plan.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activeTiers.map((tier) => {
+                  const st = tierStatus[tier.id] ?? "idle";
+                  const err = tierError[tier.id];
+                  const isInsuf = wallet
+                    ? Number(wallet.balance) < Number(formatUnits(BigInt(tier.price), 6)) + 0.01
+                    : false;
+                  const busy = st === "subscribing";
+                  const succeeded = st === "success";
 
-                const metaTier = plan?.metadata?.tiers?.find(mt => mt.label === tier.label);
-                const tierFeatures = metaTier?.features ?? [];
-                const isThisTierActive = isActiveSub && (subscription?.tierIds?.includes(tier.tierId) || subscription?.lastTierId === tier.tierId);
+                  const metaTier = plan?.metadata?.tiers?.find((mt) => mt.label === tier.label);
+                  const tierFeatures = metaTier?.features ?? [];
+                  const isThisTierActive =
+                    isActiveSub &&
+                    (subscription?.tierIds?.includes(tier.tierId) ||
+                      subscription?.lastTierId === tier.tierId);
 
-                return (
-                  <div
-                    key={tier.id}
-                    className={cn(
-                      "py-8 transition-all relative flex flex-col md:flex-row md:items-start justify-between gap-8",
-                      isInsuf && !succeeded && "opacity-75"
-                    )}
-                  >
-                    <div className="space-y-4 flex-1">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2.5">
-                          <h3 className="text-lg font-bold text-foreground leading-tight">{tier.label}</h3>
-                          <span className="text-[9px] font-bold bg-muted border border-border/40 rounded px-1.5 py-0.5 text-muted-foreground uppercase tracking-widest font-mono">
-                            ID: {tier.tierId}
-                          </span>
-                          {succeeded && (
-                            <span className="text-[9px] font-bold text-primary uppercase tracking-widest font-mono flex items-center gap-1">
-                              <CheckCircle2 className="h-3 w-3 animate-pulse" /> Purchased
-                            </span>
-                          )}
+                  return (
+                    <div
+                      key={tier.id}
+                      className={cn(
+                        "rounded-xl border bg-muted/10 p-5 sm:p-6 transition-all space-y-5",
+                        isThisTierActive
+                          ? "border-primary/40 bg-primary/5"
+                          : "border-border/30 hover:border-border/60"
+                      )}
+                    >
+                      {/* Tier Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-base font-bold text-foreground">{tier.label}</h3>
+                            <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0.5 rounded-md text-muted-foreground">
+                              Tier #{tier.tierId}
+                            </Badge>
+                            {isThisTierActive && (
+                              <Badge className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-primary text-primary-foreground">
+                                Active Tier
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Recurring access every {humanDuration(plan?.duration ?? "0")}
+                          </p>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          Access for {humanDuration(plan?.duration ?? "0")} per billing cycle
-                        </p>
+
+                        <div className="sm:text-right">
+                          <div className="flex items-baseline sm:justify-end gap-1">
+                            <span className="text-2xl font-bold font-mono text-foreground leading-none">
+                              ${fmt6(tier.price)}
+                            </span>
+                            <span className="text-xs font-semibold text-muted-foreground">USDC</span>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                            per billing cycle
+                          </p>
+                        </div>
                       </div>
 
-                      {/* features list */}
+                      {/* Tier Features */}
                       {tierFeatures.length > 0 && (
-                        <div className="space-y-2 pt-2">
+                        <div className="space-y-2 pt-2 border-t border-border/10">
                           {tierFeatures.map((f, idx) => (
                             <div key={idx} className="flex items-start gap-2.5 text-xs">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
-                              <div className="min-w-0">
-                                <p className="font-semibold text-foreground/90 leading-tight">{f.title}</p>
+                              <CheckCircle2 className="size-3.5 text-primary shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-semibold text-foreground">{f.title}</span>
                                 {f.description && (
-                                  <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
-                                    {f.description}
-                                  </p>
+                                  <span className="text-muted-foreground ml-1.5">— {f.description}</span>
                                 )}
                               </div>
                             </div>
@@ -707,112 +720,233 @@ export default function PaymentPage() {
                         </div>
                       )}
 
+                      {/* Error & Warning Notices */}
                       {err && (
-                        <div className="text-xs text-destructive flex items-center gap-1.5">
-                          <AlertCircle className="h-3.5 w-3.5" /> {err}
+                        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive flex items-center gap-2">
+                          <AlertCircle className="size-4 shrink-0" />
+                          <span>{err}</span>
                         </div>
                       )}
 
                       {isInsuf && wallet && !isOwner && !isThisTierActive && !succeeded && (
-                        <div className="text-[10px] text-amber-500 font-medium flex items-start gap-1.5 bg-amber-500/5 border border-amber-500/10 p-2.5 rounded-lg animate-in fade-in duration-300">
-                          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                          <div>
-                            <p className="font-bold uppercase tracking-wider text-[8px] text-amber-500/80 leading-none mb-1">Insufficient Funds</p>
-                            <p className="leading-normal">
-                              Required: <span className="font-mono font-bold">{(Number(formatUnits(BigInt(tier.price), 6)) + 0.01).toFixed(2)} USDC</span> (Price: {Number(formatUnits(BigInt(tier.price), 6)).toFixed(2)} USDC + 0.01 USDC gas reserve). Current: <span className="font-mono font-bold">{Number(wallet.balance).toFixed(4)} USDC</span>.
+                        <div className="rounded-lg border border-border/30 bg-muted/20 p-3 text-xs flex items-start gap-2.5">
+                          <AlertCircle className="size-4 text-muted-foreground shrink-0 mt-0.5" />
+                          <div className="space-y-1">
+                            <p className="font-semibold text-foreground">
+                              Insufficient USDC Balance
+                            </p>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              Required: <span className="font-mono font-semibold text-foreground">{(Number(formatUnits(BigInt(tier.price), 6)) + 0.01).toFixed(2)} USDC</span>. Current balance: <span className="font-mono font-semibold text-foreground">{Number(wallet.balance).toFixed(2)} USDC</span>.
                             </p>
                           </div>
                         </div>
                       )}
-                    </div>
 
-                    {/* Price & Action button */}
-                    <div className="flex flex-col md:items-end justify-between gap-4 min-w-[150px] shrink-0 md:self-stretch">
-                      <div className="md:text-right">
-                        <p className="text-3xl font-bold font-mono text-foreground leading-none">${fmt6(tier.price)}</p>
-                        <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-bold mt-1">USDC / Cycle</p>
-                      </div>
-
-                      <div className="w-full">
-                        {isOwner ? (
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/5 py-2.5 rounded-md text-center font-sans">
-                            Owner
-                          </div>
+                      {/* Action Button */}
+                      <div className="pt-2">
+                        {!session ? (
+                          <Button
+                            onClick={() => {
+                              const here = `${window.location.pathname}${window.location.search}`;
+                              router.push(`/login?redirect=${encodeURIComponent(here)}`);
+                            }}
+                            className="w-full h-9 text-xs font-semibold rounded-lg gap-1.5"
+                          >
+                            <Wallet className="size-3.5" />
+                            Connect Wallet to Subscribe
+                          </Button>
+                        ) : isOwner ? (
+                          <Button disabled variant="outline" className="w-full h-9 text-xs rounded-lg">
+                            Plan Owner
+                          </Button>
                         ) : isThisTierActive ? (
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-blue-500 border border-blue-500/20 bg-blue-500/5 py-2.5 rounded-md text-center font-sans">
-                            Active
-                          </div>
-                        ) : !session ? null : succeeded ? (
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 bg-primary/5 py-2.5 rounded-md text-center animate-pulse font-sans">
-                            Syncing…
-                          </div>
+                          <Button disabled variant="outline" className="w-full h-9 text-xs rounded-lg text-primary border-primary/30">
+                            Currently Active Tier
+                          </Button>
+                        ) : succeeded ? (
+                          <Button disabled className="w-full h-9 text-xs font-semibold rounded-lg gap-1.5 animate-pulse">
+                            <Loader2 className="size-3.5 animate-spin" />
+                            Syncing Subscription…
+                          </Button>
                         ) : (
                           <Button
                             onClick={() => handleTierPayment(tier)}
                             disabled={busy || !wallet || isInsuf}
-                            className={cn(
-                              "w-full h-10 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all shadow-none font-sans",
-                              isInsuf 
-                                ? "bg-muted/50 border border-border/20 text-muted-foreground cursor-not-allowed" 
-                                : "bg-primary text-primary-foreground hover:opacity-90"
-                            )}
+                            className="w-full h-9 text-xs font-semibold rounded-lg gap-1.5"
                           >
                             {busy ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              <>
+                                <Loader2 className="size-3.5 animate-spin" />
+                                Processing Transaction…
+                              </>
                             ) : isInsuf ? (
-                              "Insufficient USDC"
+                              "Insufficient USDC Balance"
                             ) : (
-                              "Purchase Tier"
+                              <>
+                                Subscribe with USDC
+                                <ArrowRight className="size-3.5" />
+                              </>
                             )}
                           </Button>
                         )}
                       </div>
                     </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Checkout Summary & Wallet Card */}
+          <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
+            {/* Wallet & Balance Box */}
+            <div className="rounded-xl border border-border/30 bg-muted/10 p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Wallet className="size-3.5 text-primary" />
+                  Your Wallet
+                </span>
+                <Badge variant="outline" className="text-[10px] font-mono px-2 py-0.5 rounded-md">
+                  Arc Testnet
+                </Badge>
+              </div>
+
+              {!session ? (
+                <div className="p-4 rounded-xl bg-muted/20 border border-border/20 text-center space-y-3">
+                  <p className="text-xs text-muted-foreground">
+                    Connect your passkey wallet to view balances and complete checkout.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      const here = `${window.location.pathname}${window.location.search}`;
+                      router.push(`/login?redirect=${encodeURIComponent(here)}`);
+                    }}
+                    size="sm"
+                    className="h-8 px-4 text-xs font-semibold rounded-lg w-full"
+                  >
+                    Connect Wallet
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Available Balance
+                    </span>
+                    <div className="flex items-baseline gap-1.5 mt-1">
+                      <span className="text-2xl font-bold font-mono tracking-tight text-foreground">
+                        {walletLoading ? "…" : wallet ? Number(wallet.balance).toFixed(2) : "0.00"}
+                      </span>
+                      <span className="text-xs font-semibold text-muted-foreground">USDC</span>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
 
-        {/* Context Metadata Panel */}
-        {(userId || redirectUrl) && (
-          <div className="space-y-4 pt-6 border-t border-border/30">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-              Checkout Metadata
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
-              {userId && (
-                <div className="space-y-1.5">
-                  <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">User Context ID</p>
-                  <p className="font-mono text-foreground break-all">{userId}</p>
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border/30 text-xs font-mono">
+                    <span className="text-muted-foreground truncate max-w-[200px]">
+                      {wallet ? wallet.address : "—"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={copyAddress}
+                      className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded cursor-pointer shrink-0"
+                      title="Copy wallet address"
+                    >
+                      {copiedAddress ? (
+                        <Check className="size-3.5 text-primary" />
+                      ) : (
+                        <Copy className="size-3.5" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Bridge Sheet Trigger */}
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full h-8.5 text-xs font-semibold rounded-lg gap-1.5 border-border/60 hover:bg-muted/50"
+                      >
+                        <ArrowDownUp className="size-3.5" />
+                        Deposit or Bridge USDC
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent className="w-full sm:max-w-md overflow-y-auto bg-background/95 backdrop-blur-xl border-l border-border/30 p-6">
+                      <SheetHeader className="text-left space-y-1">
+                        <SheetTitle className="text-base font-bold text-foreground">
+                          Bridge USDC to Arc Testnet
+                        </SheetTitle>
+                        <SheetDescription className="text-xs text-muted-foreground">
+                          Bridge USDC seamlessly from Base, Arbitrum, or Ethereum to your Arc smart wallet.
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="mt-6">
+                        <BridgeUSDC isCompact={true} defaultDestChain="Arc_Testnet" />
+                      </div>
+                    </SheetContent>
+                  </Sheet>
                 </div>
               )}
-              {redirectUrl && (
-                <div className="space-y-1.5">
-                  <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Redirect Handshake</p>
-                  <p className="font-mono text-foreground truncate">{decodeURIComponent(redirectUrl)}</p>
+            </div>
+
+            {/* Order Summary Card */}
+            <div className="rounded-xl border border-border/30 bg-muted/10 p-5 space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Order Summary
+              </span>
+
+              <div className="space-y-2 text-xs divide-y divide-border/10">
+                <div className="flex justify-between py-1.5">
+                  <span className="text-muted-foreground">Plan</span>
+                  <span className="font-semibold text-foreground truncate max-w-[180px]">{planName}</span>
                 </div>
-              )}
+                <div className="flex justify-between py-1.5">
+                  <span className="text-muted-foreground">Network Gas Fee</span>
+                  <span className="font-semibold text-primary font-mono">0.00 USDC (Sponsored)</span>
+                </div>
+                <div className="flex justify-between py-1.5">
+                  <span className="text-muted-foreground">Execution Protocol</span>
+                  <span className="font-semibold text-foreground">Arca Smart Gateway</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Context Metadata */}
+            {(userId || redirectUrl) && (
+              <div className="rounded-xl border border-border/20 bg-muted/10 p-4 space-y-2 text-xs">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Session Metadata
+                </span>
+                {userId && (
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-muted-foreground">User ID</span>
+                    <span className="font-mono text-foreground truncate max-w-[180px]">{userId}</span>
+                  </div>
+                )}
+                {redirectUrl && (
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="text-muted-foreground">Return URL</span>
+                    <span className="font-mono text-foreground truncate max-w-[180px]">{decodeURIComponent(redirectUrl)}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Security Guarantee Strip */}
+            <div className="p-3 text-center space-y-1 text-muted-foreground">
+              <div className="flex items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-wider">
+                <span className="flex items-center gap-1">
+                  <Lock className="size-3 text-primary" /> Passkey Secured
+                </span>
+                <span>•</span>
+                <span>Circle W3S</span>
+                <span>•</span>
+                <span>Arc Testnet</span>
+              </div>
             </div>
           </div>
-        )}
-
-        {/* Secure Verified References */}
-        <div className="pt-8 border-t border-border/30 flex flex-col items-center gap-2 text-center text-muted-foreground/60">
-          <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-widest">
-            <span>Secure Connection</span>
-            <span className="h-2.5 w-px bg-border/40" />
-            <span>USDC Gas-Paid</span>
-            <span className="h-2.5 w-px bg-border/40" />
-            <span>Circle W3S</span>
-          </div>
-          <p className="text-[9px] text-muted-foreground/40 uppercase tracking-widest">
-            Verified Arca Payment Gateway
-          </p>
         </div>
-
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
