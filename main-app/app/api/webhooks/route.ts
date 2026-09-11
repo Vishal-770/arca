@@ -2,25 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { querySubgraph } from "@/lib/subgraph";
-import { getUserAddresses } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 import crypto from "crypto";
 
-// Identify user using their Smart Account session ID (e.g. username or address)
-async function getUserId(userToken: string) {
-  if (!userToken) return null;
-  return userToken.toLowerCase();
-}
-
 /**
- * Check if the user owns the specified planId via the Subgraph.
+ * Check if the authenticated user's wallet owns the specified planId via the Subgraph.
  */
-async function verifyPlanOwnership(userToken: string, planId: string): Promise<boolean> {
-  if (planId === "all") return false;
+async function verifyPlanOwnership(sellerWallet: string, planId: string): Promise<boolean> {
+  if (!sellerWallet || !planId || planId === "all") return false;
 
   try {
-    const userAddresses = await getUserAddresses(userToken);
-    if (userAddresses.length === 0) return false;
-
     const planQuery = `
       query GetPlan($id: ID!) {
         plan(id: $id) {
@@ -40,7 +31,7 @@ async function verifyPlanOwnership(userToken: string, planId: string): Promise<b
     const plan = data?.plan;
     if (!plan) return false;
 
-    return userAddresses.includes(plan.seller.id.toLowerCase());
+    return plan.seller.id.toLowerCase() === sellerWallet.toLowerCase();
   } catch (err) {
     console.error("[verifyPlanOwnership]", err);
     return false;
@@ -48,22 +39,17 @@ async function verifyPlanOwnership(userToken: string, planId: string): Promise<b
 }
 
 /**
- * GET /api/webhooks?userToken=...
- *
- * Retrieves all webhooks for the logged-in user.
+ * GET /api/webhooks
+ * Retrieves all webhooks for the authenticated merchant session.
  */
 export async function GET(req: NextRequest) {
   try {
-    const userToken = req.nextUrl.searchParams.get("userToken");
-    if (!userToken) {
-      return NextResponse.json({ error: "userToken is required" }, { status: 400 });
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
     }
 
-    const userId = await getUserId(userToken);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const userId = session.userId;
     const { db } = await connectToDatabase();
     const webhooks = await db
       .collection("webhook_endpoints")
@@ -92,39 +78,43 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/webhooks
- *
  * Creates a new webhook endpoint. Enforces single webhook per plan per user.
- * Body: { userToken: string, url: string, planId: string, isActive?: boolean }
+ * Body: { url: string, planId: string, isActive?: boolean }
  */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { userToken, url, planId, isActive = true } = body;
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
+    }
 
-    if (!userToken || !url || !planId) {
-      return NextResponse.json({ error: "userToken, url, and planId are required" }, { status: 400 });
+    const body = await req.json();
+    const { url, planId, isActive = true } = body;
+
+    if (!url || !planId) {
+      return NextResponse.json({ error: "url and planId are required" }, { status: 400 });
     }
 
     // Validate HTTPS url
     try {
       const parsedUrl = new URL(url.trim());
       if (parsedUrl.protocol !== "https:") {
-        return NextResponse.json({ error: "Destination URL must use the HTTPS protocol" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Destination URL must use the HTTPS protocol" },
+          { status: 400 }
+        );
       }
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: "Invalid Destination URL format" }, { status: 400 });
     }
 
-    const userId = await getUserId(userToken);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = session.userId;
 
-    // Plan ownership check
-    const isOwner = await verifyPlanOwnership(userToken, planId);
+    // Cryptographic plan ownership check using authenticated session's walletAddress
+    const isOwner = await verifyPlanOwnership(session.walletAddress, planId);
     if (!isOwner) {
       return NextResponse.json(
-        { error: "Access Denied: You do not own the plan specified." },
+        { error: "Access Denied: Your authenticated wallet does not own this subscription plan." },
         { status: 403 }
       );
     }
@@ -147,10 +137,11 @@ export async function POST(req: NextRequest) {
     const secret = `whsec_${crypto.randomBytes(24).toString("hex")}`;
     const newWebhook = {
       userId,
+      sellerAddress: session.walletAddress,
       planId: planId.toLowerCase(),
-      url,
+      url: url.trim(),
       secret,
-      events: ["payment.succeeded"], // exclusively subscribed to payment.succeeded
+      events: ["payment.succeeded"],
       isActive: !!isActive,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -170,59 +161,67 @@ export async function POST(req: NextRequest) {
 
 /**
  * PUT /api/webhooks
- *
  * Updates an existing webhook endpoint's URL, Plan ID, or active status.
- * Body: { userToken: string, id: string, url: string, planId: string, isActive: boolean }
+ * Body: { id: string, url: string, planId: string, isActive: boolean }
  */
 export async function PUT(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { userToken, id, url, planId, isActive } = body;
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
+    }
 
-    if (!userToken || !id || !url || !planId || isActive === undefined) {
+    const body = await req.json();
+    const { id, url, planId, isActive } = body;
+
+    if (!id || !url || !planId || isActive === undefined) {
       return NextResponse.json(
-        { error: "userToken, id, url, planId, and isActive are required" },
+        { error: "id, url, planId, and isActive are required" },
         { status: 400 }
       );
+    }
+
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid webhook ID" }, { status: 400 });
     }
 
     // Validate HTTPS url
     try {
       const parsedUrl = new URL(url.trim());
       if (parsedUrl.protocol !== "https:") {
-        return NextResponse.json({ error: "Destination URL must use the HTTPS protocol" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Destination URL must use the HTTPS protocol" },
+          { status: 400 }
+        );
       }
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: "Invalid Destination URL format" }, { status: 400 });
     }
 
-    const userId = await getUserId(userToken);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = session.userId;
 
-    // Plan ownership check
-    const isOwner = await verifyPlanOwnership(userToken, planId);
+    // Cryptographic plan ownership check
+    const isOwner = await verifyPlanOwnership(session.walletAddress, planId);
     if (!isOwner) {
       return NextResponse.json(
-        { error: "Access Denied: You do not own the plan specified." },
+        { error: "Access Denied: Your authenticated wallet does not own this subscription plan." },
         { status: 403 }
       );
     }
 
     const { db } = await connectToDatabase();
 
-    // Verify webhook ownership and exists
+    // Verify webhook exists and belongs to the authenticated user
     const webhookObjectId = new ObjectId(id);
     const targetWebhook = await db
       .collection("webhook_endpoints")
       .findOne({ _id: webhookObjectId, userId });
 
     if (!targetWebhook) {
-      return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
+      return NextResponse.json({ error: "Webhook not found or not owned by user" }, { status: 404 });
     }
 
-    // Check unique webhook per plan constraint if they are changing the plan ID
+    // Check unique webhook per plan constraint if changing plan ID
     if (targetWebhook.planId !== planId.toLowerCase()) {
       const duplicate = await db
         .collection("webhook_endpoints")
@@ -239,7 +238,7 @@ export async function PUT(req: NextRequest) {
     const updateDoc = {
       $set: {
         planId: planId.toLowerCase(),
-        url,
+        url: url.trim(),
         isActive: !!isActive,
         updatedAt: new Date(),
       },
@@ -247,7 +246,7 @@ export async function PUT(req: NextRequest) {
 
     await db.collection("webhook_endpoints").updateOne({ _id: webhookObjectId, userId }, updateDoc);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: "Webhook updated successfully" });
   } catch (err) {
     console.error("[PUT /api/webhooks]", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -255,24 +254,22 @@ export async function PUT(req: NextRequest) {
 }
 
 /**
- * DELETE /api/webhooks?userToken=...&id=...
- *
- * Deletes a webhook endpoint.
+ * DELETE /api/webhooks?id=...
+ * Deletes a webhook endpoint belonging to the authenticated user.
  */
 export async function DELETE(req: NextRequest) {
   try {
-    const userToken = req.nextUrl.searchParams.get("userToken");
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
+    }
+
     const id = req.nextUrl.searchParams.get("id");
-
-    if (!userToken || !id) {
-      return NextResponse.json({ error: "userToken and id are required" }, { status: 400 });
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Valid webhook ID is required" }, { status: 400 });
     }
 
-    const userId = await getUserId(userToken);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const userId = session.userId;
     const { db } = await connectToDatabase();
     const result = await db.collection("webhook_endpoints").deleteOne({
       _id: new ObjectId(id),
@@ -280,10 +277,10 @@ export async function DELETE(req: NextRequest) {
     });
 
     if (result.deletedCount === 0) {
-      return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
+      return NextResponse.json({ error: "Webhook not found or not owned by user" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: "Webhook deleted" });
   } catch (err) {
     console.error("[DELETE /api/webhooks]", err);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

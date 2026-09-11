@@ -1,39 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { toLowerHex } from "@/lib/subgraph";
-import { validateWalletOwnership } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 
+/**
+ * GET /api/autopay
+ * Retrieves autopay pre-authorizations strictly for the authenticated subscriber's wallet.
+ * CRITICAL SECURITY FIX: sessionPrivateKey is completely excluded from the response.
+ */
 export async function GET(req: NextRequest) {
   try {
-    const subscriberAddress = req.nextUrl.searchParams.get("subscriberAddress");
-    const userToken = req.nextUrl.searchParams.get("userToken");
-
-    if (!subscriberAddress || !userToken) {
-      return NextResponse.json(
-        { error: "subscriberAddress and userToken are required" },
-        { status: 400 }
-      );
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
     }
 
-    const subscriberLower = toLowerHex(subscriberAddress);
-
-    // Validate ownership/session
-    const isValid = await validateWalletOwnership(userToken, subscriberLower);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 }
-      );
-    }
-
+    const subscriberLower = session.walletAddress;
     const { db } = await connectToDatabase();
 
-    const settings = await db.collection("autopay_settings")
-      .find({ subscriberAddress: subscriberLower })
+    const settings = await db
+      .collection("autopay_settings")
+      .find(
+        { subscriberAddress: subscriberLower },
+        { projection: { sessionPrivateKey: 0 } } // NEVER return private keys
+      )
       .toArray();
 
     return NextResponse.json({
-      settings: settings.map(s => ({
+      settings: settings.map((s) => ({
         id: s._id.toString(),
         subscriberAddress: s.subscriberAddress,
         planId: s.planId,
@@ -45,12 +39,11 @@ export async function GET(req: NextRequest) {
         deadline: s.deadline,
         currentExpiresAt: s.currentExpiresAt,
         sessionPublicKey: s.sessionPublicKey || "",
-        sessionPrivateKey: s.sessionPrivateKey || "",
         maxCycles: s.maxCycles ?? 1,
         executedCycles: s.executedCycles ?? 0,
         createdAt: s.createdAt,
         updatedAt: s.updatedAt,
-      }))
+      })),
     });
   } catch (err) {
     console.error("[GET /api/autopay]", err);
@@ -58,11 +51,20 @@ export async function GET(req: NextRequest) {
   }
 }
 
+/**
+ * POST /api/autopay
+ * Configures or updates an autopay subscription pre-authorization.
+ * Binds subscriberAddress strictly to the authenticated session wallet.
+ */
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
+    }
+
     const body = await req.json();
     const {
-      subscriberAddress,
       planId,
       enabled,
       tierId,
@@ -74,27 +76,17 @@ export async function POST(req: NextRequest) {
       sessionPublicKey,
       sessionPrivateKey,
       maxCycles,
-      userToken,
     } = body;
 
-    if (!subscriberAddress || !planId || !tierId || !userToken) {
+    if (!planId || !tierId) {
       return NextResponse.json(
-        { error: "subscriberAddress, planId, tierId, and userToken are required" },
+        { error: "planId and tierId are required" },
         { status: 400 }
       );
     }
 
-    const subscriberLower = toLowerHex(subscriberAddress);
+    const subscriberLower = session.walletAddress;
     const planLower = toLowerHex(planId);
-
-    // Validate ownership/session
-    const isValid = await validateWalletOwnership(userToken, subscriberLower);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 }
-      );
-    }
 
     const { db } = await connectToDatabase();
 
@@ -108,7 +100,6 @@ export async function POST(req: NextRequest) {
         deadline: deadline ? Number(deadline) : 0,
         currentExpiresAt: currentExpiresAt ? Number(currentExpiresAt) : 0,
         sessionPublicKey: sessionPublicKey || "",
-        sessionPrivateKey: sessionPrivateKey || "",
         maxCycles: maxCycles ? Number(maxCycles) : 1,
         updatedAt: new Date(),
       },
@@ -117,8 +108,13 @@ export async function POST(req: NextRequest) {
         planId: planLower,
         executedCycles: 0,
         createdAt: new Date(),
-      }
+      },
     };
+
+    // Only update sessionPrivateKey if a new valid session key is provided
+    if (sessionPrivateKey && typeof sessionPrivateKey === "string") {
+      updateDoc.$set.sessionPrivateKey = sessionPrivateKey;
+    }
 
     const result = await db.collection("autopay_settings").updateOne(
       { subscriberAddress: subscriberLower, planId: planLower },
@@ -136,30 +132,24 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/**
+ * DELETE /api/autopay?planId=...
+ * Revokes or deletes an autopay subscription pre-authorization.
+ */
 export async function DELETE(req: NextRequest) {
   try {
-    const subscriberAddress = req.nextUrl.searchParams.get("subscriberAddress");
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
+    }
+
     const planId = req.nextUrl.searchParams.get("planId");
-    const userToken = req.nextUrl.searchParams.get("userToken");
-
-    if (!subscriberAddress || !planId || !userToken) {
-      return NextResponse.json(
-        { error: "subscriberAddress, planId, and userToken are required" },
-        { status: 400 }
-      );
+    if (!planId) {
+      return NextResponse.json({ error: "planId is required" }, { status: 400 });
     }
 
-    const subscriberLower = toLowerHex(subscriberAddress);
+    const subscriberLower = session.walletAddress;
     const planLower = toLowerHex(planId);
-
-    // Validate ownership/session
-    const isValid = await validateWalletOwnership(userToken, subscriberLower);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 }
-      );
-    }
 
     const { db } = await connectToDatabase();
 

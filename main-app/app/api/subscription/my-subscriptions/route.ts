@@ -84,30 +84,19 @@ const query = `
   }
 `;
 
-import { validateWalletOwnership } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 
 export async function GET(req: Request) {
   try {
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized: Active session required" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
-    const subscriber = searchParams.get("subscriber");
-    const userToken = searchParams.get("userToken");
-
-    if (!subscriber || !userToken) {
-      return NextResponse.json(
-        { error: "subscriber and userToken are required" },
-        { status: 400 },
-      );
-    }
-
-    // Security: Validate that the subscriber address belongs to the user session
-    const isValid = await validateWalletOwnership(userToken, subscriber);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 },
-      );
-    }
-
     const first = Math.min(Number(searchParams.get("first") ?? "100"), 200);
     const skip = Math.max(Number(searchParams.get("skip") ?? "0"), 0);
 
@@ -117,7 +106,7 @@ export async function GET(req: Request) {
     }>(
       query,
       {
-        subscriber: toLowerHex(subscriber),
+        subscriber: session.walletAddress,
         first,
         skip,
       },
