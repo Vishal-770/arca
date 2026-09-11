@@ -115,8 +115,8 @@ export default function AutoPayDetailPage() {
       }
       try {
         const [subRes, autoRes] = await Promise.all([
-          fetch(`/api/subscription/my-subscriptions?subscriber=${wallet.address}&userToken=${sessionUserToken}`, { cache: "no-store" }),
-          fetch(`/api/autopay?subscriberAddress=${wallet.address}&userToken=${sessionUserToken}`, { cache: "no-store" }),
+          fetch("/api/subscription/my-subscriptions", { cache: "no-store" }),
+          fetch("/api/autopay", { cache: "no-store" }),
         ]);
 
         if (!subRes.ok) {
@@ -246,7 +246,6 @@ export default function AutoPayDetailPage() {
           sessionPublicKey,
           sessionPrivateKey,
           maxCycles: selectedCycles,
-          userToken: sessionUserToken,
         }),
       });
 
@@ -290,7 +289,7 @@ export default function AutoPayDetailPage() {
 
     try {
       const res = await fetch(
-        `/api/autopay?subscriberAddress=${wallet.address}&planId=${sub.plan.id}&userToken=${sessionUserToken}`,
+        `/api/autopay?planId=${sub.plan.id}`,
         { method: "DELETE" }
       );
 

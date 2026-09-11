@@ -188,9 +188,7 @@ export default function MarketplacePage() {
     const fetchUserSubs = async () => {
       if (!wallet?.address || !sessionUserToken) return;
       try {
-        const res = await fetch(
-          `/api/subscription/my-subscriptions?subscriber=${wallet.address}&userToken=${sessionUserToken}`
-        );
+        const res = await fetch("/api/subscription/my-subscriptions");
         if (!res.ok) return;
         const data = (await res.json()) as {
           subscriptions?: { plan: { id: string }; status: string }[];

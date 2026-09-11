@@ -49,8 +49,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "name is required" }, { status: 400 });
     }
 
-    // Bind merchantAddress to the authenticated session wallet address
-    const assignedAddress = merchantAddress ? toLowerHex(merchantAddress) : session.walletAddress;
+    // Security: Bound strictly to the authenticated session's wallet address
+    if (merchantAddress && toLowerHex(merchantAddress) !== session.walletAddress) {
+      return NextResponse.json(
+        { error: "Forbidden: You cannot generate an API key for another merchant wallet" },
+        { status: 403 }
+      );
+    }
+    const assignedAddress = session.walletAddress;
 
     const rawKey = generateApiKey();
     const hashedKey = hashApiKey(rawKey);

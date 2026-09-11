@@ -160,15 +160,29 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
           setWalletAddress(acct.address);
         }
 
-        // Sync and ensure the server-side httpOnly session cookie is active
-        await fetch("/api/auth/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: storedUsername,
-            walletAddress: acct.address,
-          }),
-        }).catch((e) => console.error("Failed to sync server session:", e));
+        // Check if an active server session is already established
+        const sessionCheck = await fetch("/api/auth/session")
+          .then((r) => r.json())
+          .catch(() => null);
+
+        if (
+          !sessionCheck?.authenticated ||
+          sessionCheck?.user?.walletAddress?.toLowerCase() !== acct.address.toLowerCase()
+        ) {
+          // Sync server session with verified WebAuthn credential
+          await fetch("/api/auth/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: storedUsername,
+              walletAddress: acct.address,
+              credential: {
+                id: parsedCred.id,
+                publicKey: parsedCred.publicKey,
+              },
+            }),
+          }).catch((e) => console.error("Failed to sync server session:", e));
+        }
       } catch (err) {
         console.error("Failed to resolve modular wallet on mount:", err);
         // Clean up bad session
@@ -216,13 +230,17 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     setWalletAddress(acct.address);
     setIsReady(true);
 
-    // Establish verified server session
+    // Establish verified server session with WebAuthn credential
     await fetch("/api/auth/session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: trimmed,
         walletAddress: acct.address,
+        credential: {
+          id: cred.id,
+          publicKey: cred.publicKey,
+        },
       }),
     }).catch((e) => console.error("Failed to establish server session on register:", e));
   }, [passkeyTransport, getClients]);
@@ -272,13 +290,17 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     setWalletAddress(acct.address);
     setIsReady(true);
 
-    // Establish verified server session
+    // Establish verified server session with WebAuthn credential
     await fetch("/api/auth/session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: resolvedUser,
         walletAddress: acct.address,
+        credential: {
+          id: cred.id,
+          publicKey: cred.publicKey,
+        },
       }),
     }).catch((e) => console.error("Failed to establish server session on login:", e));
   }, [passkeyTransport, getClients]);
