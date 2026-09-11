@@ -555,45 +555,41 @@ export default function AutoPayDetailPage() {
         {/* Left Column: Configuration Form Card */}
         <div className="lg:col-span-7 rounded-xl border border-border/30 bg-muted/10 p-5 sm:p-6 flex flex-col gap-6">
           <div className="space-y-1">
-            <h2 className="text-base font-semibold text-foreground">Auto-Pay Configuration</h2>
+            <h2 className="text-base font-semibold text-foreground">
+              {isEnabled ? "Auto-Pay Configuration" : "Set Up Auto-Pay"}
+            </h2>
             <p className="text-xs text-muted-foreground">
-              Select your renewal tier and authorization limit for recurring renewals.
+              {isEnabled
+                ? "Review or modify your renewal tier and authorization limit."
+                : "Select your renewal tier and cycle limit to enable automatic renewals."}
             </p>
           </div>
 
           {/* Form Fields */}
           <div className="space-y-5 border-t border-border/10 pt-5">
-            {/* Toggle switch */}
-            <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border/20 bg-muted/20">
-              <div className="space-y-1">
-                <span className="text-xs font-semibold text-foreground block">Recurring Auto-Pay</span>
-                <p className="text-[11px] text-muted-foreground">
-                  Allow automatic renewal payments using safe passkey approvals.
-                </p>
+            {/* Active Switch Toggle - ONLY visible when Auto-Pay is already set up */}
+            {isEnabled && (
+              <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border/30 bg-muted/20">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-primary inline-block" />
+                    <span className="text-xs font-semibold text-foreground">Recurring Auto-Pay Active</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Automatic renewal payments are active using passkey approval.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRevokeModal(true)}
+                  disabled={actionLoading}
+                  className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 focus:outline-none"
+                  title="Turn off Auto-Pay"
+                >
+                  <span className="pointer-events-none inline-block h-5 w-5 rounded-full bg-background shadow-xs translate-x-5 transition-transform duration-200" />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (isEnabled) {
-                    setShowRevokeModal(true);
-                  } else {
-                    void handleAuthorizeAutoPay();
-                  }
-                }}
-                disabled={actionLoading}
-                className={cn(
-                  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-50",
-                  isEnabled ? "bg-primary" : "bg-muted-foreground/30"
-                )}
-              >
-                <span
-                  className={cn(
-                    "pointer-events-none inline-block h-5 w-5 rounded-full bg-background shadow-xs transition-transform duration-200",
-                    isEnabled ? "translate-x-5" : "translate-x-0"
-                  )}
-                />
-              </button>
-            </div>
+            )}
 
             {/* Tier Selector */}
             <div className="space-y-2">
