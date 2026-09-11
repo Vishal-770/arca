@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { generateApiKey, hashApiKey } from "@/lib/api-keys";
 import { toLowerHex } from "@/lib/subgraph";
+import { getServerSession } from "@/lib/server-auth";
 
 export async function GET(req: NextRequest) {
   try {
-    const userToken = req.nextUrl.searchParams.get("userToken");
-    if (!userToken) {
-      return NextResponse.json({ error: "userToken is required" }, { status: 400 });
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
     }
 
-    const userId = userToken;
-
+    const userId = session.userId;
     const { db } = await connectToDatabase();
 
     const keys = await db.collection("api_keys")
@@ -20,14 +20,14 @@ export async function GET(req: NextRequest) {
       .toArray();
 
     return NextResponse.json({
-      keys: keys.map(k => ({
+      keys: keys.map((k) => ({
         id: k._id.toString(),
         name: k.name,
         prefix: k.prefix,
         mask: k.mask,
         createdAt: k.createdAt,
-        lastUsedAt: k.lastUsedAt
-      }))
+        lastUsedAt: k.lastUsedAt,
+      })),
     });
   } catch (err) {
     console.error("[GET /api/keys]", err);
@@ -37,14 +37,20 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { userToken, name, merchantAddress } = body;
-
-    if (!userToken || !name) {
-      return NextResponse.json({ error: "userToken and name are required" }, { status: 400 });
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
     }
 
-    const userId = userToken;
+    const body = await req.json();
+    const { name, merchantAddress } = body;
+
+    if (!name || typeof name !== "string" || !name.trim()) {
+      return NextResponse.json({ error: "name is required" }, { status: 400 });
+    }
+
+    // Bind merchantAddress to the authenticated session wallet address
+    const assignedAddress = merchantAddress ? toLowerHex(merchantAddress) : session.walletAddress;
 
     const rawKey = generateApiKey();
     const hashedKey = hashApiKey(rawKey);
@@ -52,22 +58,22 @@ export async function POST(req: NextRequest) {
     const { db } = await connectToDatabase();
 
     const newKey = {
-      userId,
-      merchantAddress: merchantAddress ? toLowerHex(merchantAddress) : null,
-      name,
+      userId: session.userId,
+      merchantAddress: assignedAddress,
+      name: name.trim(),
       keyHash: hashedKey,
       prefix: rawKey.slice(0, 8),
       mask: rawKey.slice(-4),
       createdAt: new Date(),
       lastUsedAt: null,
-      revokedAt: null
+      revokedAt: null,
     };
 
     const result = await db.collection("api_keys").insertOne(newKey);
 
     return NextResponse.json({
       id: result.insertedId.toString(),
-      rawKey // WE SHOW THIS ONLY ONCE
+      rawKey, // Returned once upon creation
     });
   } catch (err) {
     console.error("[POST /api/keys]", err);

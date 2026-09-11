@@ -1,39 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
-
-// Identify user using their Smart Account session ID (e.g. username or address)
-async function getUserId(userToken: string) {
-  if (!userToken) return null;
-  return userToken.toLowerCase();
-}
+import { getServerSession } from "@/lib/server-auth";
 
 /**
- * GET /api/webhooks/logs?userToken=...&endpointId=...
- *
- * Retrieves the 50 most recent webhook logs for the logged-in user.
+ * GET /api/webhooks/logs?endpointId=...
+ * Retrieves the 50 most recent webhook delivery logs strictly scoped to the authenticated user.
  */
 export async function GET(req: NextRequest) {
   try {
-    const userToken = req.nextUrl.searchParams.get("userToken");
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized: Active session required" }, { status: 401 });
+    }
+
     const endpointId = req.nextUrl.searchParams.get("endpointId");
-
-    if (!userToken) {
-      return NextResponse.json({ error: "userToken is required" }, { status: 400 });
-    }
-
-    const userId = await getUserId(userToken);
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = session.userId;
 
     const { db } = await connectToDatabase();
 
-    const query: any = { userId };
+    const query: Record<string, unknown> = { userId };
     if (endpointId) {
       query.webhookEndpointId = endpointId;
     }
 
-    // Retrieve the 50 most recent logs matching userId
+    // Retrieve the 50 most recent logs matching the authenticated user
     const logs = await db
       .collection("webhook_logs")
       .find(query)

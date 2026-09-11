@@ -215,41 +215,49 @@ const transactionsQuery = `
 `;
 
 
-import { validateWalletOwnership } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const seller = searchParams.get("seller");
-    const subscriber = searchParams.get("subscriber");
-    const userToken = searchParams.get("userToken");
-
-    if (!userToken) {
+    const session = await getServerSession(req);
+    if (!session) {
       return NextResponse.json(
-        { error: "userToken is required" },
-        { status: 400 },
+        { error: "Unauthorized: Active session required" },
+        { status: 401 }
       );
     }
 
-    // Security: Validate wallet ownership for both roles if they are being queried
-    if (seller) {
-      const isSellerOwner = await validateWalletOwnership(userToken, seller);
-      if (!isSellerOwner) {
+    const { searchParams } = new URL(req.url);
+    const sellerParam = searchParams.get("seller");
+    const subscriberParam = searchParams.get("subscriber");
+
+    // Security: Bound to authenticated wallet address
+    let seller: string | null = null;
+    let subscriber: string | null = null;
+
+    if (sellerParam) {
+      if (sellerParam.toLowerCase() !== session.walletAddress.toLowerCase()) {
         return NextResponse.json(
-          { error: "Unauthorized: Seller wallet does not belong to this user session" },
-          { status: 403 },
+          { error: "Unauthorized: You may only query analytics for your own seller wallet" },
+          { status: 403 }
         );
       }
+      seller = session.walletAddress;
     }
 
-    if (subscriber) {
-      const isSubOwner = await validateWalletOwnership(userToken, subscriber);
-      if (!isSubOwner) {
+    if (subscriberParam) {
+      if (subscriberParam.toLowerCase() !== session.walletAddress.toLowerCase()) {
         return NextResponse.json(
-          { error: "Unauthorized: Subscriber wallet does not belong to this user session" },
-          { status: 403 },
+          { error: "Unauthorized: You may only query analytics for your own subscriber wallet" },
+          { status: 403 }
         );
       }
+      subscriber = session.walletAddress;
+    }
+
+    // Default to viewing as seller if neither parameter is explicitly queried
+    if (!seller && !subscriber) {
+      seller = session.walletAddress;
     }
     const eventsFirst = 1000;
     const now = Math.floor(Date.now() / 1000);

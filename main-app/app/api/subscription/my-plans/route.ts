@@ -122,30 +122,19 @@ function averageBigInt(total: bigint, count: number) {
   return total / BigInt(count);
 }
 
-import { validateWalletOwnership } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 
 export async function GET(req: Request) {
   try {
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized: Active session required" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
-    const seller = searchParams.get("seller");
-    const userToken = searchParams.get("userToken");
-
-    if (!seller || !userToken) {
-      return NextResponse.json(
-        { error: "seller and userToken are required" },
-        { status: 400 },
-      );
-    }
-
-    // Security: Validate that the seller address belongs to the userToken session
-    const isValid = await validateWalletOwnership(userToken, seller);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 },
-      );
-    }
-
     const first = Math.min(Number(searchParams.get("first") ?? "100"), 200);
     const skip = Math.max(Number(searchParams.get("skip") ?? "0"), 0);
     const eventsFirst = Math.min(
@@ -156,7 +145,8 @@ export async function GET(req: Request) {
     const now = toSecondsNow();
     const sevenDaysAgo = Math.max(now - 7 * 24 * 60 * 60, 0);
     const thirtyDaysAgo = Math.max(now - 30 * 24 * 60 * 60, 0);
-    const sellerId = toLowerHex(seller);
+    // Bind strictly to the authenticated merchant's wallet
+    const sellerId = session.walletAddress;
 
     const [plansData, statesData, eventsData] = await Promise.all([
       querySubgraph<{ plans: SellerPlan[] }>(sellerPlansQuery, {

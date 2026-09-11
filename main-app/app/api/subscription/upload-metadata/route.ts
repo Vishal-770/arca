@@ -18,8 +18,18 @@ function getFilebaseManager() {
   return new ObjectManager(key, secret, { bucket });
 }
 
+import { getServerSession } from "@/lib/server-auth";
+
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(req);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized: Active session required to upload plan metadata" },
+        { status: 401 }
+      );
+    }
+
     const body = (await req.json()) as { metadata?: SubscriptionUiMetadata };
     const metadata = body.metadata;
 
