@@ -17,7 +17,6 @@ import {
   Loader2,
   ChevronRight,
   ExternalLink,
-  Zap,
   Lock,
   LogOut,
   Wallet,
@@ -458,11 +457,9 @@ export default function PaymentPage() {
       {/* ── Top Header / Nav ── */}
       <header className="border-b border-border/20 bg-background/80 backdrop-blur-md sticky top-0 z-30 w-full">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
-            <div className="size-6 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-              <Zap className="size-3.5 fill-current" />
-            </div>
-            <span className="text-xs font-bold tracking-tight text-foreground">Arca</span>
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+            <img src="/logo.png" alt="Arca" className="h-6 w-6 dark:invert object-contain" />
+            <span className="text-sm font-bold tracking-tight text-foreground">Arca</span>
             <span className="text-muted-foreground/40 font-mono text-xs">/</span>
             <span className="text-xs text-muted-foreground font-medium">Checkout</span>
           </Link>
@@ -705,14 +702,18 @@ export default function PaymentPage() {
 
                       {/* Tier Features */}
                       {tierFeatures.length > 0 && (
-                        <div className="space-y-2 pt-2 border-t border-border/10">
+                        <div className="space-y-2.5 pt-3 border-t border-border/10">
                           {tierFeatures.map((f, idx) => (
                             <div key={idx} className="flex items-start gap-2.5 text-xs">
-                              <CheckCircle2 className="size-3.5 text-primary shrink-0 mt-0.5" />
-                              <div>
-                                <span className="font-semibold text-foreground">{f.title}</span>
+                              <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
+                              <div className="space-y-0.5">
+                                <p className="font-semibold text-foreground text-xs leading-snug">
+                                  {f.title}
+                                </p>
                                 {f.description && (
-                                  <span className="text-muted-foreground ml-1.5">— {f.description}</span>
+                                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                                    {f.description}
+                                  </p>
                                 )}
                               </div>
                             </div>
