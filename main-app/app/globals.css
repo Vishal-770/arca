@@ -258,28 +258,53 @@
   scrollbar-color: var(--border) transparent;
 }
 
-.no-scrollbar::-webkit-scrollbar {
+/* Complete Scrollbar Elimination for Sidebar & No-Scrollbar Elements */
+.no-scrollbar,
+.no-scrollbar *,
+aside,
+aside *,
+nav,
+nav * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.no-scrollbar *::-webkit-scrollbar,
+aside::-webkit-scrollbar,
+aside *::-webkit-scrollbar,
+nav::-webkit-scrollbar,
+nav *::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
   background: transparent !important;
 }
-.no-scrollbar {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
+
+.no-scrollbar::-webkit-scrollbar-thumb,
+.no-scrollbar *::-webkit-scrollbar-thumb,
+aside::-webkit-scrollbar-thumb,
+aside *::-webkit-scrollbar-thumb,
+nav::-webkit-scrollbar-thumb,
+nav *::-webkit-scrollbar-thumb {
+  display: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar-track,
+.no-scrollbar *::-webkit-scrollbar-track,
+aside::-webkit-scrollbar-track,
+aside *::-webkit-scrollbar-track,
+nav::-webkit-scrollbar-track,
+nav *::-webkit-scrollbar-track {
+  display: none !important;
+  background: transparent !important;
 }
 
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none !important;
-    scrollbar-width: none !important;
-  }
-
   @keyframes scan-x {
     0% { transform: translateX(-100%); }
     50% { transform: translateX(100%); }
