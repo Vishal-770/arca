@@ -72,26 +72,19 @@ const eventsQuery = `
   }
 `;
 
-import { validateWalletOwnership } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const subscriber = searchParams.get("subscriber");
-    const userToken = searchParams.get("userToken");
-
-    if (!subscriber || !userToken) {
-      return NextResponse.json({ error: "subscriber and userToken are required" }, { status: 400 });
-    }
-
-    // Security: Validate wallet ownership
-    const isValid = await validateWalletOwnership(userToken, subscriber);
-    if (!isValid) {
+    const session = await getServerSession(req);
+    if (!session) {
       return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 },
+        { error: "Unauthorized: Active session required" },
+        { status: 401 }
       );
     }
+
+    const subscriber = session.walletAddress;
 
     // 1. Get user's subscribed plans
     const subData = await querySubgraph<{ subscriptionStates: { plan: { id: string, ipfsHash: string } }[] }>(

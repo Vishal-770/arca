@@ -159,6 +159,16 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
           setCredential(parsedCred);
           setWalletAddress(acct.address);
         }
+
+        // Sync and ensure the server-side httpOnly session cookie is active
+        await fetch("/api/auth/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: storedUsername,
+            walletAddress: acct.address,
+          }),
+        }).catch((e) => console.error("Failed to sync server session:", e));
       } catch (err) {
         console.error("Failed to resolve modular wallet on mount:", err);
         // Clean up bad session
@@ -205,6 +215,16 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     setUsername(trimmed);
     setWalletAddress(acct.address);
     setIsReady(true);
+
+    // Establish verified server session
+    await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: trimmed,
+        walletAddress: acct.address,
+      }),
+    }).catch((e) => console.error("Failed to establish server session on register:", e));
   }, [passkeyTransport, getClients]);
 
   const loginWithPasskey = useCallback(async (existingUser?: string) => {
@@ -251,6 +271,16 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     setUsername(resolvedUser);
     setWalletAddress(acct.address);
     setIsReady(true);
+
+    // Establish verified server session
+    await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: resolvedUser,
+        walletAddress: acct.address,
+      }),
+    }).catch((e) => console.error("Failed to establish server session on login:", e));
   }, [passkeyTransport, getClients]);
 
   const clearSession = useCallback(() => {
@@ -259,6 +289,9 @@ export function CircleSDKProvider({ children }: { children: ReactNode }) {
     setCredential(null);
     setUsername(null);
     setWalletAddress(null);
+
+    // Invalidate server session cookie
+    fetch("/api/auth/session", { method: "DELETE" }).catch(() => {});
   }, []);
 
   // Client-Side Transaction Submitting.

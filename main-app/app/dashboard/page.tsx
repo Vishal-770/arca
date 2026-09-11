@@ -122,16 +122,16 @@ export default function DashboardOverviewPage() {
   };
 
   const { data: analytics = null, isLoading: loading } = useQuery<AnalyticsResponse>({
-    queryKey: ["dashboardAnalytics", wallet?.address, sessionUserToken],
+    queryKey: ["dashboardAnalytics", wallet?.address],
     queryFn: async () => {
-      if (!wallet?.address || !sessionUserToken) return null as unknown as AnalyticsResponse;
-      const p = new URLSearchParams({ seller: wallet.address, subscriber: wallet.address, userToken: sessionUserToken });
-      const res = await fetch(`/api/subscription/analytics?${p.toString()}`, { cache: "no-store" });
+      if (!wallet?.address) return null as unknown as AnalyticsResponse;
+      const res = await fetch("/api/subscription/analytics", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch analytics");
       return res.json();
     },
-    enabled: !!wallet?.address && !!sessionUserToken,
-    refetchInterval: 15000, refetchOnWindowFocus: true,
+    enabled: !!wallet?.address,
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true,
   });
 
   const tokenBalances = wallet?.tokenBalances ?? [];
