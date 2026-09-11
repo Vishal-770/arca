@@ -108,7 +108,7 @@ function humanDuration(secondsValue: string) {
   return `${Math.max(Math.floor(seconds / 60), 1)}m`;
 }
 
-type SortOption = "revenue" | "subscribers" | "retention" | "velocity";
+type SortOption = "revenue" | "subscribers" | "renewal" | "recent_sales";
 type StatusFilter = "all" | "active" | "inactive";
 
 export default function MyPlansPage() {
@@ -121,7 +121,6 @@ export default function MyPlansPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortOption>("revenue");
   const [copiedPlanId, setCopiedPlanId] = useState<string | null>(null);
-  const [copiedLinkPlanId, setCopiedLinkPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -237,10 +236,10 @@ export default function MyPlansPage() {
       if (sortBy === "subscribers") {
         return (b.analysis?.activeSubscribers || 0) - (a.analysis?.activeSubscribers || 0);
       }
-      if (sortBy === "retention") {
+      if (sortBy === "renewal") {
         return (b.analysis?.repeatBuyerRate || 0) - (a.analysis?.repeatBuyerRate || 0);
       }
-      if (sortBy === "velocity") {
+      if (sortBy === "recent_sales") {
         const volA = BigInt(a.analysis?.windows?.thirtyDays?.grossVolume || 0);
         const volB = BigInt(b.analysis?.windows?.thirtyDays?.grossVolume || 0);
         return volB > volA ? 1 : volB < volA ? -1 : 0;
@@ -255,14 +254,6 @@ export default function MyPlansPage() {
     navigator.clipboard.writeText(planId);
     setCopiedPlanId(planId);
     setTimeout(() => setCopiedPlanId(null), 2000);
-  };
-
-  const handleCopyPaywallLink = (planId: string) => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${origin}/pay/${planId}`;
-    navigator.clipboard.writeText(url);
-    setCopiedLinkPlanId(planId);
-    setTimeout(() => setCopiedLinkPlanId(null), 2000);
   };
 
   // Loading skeleton
@@ -315,10 +306,10 @@ export default function MyPlansPage() {
         <div className="h-10 w-10 rounded-full bg-destructive/20 text-destructive flex items-center justify-center mb-3">
           <Activity size={20} />
         </div>
-        <h3 className="text-base font-bold text-foreground">Failed to Load Subscription Plans</h3>
+        <h3 className="text-base font-bold text-foreground">Failed to load plans</h3>
         <p className="text-xs text-muted-foreground max-w-sm mt-1 mb-5">{error}</p>
         <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
-          Retry Connection
+          Try Again
         </Button>
       </div>
     );
@@ -334,7 +325,7 @@ export default function MyPlansPage() {
               Subscription Plans
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Deploy, monitor, and scale recurring on-chain subscriptions.
+              Create and manage recurring plans for your customers.
             </p>
           </div>
           <Button asChild size="sm">
@@ -348,9 +339,9 @@ export default function MyPlansPage() {
           <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
             <Sparkles className="size-5" />
           </div>
-          <h3 className="text-base font-bold text-foreground">No subscription plans deployed yet</h3>
+          <h3 className="text-base font-bold text-foreground">No plans created yet</h3>
           <p className="text-xs text-muted-foreground max-w-md mt-1.5 mb-6">
-            Create automated recurring billing smart contracts with custom intervals, multi-tier pricing, and direct USDC settlement.
+            Create subscription plans with custom prices and billing cycles.
           </p>
           <Button asChild>
             <Link href="/dashboard/plans/create">
@@ -377,7 +368,7 @@ export default function MyPlansPage() {
             </Badge>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Decentralized recurring billing engine with real-time settlement telemetry.
+            Manage your plans, track subscribers, and review revenue.
           </p>
         </div>
 
@@ -395,14 +386,14 @@ export default function MyPlansPage() {
         </div>
       </div>
 
-      {/* ── Executive Stat Cards ───────────────────────────────── */}
+      {/* ── Summary Stat Cards ─────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         
-        {/* Gross Volume */}
+        {/* Total Sales */}
         <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Gross Volume
+              Total Sales
             </span>
             <DollarSign className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
           </div>
@@ -412,16 +403,16 @@ export default function MyPlansPage() {
             </p>
             <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-2">
               <TrendingUp className="h-3 w-3 text-primary shrink-0" />
-              <span>${Number(metrics.thirtyDayVolume).toLocaleString()} in last 30d</span>
+              <span>${Number(metrics.thirtyDayVolume).toLocaleString()} in last 30 days</span>
             </p>
           </div>
         </div>
 
-        {/* Net Settled Revenue */}
+        {/* Net Earnings */}
         <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-primary/10">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-              Net Revenue
+              Net Earnings
             </span>
             <TrendingUp className="h-3.5 w-3.5 text-primary shrink-0" />
           </div>
@@ -430,7 +421,7 @@ export default function MyPlansPage() {
               ${Number(formatUnits(BigInt(metrics.totalNet), 6)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             <p className="text-[11px] text-muted-foreground mt-2">
-              Settled directly to smart wallet
+              After protocol fees
             </p>
           </div>
         </div>
@@ -439,7 +430,7 @@ export default function MyPlansPage() {
         <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Subscribers
+              Active Subscribers
             </span>
             <Users className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
           </div>
@@ -448,16 +439,16 @@ export default function MyPlansPage() {
               {metrics.totalActiveSubs}
             </p>
             <p className="text-[11px] text-muted-foreground mt-2">
-              {metrics.totalSubs} total signups across plans
+              {metrics.totalSubs} all-time
             </p>
           </div>
         </div>
 
-        {/* Retention Rate */}
+        {/* Renewal Rate */}
         <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Retention Rate
+              Renewal Rate
             </span>
             <Repeat className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
           </div>
@@ -466,7 +457,7 @@ export default function MyPlansPage() {
               {metrics.avgRepeatRate.toFixed(1)}%
             </p>
             <p className="text-[11px] text-muted-foreground mt-2">
-              Average recurring renewals
+              Average repeat renewals
             </p>
           </div>
         </div>
@@ -481,7 +472,7 @@ export default function MyPlansPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground size-4 pointer-events-none" />
           <Input
             type="search"
-            placeholder="Search plans, brand, plan ID..."
+            placeholder="Search plans, brands, or IDs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 h-9 text-xs rounded-xl bg-muted/20 border-border/40 focus:border-primary/50"
@@ -530,14 +521,14 @@ export default function MyPlansPage() {
 
           {/* Shadcn Select for Sorting */}
           <Select value={sortBy} onValueChange={(v) => { if (v) setSortBy(v as SortOption); }}>
-            <SelectTrigger className="w-[160px] h-9 bg-muted/20 border-border/40 rounded-xl text-xs font-medium">
+            <SelectTrigger className="w-[170px] h-9 bg-muted/20 border-border/40 rounded-xl text-xs font-medium">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent className="bg-popover border-border/60 rounded-xl shadow-lg">
-              <SelectItem value="revenue" className="text-xs">Top Revenue</SelectItem>
+              <SelectItem value="revenue" className="text-xs">Highest Revenue</SelectItem>
               <SelectItem value="subscribers" className="text-xs">Most Subscribers</SelectItem>
-              <SelectItem value="retention" className="text-xs">Highest Retention</SelectItem>
-              <SelectItem value="velocity" className="text-xs">30d Velocity</SelectItem>
+              <SelectItem value="renewal" className="text-xs">Best Renewal Rate</SelectItem>
+              <SelectItem value="recent_sales" className="text-xs">Most Sales (30d)</SelectItem>
             </SelectContent>
           </Select>
 
@@ -547,8 +538,8 @@ export default function MyPlansPage() {
       {/* ── Plans Presentation (Desktop Table + Mobile Cards) ───── */}
       {filteredAndSortedPlans.length === 0 ? (
         <div className="py-16 px-4 text-center rounded-xl bg-muted/20">
-          <p className="text-sm font-semibold text-foreground">No subscription plans matched your query</p>
-          <p className="text-xs text-muted-foreground mt-1 mb-4">Try clearing filters or search terms.</p>
+          <p className="text-sm font-semibold text-foreground">No plans matched your filter</p>
+          <p className="text-xs text-muted-foreground mt-1 mb-4">Try clearing your search or status filter.</p>
           <Button
             variant="outline"
             size="sm"
@@ -569,10 +560,10 @@ export default function MyPlansPage() {
                 <TableHeader className="bg-muted/30">
                   <TableRow className="border-border/30 hover:bg-transparent">
                     <TableHead className="w-[28%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5 pl-4">Plan</TableHead>
-                    <TableHead className="w-[22%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Pricing &amp; Tiers</TableHead>
+                    <TableHead className="w-[22%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Pricing</TableHead>
                     <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Subscribers</TableHead>
-                    <TableHead className="w-[14%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">30d Velocity</TableHead>
-                    <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Gross Volume</TableHead>
+                    <TableHead className="w-[14%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Last 30 Days</TableHead>
+                    <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Total Sales</TableHead>
                     <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground text-right py-3.5 pr-4">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -590,7 +581,6 @@ export default function MyPlansPage() {
                         : `$${formatUnits(minPrice, 6)} – $${formatUnits(maxPrice, 6)}`;
 
                     const isCopiedId = copiedPlanId === plan.planId;
-                    const isCopiedLink = copiedLinkPlanId === plan.planId;
 
                     return (
                       <TableRow
@@ -664,12 +654,12 @@ export default function MyPlansPage() {
                               {plan.analysis?.activeSubscribers || 0}
                             </p>
                             <p className="text-[10px] text-muted-foreground">
-                              {plan.analysis?.totalSubscribers || 0} total
+                              {plan.analysis?.totalSubscribers || 0} all-time
                             </p>
                           </div>
                         </TableCell>
 
-                        {/* 30d Velocity */}
+                        {/* 30-Day Sales */}
                         <TableCell className="py-4">
                           <div>
                             <p className="text-xs font-mono font-bold text-foreground">
@@ -681,7 +671,7 @@ export default function MyPlansPage() {
                           </div>
                         </TableCell>
 
-                        {/* Total Gross / Net */}
+                        {/* Total Sales */}
                         <TableCell className="py-4">
                           <div>
                             <p className="text-xs font-mono font-bold text-foreground">
@@ -693,28 +683,18 @@ export default function MyPlansPage() {
                           </div>
                         </TableCell>
 
-                        {/* Actions */}
+                        {/* Actions: Clean single Checkout button + Analytics */}
                         <TableCell className="py-4 text-right pr-4">
-                          <div className="flex items-center justify-end gap-1.5">
+                          <div className="flex items-center justify-end gap-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleCopyPaywallLink(plan.planId)}
-                              className="h-7 text-xs px-2.5 gap-1 font-medium cursor-pointer"
-                            >
-                              {isCopiedLink ? <Check className="size-3 text-primary" /> : <Copy className="size-3" />}
-                              {isCopiedLink ? "Copied" : "Paywall"}
-                            </Button>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
                               asChild
-                              className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
-                              title="Open Live Public Paywall"
+                              className="h-7 text-xs px-2.5 gap-1.5 font-medium"
                             >
                               <Link href={`/pay/${plan.planId}`} target="_blank" rel="noreferrer">
-                                <ExternalLink className="size-3.5" />
+                                <ExternalLink className="size-3 text-muted-foreground" />
+                                <span>Preview Checkout</span>
                               </Link>
                             </Button>
 
@@ -752,7 +732,6 @@ export default function MyPlansPage() {
                   : `$${formatUnits(minPrice, 6)} – $${formatUnits(maxPrice, 6)}`;
 
               const isCopiedId = copiedPlanId === plan.planId;
-              const isCopiedLink = copiedLinkPlanId === plan.planId;
 
               return (
                 <div
@@ -810,7 +789,7 @@ export default function MyPlansPage() {
                     </div>
                     <div>
                       <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground block">
-                        Active Subs
+                        Subscribers
                       </span>
                       <p className="text-xs font-mono font-bold text-foreground mt-0.5">
                         {plan.analysis?.activeSubscribers || 0}
@@ -818,7 +797,7 @@ export default function MyPlansPage() {
                     </div>
                     <div>
                       <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground block">
-                        Volume
+                        Sales
                       </span>
                       <p className="text-xs font-mono font-bold text-foreground mt-0.5">
                         ${Number(formatUnits(BigInt(plan.analysis?.grossEarnings || 0), 6)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
@@ -842,22 +821,12 @@ export default function MyPlansPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleCopyPaywallLink(plan.planId)}
-                      className="flex-1 h-8 text-xs gap-1.5 font-medium cursor-pointer"
-                    >
-                      {isCopiedLink ? <Check className="size-3 text-primary" /> : <Copy className="size-3" />}
-                      {isCopiedLink ? "Copied" : "Copy Paywall"}
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
                       asChild
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground shrink-0"
-                      title="Open Live Public Paywall"
+                      className="flex-1 h-8 text-xs gap-1.5 font-medium"
                     >
                       <Link href={`/pay/${plan.planId}`} target="_blank" rel="noreferrer">
-                        <ExternalLink className="size-3.5" />
+                        <ExternalLink className="size-3 text-muted-foreground" />
+                        <span>Preview Checkout</span>
                       </Link>
                     </Button>
 
