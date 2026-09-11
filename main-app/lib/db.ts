@@ -21,6 +21,8 @@ export function setCustomDatabaseConnector(connector: DbConnector | null) {
   customConnector = connector;
 }
 
+let cachedPromise: Promise<{ client: MongoClient; db: Db }> | null = null;
+
 export async function connectToDatabase() {
   if (customConnector) {
     return customConnector();
@@ -34,12 +36,19 @@ export async function connectToDatabase() {
     return { client: cachedClient, db: cachedDb };
   }
 
-  // If the connection is already in progress, wait for it
-  const client = await MongoClient.connect(MONGODB_URI);
-  const db = client.db(MONGODB_DB);
+  if (!cachedPromise) {
+    cachedPromise = MongoClient.connect(MONGODB_URI)
+      .then((client) => {
+        const db = client.db(MONGODB_DB);
+        cachedClient = client;
+        cachedDb = db;
+        return { client, db };
+      })
+      .catch((err) => {
+        cachedPromise = null; // Reset promise so subsequent calls can retry
+        throw err;
+      });
+  }
 
-  cachedClient = client;
-  cachedDb = db;
-
-  return { client, db };
+  return cachedPromise;
 }
