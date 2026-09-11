@@ -278,20 +278,20 @@ export default function MyPlansPage() {
           ))}
         </div>
 
-        <div className="p-5 rounded-xl bg-muted/20 space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center justify-between py-3 border-b border-border/10 last:border-0">
+        <div className="space-y-4 pt-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex items-center justify-between py-4 border-b border-border/10">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-9 w-9 rounded-lg" />
                 <div className="space-y-1.5">
-                  <Skeleton className="h-4 w-36 rounded" />
-                  <Skeleton className="h-3 w-24 rounded" />
+                  <Skeleton className="h-4 w-40 rounded" />
+                  <Skeleton className="h-3 w-28 rounded" />
                 </div>
               </div>
-              <Skeleton className="h-4 w-24 rounded hidden md:block" />
-              <Skeleton className="h-4 w-16 rounded hidden md:block" />
-              <Skeleton className="h-4 w-20 rounded hidden md:block" />
-              <Skeleton className="h-8 w-24 rounded-lg" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-8 w-28 rounded-lg" />
             </div>
           ))}
         </div>
@@ -535,7 +535,7 @@ export default function MyPlansPage() {
         </div>
       </div>
 
-      {/* ── Plans Presentation (Desktop Table + Mobile Cards) ───── */}
+      {/* ── Proper Clean Table Layout ──────────────────────────── */}
       {filteredAndSortedPlans.length === 0 ? (
         <div className="py-16 px-4 text-center rounded-xl bg-muted/20">
           <p className="text-sm font-semibold text-foreground">No plans matched your filter</p>
@@ -552,299 +552,179 @@ export default function MyPlansPage() {
           </Button>
         </div>
       ) : (
-        <>
-          {/* Desktop Table View (md and up) */}
-          <div className="hidden md:block rounded-xl overflow-hidden bg-card/40 border border-border/30">
-            <div className="overflow-x-auto">
-              <Table className="min-w-[800px]">
-                <TableHeader className="bg-muted/30">
-                  <TableRow className="border-border/30 hover:bg-transparent">
-                    <TableHead className="w-[28%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5 pl-4">Plan</TableHead>
-                    <TableHead className="w-[22%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Pricing</TableHead>
-                    <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Subscribers</TableHead>
-                    <TableHead className="w-[14%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Last 30 Days</TableHead>
-                    <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-3.5">Total Sales</TableHead>
-                    <TableHead className="w-[12%] text-[10px] font-bold uppercase tracking-widest text-muted-foreground text-right py-3.5 pr-4">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAndSortedPlans.map((plan) => {
-                    const title =
-                      plan.metadata?.name ?? plan.metadata?.brand?.name ?? `Plan ${plan.planId.slice(0, 10)}`;
-                    const brand = plan.metadata?.brand?.name;
-                    const prices = plan.tiers?.map((t) => BigInt(t.price)) ?? [];
-                    const minPrice = prices.length > 0 ? prices.reduce((a, b) => (a < b ? a : b)) : BigInt(plan.price || "0");
-                    const maxPrice = prices.length > 0 ? prices.reduce((a, b) => (a > b ? a : b)) : BigInt(plan.price || "0");
-                    const priceDisplay =
-                      minPrice === maxPrice
-                        ? `$${formatUnits(minPrice, 6)}`
-                        : `$${formatUnits(minPrice, 6)} – $${formatUnits(maxPrice, 6)}`;
+        <div className="w-full overflow-x-auto">
+          <Table className="w-full min-w-[760px]">
+            <TableHeader>
+              <TableRow className="border-b border-border/20 hover:bg-transparent">
+                <TableHead className="py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 pl-1">
+                  Plan
+                </TableHead>
+                <TableHead className="py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                  Pricing
+                </TableHead>
+                <TableHead className="py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                  Subscribers
+                </TableHead>
+                <TableHead className="py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                  30-Day Sales
+                </TableHead>
+                <TableHead className="py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                  Total Sales
+                </TableHead>
+                <TableHead className="py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 text-right pr-1">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAndSortedPlans.map((plan) => {
+                const title =
+                  plan.metadata?.name ?? plan.metadata?.brand?.name ?? `Plan ${plan.planId.slice(0, 10)}`;
+                const brand = plan.metadata?.brand?.name;
+                const prices = plan.tiers?.map((t) => BigInt(t.price)) ?? [];
+                const minPrice = prices.length > 0 ? prices.reduce((a, b) => (a < b ? a : b)) : BigInt(plan.price || "0");
+                const maxPrice = prices.length > 0 ? prices.reduce((a, b) => (a > b ? a : b)) : BigInt(plan.price || "0");
+                const priceDisplay =
+                  minPrice === maxPrice
+                    ? `$${formatUnits(minPrice, 6)}`
+                    : `$${formatUnits(minPrice, 6)} – $${formatUnits(maxPrice, 6)}`;
 
-                    const isCopiedId = copiedPlanId === plan.planId;
+                const isCopiedId = copiedPlanId === plan.planId;
 
-                    return (
-                      <TableRow
-                        key={plan.planId}
-                        className="border-border/20 hover:bg-muted/30 transition-colors"
-                      >
-                        {/* Plan Identity */}
-                        <TableCell className="py-4 pl-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center font-bold text-xs text-foreground shrink-0">
-                              {title.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <Link
-                                  href={`/dashboard/my-plans/${plan.planId}`}
-                                  className="text-xs font-bold text-foreground hover:text-primary transition-colors truncate max-w-[180px]"
-                                >
-                                  {title}
-                                </Link>
-                                <Badge
-                                  variant={plan.active ? "secondary" : "outline"}
-                                  className="text-[10px] h-4.5 px-1.5 font-medium"
-                                >
-                                  {plan.active ? "Active" : "Paused"}
-                                </Badge>
-                                <span className="text-[10px] font-mono text-muted-foreground">
-                                  {humanDuration(plan.duration)}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
-                                {brand && <span className="font-medium text-foreground/70 truncate max-w-[120px]">{brand} ·</span>}
-                                <button
-                                  onClick={() => handleCopyId(plan.planId)}
-                                  className="inline-flex items-center gap-1 font-mono text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                                  title="Copy Plan ID"
-                                >
-                                  <span>{plan.planId.slice(0, 6)}…{plan.planId.slice(-4)}</span>
-                                  {isCopiedId ? <Check className="size-2.5 text-primary" /> : <Copy className="size-2.5" />}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-
-                        {/* Pricing & Tiers */}
-                        <TableCell className="py-4">
-                          <div>
-                            <p className="text-xs font-bold font-mono text-foreground">{priceDisplay}</p>
-                            <div className="flex items-center gap-1 mt-1 flex-wrap">
-                              {plan.tiers && plan.tiers.length > 0 ? (
-                                plan.tiers.slice(0, 2).map((t) => (
-                                  <Badge key={t.tierId} variant="outline" className="text-[9px] h-4 px-1.5 py-0 font-normal">
-                                    {t.label} (${formatUnits(BigInt(t.price), 6)})
-                                  </Badge>
-                                ))
-                              ) : (
-                                <span className="text-[10px] text-muted-foreground">Standard</span>
-                              )}
-                              {plan.tiers && plan.tiers.length > 2 && (
-                                <span className="text-[9px] text-muted-foreground">+{plan.tiers.length - 2} more</span>
-                              )}
-                            </div>
-                          </div>
-                        </TableCell>
-
-                        {/* Subscribers */}
-                        <TableCell className="py-4">
-                          <div>
-                            <p className="text-xs font-mono font-bold text-foreground">
-                              {plan.analysis?.activeSubscribers || 0}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground">
-                              {plan.analysis?.totalSubscribers || 0} all-time
-                            </p>
-                          </div>
-                        </TableCell>
-
-                        {/* 30-Day Sales */}
-                        <TableCell className="py-4">
-                          <div>
-                            <p className="text-xs font-mono font-bold text-foreground">
-                              ${Number(formatUnits(BigInt(plan.analysis?.windows?.thirtyDays?.grossVolume || 0), 6)).toLocaleString()}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground">
-                              {plan.analysis?.windows?.thirtyDays?.subscriptionCount || 0} renewals
-                            </p>
-                          </div>
-                        </TableCell>
-
-                        {/* Total Sales */}
-                        <TableCell className="py-4">
-                          <div>
-                            <p className="text-xs font-mono font-bold text-foreground">
-                              ${Number(formatUnits(BigInt(plan.analysis?.grossEarnings || 0), 6)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground font-mono">
-                              ${Number(formatUnits(BigInt(plan.analysis?.netEarnings || 0), 6)).toLocaleString()} net
-                            </p>
-                          </div>
-                        </TableCell>
-
-                        {/* Actions: Clean single Checkout button + Analytics */}
-                        <TableCell className="py-4 text-right pr-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              asChild
-                              className="h-7 text-xs px-2.5 gap-1.5 font-medium"
+                return (
+                  <TableRow
+                    key={plan.planId}
+                    className="group border-b border-border/10 hover:bg-muted/30 transition-colors"
+                  >
+                    {/* Plan Identity */}
+                    <TableCell className="py-4 pl-1 align-middle">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center font-bold text-xs text-foreground shrink-0">
+                          {title.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`/dashboard/my-plans/${plan.planId}`}
+                              className="text-xs font-bold text-foreground hover:text-primary transition-colors truncate max-w-[200px]"
                             >
-                              <Link href={`/pay/${plan.planId}`} target="_blank" rel="noreferrer">
-                                <ExternalLink className="size-3 text-muted-foreground" />
-                                <span>Preview Checkout</span>
-                              </Link>
-                            </Button>
-
-                            <Button
-                              size="sm"
-                              asChild
-                              className="h-7 text-xs px-2.5 gap-1 font-semibold"
+                              {title}
+                            </Link>
+                            <Badge
+                              variant={plan.active ? "secondary" : "outline"}
+                              className="text-[10px] h-4.5 px-1.5 font-medium shrink-0"
                             >
-                              <Link href={`/dashboard/my-plans/${plan.planId}`}>
-                                Analytics <ArrowUpRight className="size-3" />
-                              </Link>
-                            </Button>
+                              {plan.active ? "Active" : "Paused"}
+                            </Badge>
+                            <span className="text-[10px] font-mono text-muted-foreground shrink-0">
+                              {humanDuration(plan.duration)}
+                            </span>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-
-          {/* Mobile Card View (hidden on md and up) */}
-          <div className="md:hidden flex flex-col gap-3">
-            {filteredAndSortedPlans.map((plan) => {
-              const title =
-                plan.metadata?.name ?? plan.metadata?.brand?.name ?? `Plan ${plan.planId.slice(0, 10)}`;
-              const brand = plan.metadata?.brand?.name;
-              const prices = plan.tiers?.map((t) => BigInt(t.price)) ?? [];
-              const minPrice = prices.length > 0 ? prices.reduce((a, b) => (a < b ? a : b)) : BigInt(plan.price || "0");
-              const maxPrice = prices.length > 0 ? prices.reduce((a, b) => (a > b ? a : b)) : BigInt(plan.price || "0");
-              const priceDisplay =
-                minPrice === maxPrice
-                  ? `$${formatUnits(minPrice, 6)}`
-                  : `$${formatUnits(minPrice, 6)} – $${formatUnits(maxPrice, 6)}`;
-
-              const isCopiedId = copiedPlanId === plan.planId;
-
-              return (
-                <div
-                  key={plan.planId}
-                  className="rounded-xl bg-card/40 border border-border/30 p-4 flex flex-col gap-3.5"
-                >
-                  {/* Top: Identity */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center font-bold text-xs text-foreground shrink-0">
-                        {title.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="min-w-0">
-                        <Link
-                          href={`/dashboard/my-plans/${plan.planId}`}
-                          className="text-xs font-bold text-foreground hover:text-primary transition-colors truncate block"
-                        >
-                          {title}
-                        </Link>
-                        <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-muted-foreground">
-                          {brand && <span className="font-medium text-foreground/70 truncate">{brand} ·</span>}
-                          <button
-                            onClick={() => handleCopyId(plan.planId)}
-                            className="inline-flex items-center gap-1 font-mono text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                          >
-                            <span>{plan.planId.slice(0, 6)}…{plan.planId.slice(-4)}</span>
-                            {isCopiedId ? <Check className="size-2.5 text-primary" /> : <Copy className="size-2.5" />}
-                          </button>
+                          <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
+                            {brand && <span className="font-medium text-foreground/70 truncate max-w-[130px]">{brand} ·</span>}
+                            <button
+                              onClick={() => handleCopyId(plan.planId)}
+                              className="inline-flex items-center gap-1 font-mono text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                              title="Copy Plan ID"
+                            >
+                              <span>{plan.planId.slice(0, 6)}…{plan.planId.slice(-4)}</span>
+                              {isCopiedId ? <Check className="size-2.5 text-primary" /> : <Copy className="size-2.5" />}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </TableCell>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <Badge
-                        variant={plan.active ? "secondary" : "outline"}
-                        className="text-[10px] h-4.5 px-1.5 font-medium"
-                      >
-                        {plan.active ? "Active" : "Paused"}
-                      </Badge>
-                      <span className="text-[10px] font-mono text-muted-foreground bg-muted/40 px-1.5 py-0.5 rounded">
-                        {humanDuration(plan.duration)}
-                      </span>
-                    </div>
-                  </div>
+                    {/* Pricing */}
+                    <TableCell className="py-4 align-middle">
+                      <div>
+                        <p className="text-xs font-bold font-mono text-foreground">{priceDisplay}</p>
+                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                          {plan.tiers && plan.tiers.length > 0 ? (
+                            plan.tiers.slice(0, 2).map((t) => (
+                              <Badge key={t.tierId} variant="outline" className="text-[9px] h-4 px-1.5 py-0 font-normal">
+                                {t.label} (${formatUnits(BigInt(t.price), 6)})
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground">Standard</span>
+                          )}
+                          {plan.tiers && plan.tiers.length > 2 && (
+                            <span className="text-[9px] text-muted-foreground">+{plan.tiers.length - 2} more</span>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
 
-                  {/* Middle: 3-column key stats */}
-                  <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-muted/20 text-center">
-                    <div>
-                      <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground block">
-                        Price
-                      </span>
-                      <p className="text-xs font-mono font-bold text-foreground mt-0.5">
-                        {priceDisplay}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground block">
-                        Subscribers
-                      </span>
-                      <p className="text-xs font-mono font-bold text-foreground mt-0.5">
-                        {plan.analysis?.activeSubscribers || 0}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground block">
-                        Sales
-                      </span>
-                      <p className="text-xs font-mono font-bold text-foreground mt-0.5">
-                        ${Number(formatUnits(BigInt(plan.analysis?.grossEarnings || 0), 6)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                      </p>
-                    </div>
-                  </div>
+                    {/* Subscribers */}
+                    <TableCell className="py-4 align-middle">
+                      <div>
+                        <p className="text-xs font-mono font-bold text-foreground">
+                          {plan.analysis?.activeSubscribers || 0}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {plan.analysis?.totalSubscribers || 0} all-time
+                        </p>
+                      </div>
+                    </TableCell>
 
-                  {/* Tiers Preview */}
-                  {plan.tiers && plan.tiers.length > 0 && (
-                    <div className="flex items-center gap-1 flex-wrap">
-                      {plan.tiers.map((t) => (
-                        <Badge key={t.tierId} variant="outline" className="text-[9px] h-4 px-1.5 py-0 font-normal">
-                          {t.label} (${formatUnits(BigInt(t.price), 6)})
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
+                    {/* 30-Day Sales */}
+                    <TableCell className="py-4 align-middle">
+                      <div>
+                        <p className="text-xs font-mono font-bold text-foreground">
+                          ${Number(formatUnits(BigInt(plan.analysis?.windows?.thirtyDays?.grossVolume || 0), 6)).toLocaleString()}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {plan.analysis?.windows?.thirtyDays?.subscriptionCount || 0} renewals
+                        </p>
+                      </div>
+                    </TableCell>
 
-                  {/* Bottom: Actions */}
-                  <div className="flex items-center gap-2 pt-1 border-t border-border/10">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="flex-1 h-8 text-xs gap-1.5 font-medium"
-                    >
-                      <Link href={`/pay/${plan.planId}`} target="_blank" rel="noreferrer">
-                        <ExternalLink className="size-3 text-muted-foreground" />
-                        <span>Preview Checkout</span>
-                      </Link>
-                    </Button>
+                    {/* Total Sales */}
+                    <TableCell className="py-4 align-middle">
+                      <div>
+                        <p className="text-xs font-mono font-bold text-foreground">
+                          ${Number(formatUnits(BigInt(plan.analysis?.grossEarnings || 0), 6)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-mono">
+                          ${Number(formatUnits(BigInt(plan.analysis?.netEarnings || 0), 6)).toLocaleString()} net
+                        </p>
+                      </div>
+                    </TableCell>
 
-                    <Button
-                      size="sm"
-                      asChild
-                      className="flex-1 h-8 text-xs gap-1 font-semibold"
-                    >
-                      <Link href={`/dashboard/my-plans/${plan.planId}`}>
-                        Analytics <ArrowUpRight className="size-3" />
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </>
+                    {/* Actions */}
+                    <TableCell className="py-4 text-right pr-1 align-middle">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="h-7 text-xs px-2.5 gap-1.5 font-medium rounded-lg"
+                        >
+                          <Link href={`/pay/${plan.planId}`} target="_blank" rel="noreferrer">
+                            <ExternalLink className="size-3 text-muted-foreground" />
+                            <span>Preview Checkout</span>
+                          </Link>
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          asChild
+                          className="h-7 text-xs px-2.5 gap-1 font-semibold rounded-lg"
+                        >
+                          <Link href={`/dashboard/my-plans/${plan.planId}`}>
+                            <span>Analytics</span>
+                            <ArrowUpRight className="size-3" />
+                          </Link>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
 
     </div>
