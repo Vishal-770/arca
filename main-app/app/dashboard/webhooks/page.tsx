@@ -54,7 +54,6 @@ import {
   Terminal,
   Search,
   RotateCcw,
-  Sparkles,
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -554,7 +553,7 @@ export default function WebhooksPage() {
       ) : webhooks.length === 0 ? (
         <div className="py-20 px-6 rounded-xl bg-muted/20 border border-border/20 flex flex-col items-center text-center justify-center">
           <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-            <Sparkles className="size-5" />
+            <Webhook className="size-5" />
           </div>
           <h3 className="text-base font-bold text-foreground">No webhooks configured yet</h3>
           <p className="text-xs text-muted-foreground max-w-md mt-1.5 mb-6">
@@ -980,7 +979,7 @@ export default function WebhooksPage() {
           }
         }}
       >
-        <DialogContent className="sm:max-w-md rounded-2xl border-border/30 bg-background/95 backdrop-blur-xl p-6">
+        <DialogContent className="w-full max-w-[calc(100vw-2rem)] sm:max-w-md rounded-2xl border-border/30 bg-background/95 backdrop-blur-xl p-6 overflow-hidden max-h-[90vh] overflow-y-auto">
           <DialogHeader className="text-left space-y-1">
             <DialogTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
               <Webhook className="size-4 text-primary" />
@@ -991,18 +990,18 @@ export default function WebhooksPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
+          <div className="space-y-4 py-2 min-w-0">
             {errorMsg && (
               <Alert variant="destructive" className="bg-destructive/5 border-destructive/20 rounded-xl p-3">
-                <AlertTriangle className="size-4 text-destructive" />
-                <AlertDescription className="text-xs text-destructive font-medium">
+                <AlertTriangle className="size-4 text-destructive shrink-0" />
+                <AlertDescription className="text-xs text-destructive font-medium break-all">
                   {errorMsg}
                 </AlertDescription>
               </Alert>
             )}
 
             {/* Plan Dropdown */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <label className="text-xs font-semibold text-foreground">Subscription Plan</label>
               {availablePlanOptions.length === 0 ? (
                 <p className="text-xs text-muted-foreground italic">
@@ -1013,13 +1012,15 @@ export default function WebhooksPage() {
                   value={selectedPlanId}
                   onValueChange={(val) => setSelectedPlanId(val ?? "")}
                 >
-                  <SelectTrigger className="w-full h-8.5 text-xs bg-muted/20 border-border/40 rounded-lg">
+                  <SelectTrigger className="w-full min-w-0 max-w-full h-8.5 text-xs bg-muted/20 border-border/40 rounded-lg overflow-hidden [&>[data-slot=select-value]]:truncate">
                     <SelectValue placeholder="Select a plan" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl border-border/30">
+                  <SelectContent className="max-w-[calc(100vw-4rem)] sm:max-w-md rounded-xl border-border/30 overflow-hidden">
                     {availablePlanOptions.map((opt) => (
-                      <SelectItem key={opt.id} value={opt.id} className="text-xs">
-                        {opt.label}
+                      <SelectItem key={opt.id} value={opt.id} className="text-xs max-w-full overflow-hidden">
+                        <span className="truncate block max-w-[280px] sm:max-w-[340px]">
+                          {opt.label}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1028,7 +1029,7 @@ export default function WebhooksPage() {
             </div>
 
             {/* URL Input */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <label htmlFor="create-url-input" className="text-xs font-semibold text-foreground">
                 Destination URL
               </label>
@@ -1038,7 +1039,7 @@ export default function WebhooksPage() {
                 placeholder="https://api.yourdomain.com/webhooks"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="h-8.5 text-xs bg-muted/20 border-border/40 focus:border-foreground/40 rounded-lg font-mono"
+                className="w-full min-w-0 h-8.5 text-xs bg-muted/20 border-border/40 focus:border-foreground/40 rounded-lg font-mono"
               />
               <p className="text-[11px] text-muted-foreground">
                 Must be an HTTPS endpoint accepting POST requests with JSON payload.
@@ -1089,7 +1090,7 @@ export default function WebhooksPage() {
 
       {/* ── Edit Webhook Dialog ──────────────────────────────────── */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="sm:max-w-md rounded-2xl border-border/30 bg-background/95 backdrop-blur-xl p-6">
+        <DialogContent className="w-full max-w-[calc(100vw-2rem)] sm:max-w-md rounded-2xl border-border/30 bg-background/95 backdrop-blur-xl p-6 overflow-hidden max-h-[90vh] overflow-y-auto">
           <DialogHeader className="text-left space-y-1">
             <DialogTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
               <Settings2 className="size-4 text-primary" />
@@ -1100,28 +1101,28 @@ export default function WebhooksPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
+          <div className="space-y-4 py-2 min-w-0">
             {errorMsg && (
               <Alert variant="destructive" className="bg-destructive/5 border-destructive/20 rounded-xl p-3">
-                <AlertTriangle className="size-4 text-destructive" />
-                <AlertDescription className="text-xs text-destructive font-medium">
+                <AlertTriangle className="size-4 text-destructive shrink-0" />
+                <AlertDescription className="text-xs text-destructive font-medium break-all">
                   {errorMsg}
                 </AlertDescription>
               </Alert>
             )}
 
             {/* Read-only Plan indicator */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <label className="text-xs font-semibold text-foreground">Assigned Subscription Plan</label>
-              <div className="h-8.5 bg-muted/20 border border-border/40 px-3 rounded-lg flex items-center">
-                <span className="text-xs font-semibold text-foreground">
+              <div className="h-8.5 bg-muted/20 border border-border/40 px-3 rounded-lg flex items-center min-w-0 overflow-hidden">
+                <span className="text-xs font-semibold text-foreground truncate block max-w-full">
                   {planTitleMap.get(selectedPlanId.toLowerCase()) ?? "Subscription Plan"}
                 </span>
               </div>
             </div>
 
             {/* URL Input */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <label htmlFor="edit-url-input" className="text-xs font-semibold text-foreground">
                 Destination URL
               </label>
@@ -1131,7 +1132,7 @@ export default function WebhooksPage() {
                 placeholder="https://api.yourdomain.com/webhooks"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="h-8.5 text-xs bg-muted/20 border-border/40 focus:border-foreground/40 rounded-lg font-mono"
+                className="w-full min-w-0 h-8.5 text-xs bg-muted/20 border-border/40 focus:border-foreground/40 rounded-lg font-mono"
               />
             </div>
 
