@@ -484,7 +484,7 @@ function ProtectedPage() {
                 : "Are you sure you want to resume this plan? The checkout page will immediately accept new subscriptions."}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+          <DialogFooter className="gap-2.5 mt-4">
             <Button
               variant="outline"
               size="sm"

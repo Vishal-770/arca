@@ -356,7 +356,7 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
 
           {/* Footer */}
           <div className="p-4 px-6 border-t border-border/20 bg-muted/20 shrink-0">
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-2.5">
               <Button
                 variant="outline"
                 size="sm"
@@ -399,7 +399,7 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
               This will submit an on-chain transaction to update the plan metadata on Arc Testnet. Do you wish to proceed?
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+          <DialogFooter className="gap-2.5 mt-4">
             <Button
               variant="outline"
               size="sm"
