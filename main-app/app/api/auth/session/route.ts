@@ -13,6 +13,10 @@ function isValidEthereumAddress(address: string): boolean {
   return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
 
+const sharedArcClient = createPublicClient({
+  transport: http(arcTestnet.rpcUrls.default.http[0] || "https://rpc.testnet.arc.network"),
+});
+
 /**
  * Verifies that the provided WebAuthn credential deterministically derives
  * the target Circle MSCA smart account address.
@@ -24,9 +28,6 @@ async function verifySmartAccountCredential(
 ): Promise<boolean> {
   try {
     if (!credential?.id || !credential?.publicKey) return false;
-    const client = createPublicClient({
-      transport: http(arcTestnet.rpcUrls.default.http[0] || "https://rpc.testnet.arc.network"),
-    });
     const owner = toWebAuthnAccount({
       credential: {
         id: credential.id,
@@ -34,7 +35,7 @@ async function verifySmartAccountCredential(
       },
     });
     const smartAccount = await toCircleSmartAccount({
-      client: client as any,
+      client: sharedArcClient as any,
       owner,
       name: username,
     });
