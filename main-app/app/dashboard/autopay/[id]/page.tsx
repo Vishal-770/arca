@@ -15,27 +15,41 @@ import {
   ShieldCheck,
   Play,
   XCircle,
-  Cpu,
-  Lock
+  Zap,
+  Repeat,
+  Copy,
+  Check,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 import { cn } from "@/lib/utils";
 import { toCircleSmartAccount } from "@circle-fin/modular-wallets-core";
 import { toWebAuthnAccount } from "viem/account-abstraction";
 import { createPublicClient, http, type Client } from "viem";
 import { arcTestnet } from "@/lib/bridge_config";
 import { SUBSCRIPTION_GATEWAY_ADDRESS } from "@/lib/subscription";
-
-// Import proper Shadcn Select
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
 
 type Tier = {
   tierId: string;
@@ -104,6 +118,8 @@ export default function AutoPayDetailPage() {
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
+  const [copiedPlanId, setCopiedPlanId] = useState(false);
+  const [copiedPayload, setCopiedPayload] = useState(false);
 
   // Load data for single subscription
   useEffect(() => {
@@ -129,25 +145,25 @@ export default function AutoPayDetailPage() {
 
         if (mounted) {
           const allSubs: SubscriptionRow[] = subData.subscriptions ?? [];
-          const foundSub = allSubs.find(s => s.id.toLowerCase() === id.toLowerCase());
-          
+          const foundSub = allSubs.find((s) => s.id.toLowerCase() === id.toLowerCase());
+
           if (!foundSub) {
             throw new Error("Subscription not found");
           }
-          
+
           setSub(foundSub);
 
-          // Find setting matching this plan ID
           const planIdLower = foundSub.plan.id.toLowerCase();
-          const foundSetting = (autoData.settings ?? []).find((s: AutoPaySetting) => s.planId.toLowerCase() === planIdLower);
-          
+          const foundSetting = (autoData.settings ?? []).find(
+            (s: AutoPaySetting) => s.planId.toLowerCase() === planIdLower
+          );
+
           if (foundSetting) {
             setSetting(foundSetting);
             setSelectedTierId(foundSetting.tierId);
             setSelectedCycles(foundSetting.maxCycles ?? 10);
           } else {
-            // Default select first active tier or last tier ID
-            const activeTiers = foundSub.plan.tiers.filter(t => t.active);
+            const activeTiers = foundSub.plan.tiers.filter((t) => t.active);
             setSelectedTierId(foundSub.lastTierId ?? activeTiers[0]?.tierId ?? "0");
             setSelectedCycles(10);
           }
@@ -165,6 +181,20 @@ export default function AutoPayDetailPage() {
     };
   }, [wallet?.address, sessionUserToken, id]);
 
+  const handleCopyPlanId = () => {
+    if (!sub?.plan.id) return;
+    navigator.clipboard.writeText(sub.plan.id);
+    setCopiedPlanId(true);
+    setTimeout(() => setCopiedPlanId(false), 2000);
+  };
+
+  const handleCopyPayload = () => {
+    if (!sub?.lastBuyerData) return;
+    navigator.clipboard.writeText(sub.lastBuyerData);
+    setCopiedPayload(true);
+    setTimeout(() => setCopiedPayload(false), 2000);
+  };
+
   // Handle Save / EIP-712 Sign Authorization
   const handleAuthorizeAutoPay = async () => {
     if (!sub || !wallet?.address || !sessionUserToken || !session) {
@@ -176,11 +206,9 @@ export default function AutoPayDetailPage() {
     setStatusMessage(null);
 
     try {
-      const planIdLower = sub.plan.id.toLowerCase();
       const customBuyerData = sub.lastBuyerData ?? "";
       const currentExpiresAt = Number(sub.lastEndTime || Math.floor(Date.now() / 1000) + 30 * 86400);
 
-      // Generate secure unique sequential timestamp nonce and 5-year expiration deadline
       const nonce = Math.floor(Date.now() / 1000);
       const deadline = Math.floor(Date.now() / 1000) + 5 * 365 * 24 * 3600;
 
@@ -205,7 +233,7 @@ export default function AutoPayDetailPage() {
         domain: {
           name: "Arca Subscription Gateway",
           version: "1",
-          chainId: 5042002, // Arc Testnet
+          chainId: 5042002,
           verifyingContract: SUBSCRIPTION_GATEWAY_ADDRESS as `0x${string}`,
         },
         types: {
@@ -252,7 +280,6 @@ export default function AutoPayDetailPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Failed to save configuration");
 
-      // Update state
       const updatedSetting: AutoPaySetting = {
         id: json.upsertedId ?? "generated",
         subscriberAddress: wallet.address,
@@ -288,11 +315,7 @@ export default function AutoPayDetailPage() {
     setStatusMessage(null);
 
     try {
-      const res = await fetch(
-        `/api/autopay?planId=${sub.plan.id}`,
-        { method: "DELETE" }
-      );
-
+      const res = await fetch(`/api/autopay?planId=${sub.plan.id}`, { method: "DELETE" });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Failed to disable AutoPay");
 
@@ -309,18 +332,27 @@ export default function AutoPayDetailPage() {
 
   if (loading) {
     return (
-      <div className="w-full min-h-screen py-16 px-6 md:px-12 lg:px-20 space-y-12">
-        <div className="py-6 border-b border-border/10 space-y-3">
-          <Skeleton className="h-4 w-32 bg-muted rounded-full" />
-          <Skeleton className="h-10 w-72 bg-muted rounded-full" />
-          <Skeleton className="h-4 w-full max-w-2xl bg-muted rounded-full" />
+      <div className="w-full flex flex-col gap-6">
+        <div className="space-y-2 pb-2">
+          <Skeleton className="h-4 w-28 rounded" />
+          <Skeleton className="h-7 w-64 rounded-lg" />
+          <Skeleton className="h-4 w-96 rounded" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="p-5 rounded-xl bg-muted/30 space-y-3">
+              <Skeleton className="h-3 w-20 rounded" />
+              <Skeleton className="h-7 w-28 rounded-md" />
+              <Skeleton className="h-3 w-36 rounded" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <Skeleton className="h-96 w-full rounded-full bg-muted/10 border-0" />
+            <Skeleton className="h-96 w-full rounded-xl" />
           </div>
           <div className="lg:col-span-5">
-            <Skeleton className="h-80 w-full rounded-full bg-muted/10 border-0" />
+            <Skeleton className="h-96 w-full rounded-xl" />
           </div>
         </div>
       </div>
@@ -329,127 +361,218 @@ export default function AutoPayDetailPage() {
 
   if (error || !sub) {
     return (
-      <div className="w-full min-h-screen flex flex-col items-center justify-center py-20 px-6 text-center space-y-6">
-        <div className="h-12 w-12 flex items-center justify-center text-foreground">
-          <AlertCircle size={28} />
+      <div className="w-full flex flex-col items-center justify-center min-h-[360px] p-8 text-center gap-4 rounded-xl bg-destructive/10">
+        <div className="h-12 w-12 rounded-full bg-destructive/20 text-destructive flex items-center justify-center">
+          <AlertCircle size={24} />
         </div>
-        <div className="space-y-2">
-          <h2 className="text-sm font-mono font-bold tracking-wider uppercase text-foreground">Configuration Error</h2>
-          <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed font-semibold">{error ?? "Subscription not found"}</p>
+        <div className="space-y-1">
+          <h2 className="text-lg font-bold text-foreground">Configuration Error</h2>
+          <p className="text-xs text-muted-foreground max-w-sm">
+            {error ?? "Subscription not found"}
+          </p>
         </div>
-        <div className="flex items-center justify-center gap-6">
-          <Button asChild size="sm" variant="link" className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground p-0">
-            <Link href="/dashboard/autopay">Back to Autopay</Link>
-          </Button>
-          <Button onClick={() => window.location.reload()} size="sm" variant="outline" className="rounded-full font-bold text-xs h-9 px-4 border-foreground">
-            Retry Connection
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" asChild className="h-8.5 rounded-lg">
+          <Link href="/dashboard/autopay">Back to Auto-Pay</Link>
+        </Button>
       </div>
     );
   }
 
   const isEnabled = !!setting?.enabled;
-  const isModified = isEnabled && setting && (
-    selectedTierId !== setting.tierId || 
-    selectedCycles !== (setting.maxCycles ?? 10)
-  );
-  const planName = sub.metadata?.name ?? sub.metadata?.brand?.name ?? `Plan ${sub.plan.id.slice(0, 8)}`;
+  const isModified =
+    isEnabled &&
+    setting &&
+    (selectedTierId !== setting.tierId || selectedCycles !== (setting.maxCycles ?? 10));
+  const planName =
+    sub.metadata?.name ?? sub.metadata?.brand?.name ?? `Plan ${sub.plan.id.slice(0, 8)}`;
+  const brand = sub.metadata?.brand;
   const durationDays = Math.round(Number(sub.plan.duration) / 86400);
 
-  // Active Tiers
-  const activeTiers = sub.plan.tiers.filter(t => t.active);
+  const activeTiers = sub.plan.tiers.filter((t) => t.active);
+  const selectedTier = activeTiers.find((t) => t.tierId === selectedTierId) ?? activeTiers[0];
 
   const baseEndTime = Number(sub.lastEndTime || Math.floor(Date.now() / 1000));
   const duration = Number(sub.plan.duration || 30 * 86400);
   const maxCycles = isEnabled && setting?.maxCycles ? setting.maxCycles : selectedCycles;
   const scheduleItems = Array.from({ length: maxCycles }, (_, i) => ({
     index: i + 1,
-    startTime: baseEndTime + (i * duration),
-    endTime: baseEndTime + ((i + 1) * duration)
+    startTime: baseEndTime + i * duration,
+    endTime: baseEndTime + (i + 1) * duration,
   }));
 
   return (
-    <div className="relative min-h-screen w-full py-12 px-6 md:px-12 lg:px-20 space-y-12 text-foreground font-sans animate-in fade-in duration-300">
-      
-      {/* Back Link */}
-      <div className="max-w-7xl mx-auto w-full">
-        <button
-          onClick={() => router.push("/dashboard/autopay")}
-          className="inline-flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft size={14} className="stroke-[2.5px]" /> Back to Auto-Pay
-        </button>
+    <div className="w-full flex flex-col gap-6">
+      {/* ── Breadcrumb & Header ───────────────────────────────── */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2">
+        <div className="space-y-1.5">
+          <Link
+            href="/dashboard/autopay"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={13} />
+            <span>Back to Auto-Pay</span>
+          </Link>
+
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-xl font-bold tracking-tight text-foreground">{planName}</h1>
+            <Badge
+              variant={sub.status === "ACTIVE" ? "secondary" : "outline"}
+              className="text-xs font-mono px-2 py-0.5"
+            >
+              {sub.status === "ACTIVE" ? "Active" : "Expired"}
+            </Badge>
+            <Badge
+              variant={isEnabled ? "secondary" : "outline"}
+              className="text-xs font-mono px-2 py-0.5"
+            >
+              {isEnabled ? "Auto-Pay On" : "Auto-Pay Off"}
+            </Badge>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+            <button
+              onClick={handleCopyPlanId}
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] hover:text-foreground transition-colors cursor-pointer"
+              title="Click to copy plan ID"
+            >
+              <span>{sub.plan.id.slice(0, 8)}…{sub.plan.id.slice(-4)}</span>
+              {copiedPlanId ? <Check className="size-3 text-primary" /> : <Copy className="size-3" />}
+            </button>
+            <span>·</span>
+            <span>Every {durationDays} Days</span>
+            {brand?.name && (
+              <>
+                <span>·</span>
+                <span className="font-medium text-foreground/80">{brand.name}</span>
+              </>
+            )}
+            {brand?.website && (
+              <>
+                <span>·</span>
+                <a
+                  href={brand.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-primary transition-colors inline-flex items-center gap-1"
+                >
+                  {brand.website.replace(/^https?:\/\//, "")}
+                  <ExternalLink size={10} />
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap self-start sm:self-center">
+          <Button asChild size="sm" variant="outline" className="h-8.5 px-3 text-xs gap-1.5 rounded-lg border-border/60 hover:bg-muted/50">
+            <Link href={`/dashboard/subscriptions/${sub.plan.id}`}>
+              Subscription Details <ExternalLink className="size-3.5" />
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
-        
-        {/* Left Column - Configuration console */}
-        <div className="lg:col-span-7 space-y-10">
-          
-          <div className="space-y-8">
-          
-          {/* Header Details */}
-          <div className="flex flex-col md:flex-row md:items-start justify-between border-b border-border/20 pb-8 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-extrabold tracking-tight text-foreground uppercase leading-none">{planName}</h1>
-                <span className={cn(
-                  "text-[10px] font-medium uppercase px-2.5 py-0.5 border tracking-wider rounded-full shrink-0",
-                  sub.status === "ACTIVE"
-                    ? "bg-primary/10 text-primary border-primary/20"
-                    : "bg-muted text-muted-foreground border-border"
-                )}>
-                  {sub.status === "ACTIVE" ? "Active" : "Expired"}
-                </span>
-              </div>
-              <p className="text-[10px] font-mono text-muted-foreground flex items-center gap-2">
-                <span>Plan ID:</span>
-                <span className="font-bold select-all text-foreground truncate max-w-[200px] md:max-w-none">{sub.plan.id}</span>
-              </p>
-            </div>
-
-            <span
-              className={cn(
-                "inline-flex items-center text-[10px] font-medium uppercase px-3 py-1 border tracking-wider md:self-start rounded-full shrink-0",
-                isEnabled
-                  ? "bg-primary/10 text-primary border-primary/30"
-                  : "bg-muted text-muted-foreground border-border"
-              )}
-            >
-              {isEnabled ? "Auto-Pay Active" : "Auto-Pay Inactive"}
+      {/* ── Summary Stat Cards ─────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* Status */}
+        <div className={cn("rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3", isEnabled ? "bg-primary/10" : "bg-muted/30")}>
+          <div className="flex items-center justify-between">
+            <span className={cn("text-[10px] font-bold uppercase tracking-widest", isEnabled ? "text-primary" : "text-muted-foreground")}>
+              Auto-Pay State
             </span>
+            <Zap className={cn("h-3.5 w-3.5 shrink-0", isEnabled ? "text-primary" : "text-muted-foreground/60")} />
+          </div>
+          <div>
+            <p className="text-2xl font-bold font-mono tracking-tight text-foreground leading-none">
+              {isEnabled ? "Enabled" : "Disabled"}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              {isEnabled ? "Renewals will execute automatically" : "Manual payment required"}
+            </p>
+          </div>
+        </div>
+
+        {/* Next Renewal */}
+        <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Current Cycle Ends
+            </span>
+            <Clock className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold font-mono tracking-tight text-foreground leading-none">
+              {new Date(Number(sub.lastEndTime) * 1000).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              {new Date(Number(sub.lastEndTime) * 1000).toLocaleDateString("en-US", { year: "numeric" })}
+            </p>
+          </div>
+        </div>
+
+        {/* Billing Interval */}
+        <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Billing Interval
+            </span>
+            <Repeat className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold font-mono tracking-tight text-foreground leading-none">
+              {durationDays} Days
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Renewal period length
+            </p>
+          </div>
+        </div>
+
+        {/* Relayer Fees */}
+        <div className="rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Relayer Fees
+            </span>
+            <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold font-mono tracking-tight text-foreground leading-none">
+              Free
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Sponsored by network
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main Two-Column Section ───────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column: Configuration Form Card */}
+        <div className="lg:col-span-7 rounded-xl border border-border/30 bg-muted/10 p-5 sm:p-6 flex flex-col gap-6">
+          <div className="space-y-1">
+            <h2 className="text-base font-semibold text-foreground">Auto-Pay Configuration</h2>
+            <p className="text-xs text-muted-foreground">
+              Select your renewal tier and authorization limit for recurring renewals.
+            </p>
           </div>
 
-          {/* Cycle details */}
-          <div className="grid grid-cols-2 py-6 border-b border-border/20 gap-x-8 gap-y-4">
-            <div className="space-y-1">
-              <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted-foreground block">Current Cycle Ends</span>
-              <p className="text-xs font-mono font-bold text-foreground flex items-center gap-2">
-                <Clock size={13} className="text-muted-foreground shrink-0" />
-                {new Date(Number(sub.lastEndTime) * 1000).toLocaleDateString(undefined, {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric"
-                })}
-              </p>
-            </div>
-            <div className="space-y-1 text-right">
-              <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted-foreground block">Renewal Period</span>
-              <p className="text-xs font-mono font-bold text-foreground uppercase tracking-widest">Every {durationDays} Days</p>
-            </div>
-          </div>
-
-          {/* Form Panel */}
-          <div className="space-y-8 font-sans">
-            
-            {/* Active Switch Toggle */}
-            <div className="flex items-center justify-between border-b border-border/10 pb-6">
-              <div className="space-y-1.5 pr-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-foreground block">Enable Recurring Auto-Pay</span>
-                <p className="text-[10px] text-muted-foreground leading-normal font-semibold max-w-md">Allow automatic renewal payments of your subscriptions using safe passkey approvals.</p>
+          {/* Form Fields */}
+          <div className="space-y-5 border-t border-border/10 pt-5">
+            {/* Toggle switch */}
+            <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border/20 bg-muted/20">
+              <div className="space-y-1">
+                <span className="text-xs font-semibold text-foreground block">Recurring Auto-Pay</span>
+                <p className="text-[11px] text-muted-foreground">
+                  Allow automatic renewal payments using safe passkey approvals.
+                </p>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   if (isEnabled) {
                     setShowRevokeModal(true);
@@ -459,36 +582,33 @@ export default function AutoPayDetailPage() {
                 }}
                 disabled={actionLoading}
                 className={cn(
-                  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed shrink-0",
-                  isEnabled ? "bg-primary" : "bg-muted hover:bg-muted/80"
+                  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-50",
+                  isEnabled ? "bg-primary" : "bg-muted-foreground/30"
                 )}
               >
                 <span
                   className={cn(
-                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background ring-0 transition duration-150 ease-in-out",
+                    "pointer-events-none inline-block h-5 w-5 rounded-full bg-background shadow-xs transition-transform duration-200",
                     isEnabled ? "translate-x-5" : "translate-x-0"
                   )}
                 />
               </button>
             </div>
 
-            {/* Tier Selection - Underlined dropdown */}
-            <div className="space-y-2.5">
-              <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground block">
-                Renewal Price Tier
-              </label>
+            {/* Tier Selector */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-foreground">Renewal Price Tier</label>
               <Select
                 disabled={actionLoading}
                 value={selectedTierId}
                 onValueChange={(val) => setSelectedTierId(val ?? "")}
-                items={activeTiers.map((t) => ({ value: t.tierId, label: t.label }))}
               >
-                <SelectTrigger className="w-full flex w-full justify-between items-center h-11 px-3 border-b border-border bg-transparent text-xs font-bold font-sans rounded-lg border border-border px-3 transition-colors focus:border-foreground cursor-pointer">
+                <SelectTrigger className="w-full h-8.5 text-xs bg-muted/20 border-border/40 rounded-lg">
                   <SelectValue placeholder="Select a pricing tier" />
                 </SelectTrigger>
-                <SelectContent className="rounded-lg border border-border">
+                <SelectContent className="rounded-xl border-border/30">
                   {activeTiers.map((t) => (
-                    <SelectItem key={t.tierId} value={t.tierId} label={t.label} className="font-sans text-xs rounded-lg">
+                    <SelectItem key={t.tierId} value={t.tierId} className="text-xs">
                       {t.label} — {Number(formatUnits(t.price, 6)).toLocaleString()} USDC
                     </SelectItem>
                   ))}
@@ -496,15 +616,15 @@ export default function AutoPayDetailPage() {
               </Select>
             </div>
 
-            {/* AutoPay Cycle Limit - Underlined Input */}
-            <div className="space-y-2.5">
-              <div className="flex justify-between items-baseline">
-                <label htmlFor="cycle-limit" className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
+            {/* Cycle Limit */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label htmlFor="cycle-limit" className="text-xs font-semibold text-foreground">
                   Renewal Cycle Limit (1 - 10)
                 </label>
-                <span className="font-mono text-[10px] text-primary font-bold">{maxCycles} Cycles</span>
+                <span className="font-mono text-xs text-primary font-semibold">{maxCycles} Cycles</span>
               </div>
-              <input
+              <Input
                 id="cycle-limit"
                 type="number"
                 min={1}
@@ -517,79 +637,91 @@ export default function AutoPayDetailPage() {
                   if (val > 10) val = 10;
                   setSelectedCycles(val);
                 }}
-                className="w-full h-11 bg-muted/20 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-foreground font-sans font-semibold"
+                className="h-8.5 bg-muted/20 border-border/40 text-xs font-mono rounded-lg"
               />
             </div>
 
-            {/* Locked Metadata - Text-Based Clean View */}
-            <div className="space-y-3">
+            {/* Custom buyer data / payload */}
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground block">
-                  Saved Details / Custom Data
-                </label>
+                <label className="text-xs font-semibold text-foreground">Saved Parameters</label>
+                {sub.lastBuyerData && (
+                  <button
+                    type="button"
+                    onClick={handleCopyPayload}
+                    className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    {copiedPayload ? (
+                      <>
+                        <Check className="size-3 text-primary" />
+                        <span className="text-primary font-medium">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="size-3" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
-              <p className="text-xs font-mono text-foreground font-bold select-all py-3 border-b border-border/10">
-                {sub.lastBuyerData || "No parameters registered"}
-              </p>
-              <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                These options are permanently bound to align with your original subscription parameters.
-              </p>
+              <div className="p-3 bg-muted/20 border border-border/20 rounded-lg font-mono text-[10px] break-all leading-normal text-muted-foreground">
+                {sub.lastBuyerData || "No custom parameters registered for this plan"}
+              </div>
             </div>
 
-            {/* Visual Execution Timeline Preview */}
-            <div className="space-y-4 pt-6 border-t border-border/10">
-              <div className="flex items-center justify-between">
-                <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
-                  Renewal Schedule
-                </label>
-                <button
-                  onClick={() => setShowTimeline(!showTimeline)}
-                  className="text-[9px] font-mono font-bold uppercase text-primary hover:underline transition-all"
-                >
-                  {showTimeline ? "[ Hide Timeline - ]" : `[ Show Timeline (${maxCycles} Cycles) + ]`}
-                </button>
-              </div>
-              
+            {/* Schedule Timeline Accordion */}
+            <div className="space-y-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowTimeline(!showTimeline)}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
+              >
+                {showTimeline ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                <span>Renewal Schedule Timeline ({maxCycles} Cycles)</span>
+              </button>
+
               {showTimeline && (
-                <div className="max-h-60 overflow-y-auto no-scrollbar animate-in fade-in duration-200">
+                <div className="rounded-lg border border-border/20 bg-muted/20 overflow-hidden text-xs">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-border text-[9px] font-mono font-bold uppercase tracking-wider text-muted-foreground">
-                        <th className="py-2.5 px-0 font-mono">Cycle</th>
-                        <th className="py-2.5 px-0">Execution Date</th>
-                        <th className="py-2.5 px-0 text-right">Status</th>
+                      <tr className="border-b border-border/20 bg-muted/30 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <th className="py-2 px-3">Cycle</th>
+                        <th className="py-2 px-3">Date</th>
+                        <th className="py-2 px-3 text-right">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border/10 text-xs">
+                    <tbody className="divide-y divide-border/10 font-mono text-[11px]">
                       {scheduleItems.map((item) => {
-                        const dateStr = new Date(item.startTime * 1000).toLocaleDateString(undefined, {
+                        const dateStr = new Date(item.startTime * 1000).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
-                          year: "numeric"
+                          year: "numeric",
                         });
-                        const isExecuted = setting && setting.executedCycles ? item.index <= setting.executedCycles : false;
+                        const isExecuted =
+                          setting && setting.executedCycles ? item.index <= setting.executedCycles : false;
 
                         return (
-                          <tr key={item.index}>
-                            <td className="py-3 px-0 font-semibold text-foreground">
-                              #{String(item.index).padStart(2, '0')}
-                            </td>
-                            <td className="py-3 px-0 text-muted-foreground font-medium">
-                              {dateStr}
-                            </td>
-                            <td className="py-3 px-0 text-right">
-                              <span className={cn(
-                                "inline-flex items-center gap-1 text-[9px] font-mono font-bold uppercase tracking-wider",
-                                isExecuted 
-                                  ? "text-muted-foreground"
-                                  : isEnabled
-                                    ? "text-primary"
-                                    : "text-muted-foreground/80"
-                              )}>
-                                <span className={cn(
-                                  "w-1.5 h-1.5 rounded-full",
-                                  isExecuted ? "bg-muted-foreground" : isEnabled ? "bg-primary animate-pulse" : "bg-muted-foreground"
-                                )} />
+                          <tr key={item.index} className="hover:bg-muted/30">
+                            <td className="py-2 px-3 font-semibold text-foreground">#{item.index}</td>
+                            <td className="py-2 px-3 text-muted-foreground">{dateStr}</td>
+                            <td className="py-2 px-3 text-right">
+                              <span
+                                className={cn(
+                                  "inline-flex items-center gap-1 text-[10px] font-medium",
+                                  isExecuted
+                                    ? "text-muted-foreground"
+                                    : isEnabled
+                                    ? "text-primary font-semibold"
+                                    : "text-muted-foreground"
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    "w-1.5 h-1.5 rounded-full",
+                                    isExecuted ? "bg-muted-foreground" : isEnabled ? "bg-primary" : "bg-muted-foreground"
+                                  )}
+                                />
                                 {isExecuted ? "Executed" : isEnabled ? "Authorized" : "Needs Signature"}
                               </span>
                             </td>
@@ -600,316 +732,269 @@ export default function AutoPayDetailPage() {
                   </table>
                 </div>
               )}
-              <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                Renewal transactions will trigger automatically on each date shown above, up to the defined cycle limit, using the authorized local session key.
-              </p>
             </div>
 
-            {/* Signature details status info */}
-            {isEnabled && setting && !isModified && (
-              <div className="border-l-2 border-primary pl-4 py-1 space-y-1.5">
-                <p className="text-[10px] font-mono font-bold uppercase text-primary tracking-wider flex items-center gap-1.5">
-                  <CheckCircle2 size={13} className="shrink-0" /> Auto-Pay is Securely Set Up
-                </p>
-                <p className="text-[10px] text-muted-foreground leading-relaxed font-semibold">
-                  Your device signature is saved securely in the vault. Client Sequence Nonce: <span className="font-mono font-bold text-foreground">{setting.nonce}</span>. Validation deadline set for 5 years.
-                </p>
-                <div className="pt-2">
-                  <button
-                    onClick={() => setShowRevokeModal(true)}
-                    className="h-9 px-4 text-xs font-semibold bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 transition-all duration-150 rounded-lg w-full md:w-auto cursor-pointer"
-                  >
-                    Turn Off Auto-Pay
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Action triggers */}
-            {(!isEnabled || isModified) && (
-              <div className="pt-4 flex flex-col md:flex-row items-stretch md:items-center gap-4">
-                <Button
-                  onClick={handleAuthorizeAutoPay}
-                  disabled={actionLoading}
-                  variant="outline"
-                  className="flex-1 h-11 text-xs font-bold uppercase tracking-wider gap-2 rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer"
-                >
-                  {actionLoading ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 animate-spin shrink-0" /> Securing Intent...
-                    </>
-                  ) : isModified ? (
-                    <>
-                      <Play size={11} className="fill-current text-current shrink-0" /> Save & Re-Sign Setup
-                    </>
-                  ) : (
-                    <>
-                      <Play size={11} className="fill-current text-current shrink-0" /> Set Up Auto-Pay
-                    </>
-                  )}
-                </Button>
-
-                {isModified && (
-                  <Button
-                    onClick={() => {
-                      if (setting) {
-                        setSelectedTierId(setting.tierId);
-                        setSelectedCycles(setting.maxCycles ?? 10);
-                      }
-                    }}
-                    disabled={actionLoading}
-                    variant="ghost"
-                    className="h-11 px-6 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-muted border border-border/30 transition-colors cursor-pointer"
-                  >
-                    Reset Changes
-                  </Button>
+            {/* Status Feedback Message */}
+            {statusMessage && (
+              <div
+                className={cn(
+                  "p-3 rounded-lg border text-xs flex items-center gap-2",
+                  statusMessage.type === "success"
+                    ? "bg-primary/10 border-primary/20 text-primary font-medium"
+                    : "bg-destructive/10 border-destructive/20 text-destructive font-medium"
                 )}
+              >
+                {statusMessage.type === "success" ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                <span>{statusMessage.text}</span>
               </div>
             )}
 
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {(!isEnabled || isModified) ? (
+                <>
+                  <Button
+                    onClick={handleAuthorizeAutoPay}
+                    disabled={actionLoading}
+                    className="h-8.5 px-4 text-xs font-semibold gap-1.5 rounded-lg flex-1"
+                  >
+                    {actionLoading ? (
+                      <>
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin shrink-0" />
+                        <span>Securing Intent...</span>
+                      </>
+                    ) : isModified ? (
+                      <>
+                        <Play size={12} className="fill-current shrink-0" />
+                        <span>Save & Re-Sign Setup</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play size={12} className="fill-current shrink-0" />
+                        <span>Set Up Auto-Pay</span>
+                      </>
+                    )}
+                  </Button>
+
+                  {isModified && (
+                    <Button
+                      onClick={() => {
+                        if (setting) {
+                          setSelectedTierId(setting.tierId);
+                          setSelectedCycles(setting.maxCycles ?? 10);
+                        }
+                      }}
+                      disabled={actionLoading}
+                      variant="outline"
+                      className="h-8.5 px-3 text-xs rounded-lg"
+                    >
+                      Reset Changes
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <div className="w-full flex items-center justify-between gap-4 p-3 rounded-xl border border-border/20 bg-muted/20">
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                      <CheckCircle2 size={13} className="text-primary" /> Auto-Pay is active
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Nonce: <span className="font-mono">{setting.nonce}</span> · 5-year expiration deadline
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => setShowRevokeModal(true)}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs font-medium rounded-lg hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                  >
+                    Turn Off
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Messages */}
-        {statusMessage && (
-          <div
-            className={cn(
-              "py-3 border-t border-border/20 text-[11px] font-mono font-bold",
-              statusMessage.type === "success" ? "text-primary" : "text-destructive"
-            )}
-          >
-            <span>{statusMessage.type === "success" ? "✓" : "✗"} {statusMessage.text}</span>
+        {/* Right Column: Security & Cryptographic Pipeline Card */}
+        <div className="lg:col-span-5 rounded-xl border border-border/30 bg-muted/10 p-5 sm:p-6 flex flex-col gap-6">
+          <div className="space-y-1">
+            <h2 className="text-base font-semibold text-foreground">Security & Authorization</h2>
+            <p className="text-xs text-muted-foreground">
+              How passkey approvals safely automate recurring payments.
+            </p>
           </div>
-        )}
 
-        </div>
-
-        {/* Right Column - Cryptographic Pipeline Console */}
-        <div className="lg:col-span-5 space-y-10 lg:border-l lg:border-border/10 lg:pl-16">
-          <div className="space-y-8">
-            <div className="space-y-2">
-              <span className="text-[10px] font-mono tracking-widest uppercase font-extrabold text-primary">
-                Security & Status
-              </span>
-              <h2 className="text-xl font-extrabold tracking-tight uppercase">
-                Auto-Pay Security Setup
-              </h2>
-              <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
-                Your device passkey creates secure, instant automatic payments without exposing your private keys.
-              </p>
-            </div>
-
-            <div className="relative border-l border-border/20 pl-6 space-y-8">
-              {/* Step 1: Biometric Consent */}
-              <div className="relative">
-                {/* Node Dot */}
-                <span className={cn(
-                  "absolute -left-7 top-1 w-2 h-2 border bg-background transition-colors duration-300 rounded-full",
-                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground"
-                )} />
-                
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                      01. Biometric Consent
-                    </span>
-                    <span className={cn(
-                      "text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-full transition-colors duration-300 shrink-0",
-                      isEnabled ? "bg-muted text-primary border-primary/20" : "bg-muted text-muted-foreground border-border"
-                    )}>
-                      {isEnabled ? "Signed" : "Pending Sign"}
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-mono text-muted-foreground font-semibold">
-                    Device login key approval
-                  </p>
-                  <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                    Biometrically approve the setup using your device's saved login key or Face ID.
-                  </p>
+          <div className="relative border-l border-border/20 pl-5 space-y-6 pt-2">
+            {/* Step 1 */}
+            <div className="relative">
+              <span
+                className={cn(
+                  "absolute -left-[25px] top-1 w-2.5 h-2.5 rounded-full border-2 bg-background transition-colors",
+                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground/40"
+                )}
+              />
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground">1. Biometric Passkey Consent</span>
+                  <Badge variant={isEnabled ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0 font-mono">
+                    {isEnabled ? "Signed" : "Pending"}
+                  </Badge>
                 </div>
-              </div>
-
-              {/* Step 2: Off-Chain Storage */}
-              <div className="relative">
-                <span className={cn(
-                  "absolute -left-7 top-1 w-2 h-2 border bg-background transition-colors duration-300 rounded-full",
-                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground"
-                )} />
-                
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                      02. Vault Storage
-                    </span>
-                    <span className={cn(
-                      "text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-full transition-colors duration-300 shrink-0",
-                      isEnabled ? "bg-muted text-primary border-primary/20" : "bg-muted text-muted-foreground border-border"
-                    )}>
-                      {isEnabled ? "Secured" : "Inactive"}
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-mono text-muted-foreground font-semibold">
-                    Secure Vault
-                  </p>
-                  <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                    Your secure auto-renewal settings are stored in the server vault.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 3: Sponsored Relayer */}
-              <div className="relative">
-                <span className={cn(
-                  "absolute -left-7 top-1 w-2 h-2 border bg-background transition-colors duration-300 rounded-full",
-                  isEnabled ? "bg-primary border-primary animate-pulse" : "border-muted-foreground"
-                )} />
-                
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                      03. Transaction Fee Sponsor
-                    </span>
-                    <span className={cn(
-                      "text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-full transition-colors duration-300 shrink-0",
-                      isEnabled ? "bg-muted text-primary border-primary/20" : "bg-muted text-muted-foreground border-border"
-                    )}>
-                      {isEnabled ? "Active" : "Disabled"}
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-mono text-muted-foreground font-semibold">
-                    Free automatic triggers
-                  </p>
-                  <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                    Transaction fees are fully covered. Auto-Pay handles renewals on schedule.
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 4: Arc Testnet Chain */}
-              <div className="relative">
-                <span className={cn(
-                  "absolute -left-7 top-1 w-2 h-2 border bg-background transition-colors duration-300 rounded-full",
-                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground"
-                )} />
-                
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                      04. Network Verification
-                    </span>
-                    <span className={cn(
-                      "text-[9px] font-mono font-bold uppercase px-2 py-0.5 border rounded-full transition-colors duration-300 shrink-0",
-                      isEnabled ? "bg-muted text-primary border-primary/20" : "bg-muted text-muted-foreground border-border"
-                    )}>
-                      {isEnabled ? "Verified" : "Ready"}
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-mono text-muted-foreground font-semibold">
-                    On-Chain Verification
-                  </p>
-                  <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                    The smart payment gateway verifies and executes the transfer on schedule.
-                  </p>
-                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  You biometrically approve the pre-authorization using your hardware passkey (Face ID / Touch ID).
+                </p>
               </div>
             </div>
 
-            {/* Flat Assurances */}
-            <div className="pt-6 border-t border-border/10 space-y-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 size={14} className="text-primary shrink-0" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
-                  Zero transaction fees (Fully sponsored)
-                </span>
+            {/* Step 2 */}
+            <div className="relative">
+              <span
+                className={cn(
+                  "absolute -left-[25px] top-1 w-2.5 h-2.5 rounded-full border-2 bg-background transition-colors",
+                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground/40"
+                )}
+              />
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground">2. Session Key Vault</span>
+                  <Badge variant={isEnabled ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0 font-mono">
+                    {isEnabled ? "Secured" : "Inactive"}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Your bounded session key and EIP-712 signature are stored safely with cycle constraints.
+                </p>
               </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 size={14} className="text-primary shrink-0" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
-                  Instantly revocable anytime
-                </span>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative">
+              <span
+                className={cn(
+                  "absolute -left-[25px] top-1 w-2.5 h-2.5 rounded-full border-2 bg-background transition-colors",
+                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground/40"
+                )}
+              />
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground">3. Sponsored Relayer</span>
+                  <Badge variant={isEnabled ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0 font-mono">
+                    {isEnabled ? "Active" : "Ready"}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Renewal gas fees are fully sponsored by Arca. Renewals trigger automatically on schedule.
+                </p>
               </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="relative">
+              <span
+                className={cn(
+                  "absolute -left-[25px] top-1 w-2.5 h-2.5 rounded-full border-2 bg-background transition-colors",
+                  isEnabled ? "bg-primary border-primary" : "border-muted-foreground/40"
+                )}
+              />
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground">4. Gateway Settlement</span>
+                  <Badge variant={isEnabled ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0 font-mono">
+                    {isEnabled ? "Verified" : "Standby"}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  The on-chain smart contract verifies signature parameters and extends the subscription.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Assurances list */}
+          <div className="border-t border-border/10 pt-4 space-y-2.5">
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <CheckCircle2 size={13} className="text-primary shrink-0" />
+              <span>Zero gas fees paid by you (Sponsored)</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <CheckCircle2 size={13} className="text-primary shrink-0" />
+              <span>Instantly revocable anytime with one click</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
+              <CheckCircle2 size={13} className="text-primary shrink-0" />
+              <span>Non-custodial: funds never leave your account</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Cryptographic Revocation Confirmation Dialog ── */}
-      {showRevokeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-background border border-border p-6 md:p-8 space-y-6 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200">
-            
-            {/* Warning Icon and Header */}
-            <div className="space-y-3 font-sans">
-              <div className="flex items-center gap-2 text-destructive">
-                <AlertCircle className="h-5 w-5 shrink-0" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider">Confirm</span>
-              </div>
-              <h2 className="text-lg font-bold uppercase tracking-tight text-foreground">
-                Turn off Auto-Pay?
-              </h2>
-              <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
-                This will immediately turn off automatic renewals for this plan. You can set it up again anytime.
-              </p>
-            </div>
+      {/* ── Revocation Confirmation Dialog ── */}
+      <Dialog open={showRevokeModal} onOpenChange={setShowRevokeModal}>
+        <DialogContent className="rounded-2xl max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold text-foreground">
+              Turn off Auto-Pay?
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              This will immediately stop automated renewal payments for this subscription. You can re-enable Auto-Pay at any time.
+            </DialogDescription>
+          </DialogHeader>
 
-            {/* Structured details block */}
-            <div className="border border-border/40 p-4 md:p-5 space-y-3 text-[10px] font-mono rounded-xl bg-muted/20">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground uppercase font-bold">Plan ID:</span>
-                <span className="font-bold text-foreground truncate max-w-[200px] select-all font-mono">
-                  {sub.plan.id}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground uppercase font-bold">Authorized Cycles:</span>
-                <span className="font-bold text-foreground font-mono">
-                  {maxCycles} Cycles
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground uppercase font-bold">Executed Cycles:</span>
-                <span className="font-bold text-foreground font-mono">
-                  {setting?.executedCycles ?? 0}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground uppercase font-bold">Next Renewal:</span>
-                <span className="font-bold text-foreground font-mono">
-                  {new Date(Number(sub.lastEndTime) * 1000).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric"
-                  })}
-                </span>
-              </div>
+          <div className="rounded-xl border border-border/20 bg-muted/20 p-4 space-y-2.5 text-xs font-mono">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Plan ID:</span>
+              <span className="font-semibold text-foreground">{sub.plan.id.slice(0, 10)}…{sub.plan.id.slice(-4)}</span>
             </div>
-
-            {/* Buttons */}
-            <div className="flex items-center gap-3">
-              <button
-                disabled={actionLoading}
-                onClick={() => setShowRevokeModal(false)}
-                className="flex-1 h-10 border border-border bg-transparent text-xs font-mono font-bold uppercase tracking-wider hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={actionLoading}
-                onClick={handleDisableAutoPay}
-                className="flex-1 h-10 bg-destructive text-destructive-foreground text-xs font-mono font-bold uppercase tracking-wider hover:opacity-90 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg flex items-center justify-center gap-2"
-              >
-                {actionLoading ? (
-                  <>
-                    <RefreshCw className="h-3.5 w-3.5 animate-spin shrink-0" /> Revoking...
-                  </>
-                ) : (
-                  "Turn Off"
-                )}
-              </button>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Authorized Cycles:</span>
+              <span className="font-semibold text-foreground">{maxCycles} Cycles</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Executed Cycles:</span>
+              <span className="font-semibold text-foreground">{setting?.executedCycles ?? 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Next Expiration:</span>
+              <span className="font-semibold text-foreground">
+                {new Date(Number(sub.lastEndTime) * 1000).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
             </div>
           </div>
-        </div>
-      )}
+
+          <DialogFooter className="gap-2 sm:gap-2.5">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={actionLoading}
+              onClick={() => setShowRevokeModal(false)}
+              className="h-8.5 rounded-lg text-xs"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={actionLoading}
+              onClick={handleDisableAutoPay}
+              className="h-8.5 rounded-lg text-xs font-semibold gap-1.5"
+            >
+              {actionLoading ? (
+                <>
+                  <RefreshCw className="h-3.5 w-3.5 animate-spin shrink-0" />
+                  <span>Revoking...</span>
+                </>
+              ) : (
+                <span>Confirm Turn Off</span>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
