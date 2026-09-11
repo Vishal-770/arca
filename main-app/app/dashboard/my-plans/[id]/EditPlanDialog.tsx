@@ -12,10 +12,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { Edit3, Plus, Trash2, AlertCircle } from "lucide-react";
 import { useCircleSDK } from "@/context/CircleSDKContext";
 import { useDashboardContext } from "@/app/dashboard/_components/DashboardShell";
-import { Separator } from "@/components/ui/separator";
 import { encodeFunctionData } from "viem";
 import { SUBSCRIPTION_GATEWAY_ADDRESS, normalizeIpfsUri } from "@/lib/subscription";
 
@@ -44,8 +45,9 @@ type EditPlanMetadata = {
 } | null;
 
 export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }: EditPlanDialogProps) {
-  const { executeTransaction } = useCircleSDK();
   const { wallet } = useDashboardContext();
+  const { executeTransaction } = useCircleSDK();
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,14 +63,20 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
 
   const hasMinUsdc = usdcBalance >= 0.01;
 
-  // Default values
-  const [durationDays, setDurationDays] = useState(Math.max(1, Math.floor(durationSeconds / 86400)).toString());
+  // Form values
+  const [durationDays, setDurationDays] = useState(
+    Math.max(1, Math.floor(durationSeconds / 86400)).toString()
+  );
   const [brandName, setBrandName] = useState(metadata?.brand?.name || metadata?.name || "");
   const [brandWebsite, setBrandWebsite] = useState(metadata?.brand?.website || "");
-
   const [tiers, setTiers] = useState<TierState[]>(metadata?.tiers || []);
 
-  const handleFeatureChange = (tierIdx: number, featureIdx: number, field: keyof FeatureState, value: string) => {
+  const handleFeatureChange = (
+    tierIdx: number,
+    featureIdx: number,
+    field: keyof FeatureState,
+    value: string
+  ) => {
     const newTiers = [...tiers];
     newTiers[tierIdx].features[featureIdx][field] = value;
     setTiers(newTiers);
@@ -89,12 +97,12 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
 
   const handleSave = async () => {
     if (!wallet?.address) {
-      setError("Active smart account wallet not found");
+      setError("Active wallet account not found");
       return;
     }
 
     if (usdcBalance < 0.01) {
-      setError("Insufficient USDC balance. You need at least 0.01 USDC to pay transaction gas fees.");
+      setError("Insufficient USDC balance. You need at least 0.01 USDC to pay network gas fees.");
       return;
     }
 
@@ -131,10 +139,10 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
           inputs: [
             { name: "planId", type: "bytes32" },
             { name: "durationSeconds", type: "uint32" },
-            { name: "ipfsHash", type: "string" }
+            { name: "ipfsHash", type: "string" },
           ],
-          outputs: []
-        }
+          outputs: [],
+        },
       ] as const;
 
       const newDurationSeconds = Number(durationDays) * 86400;
@@ -151,179 +159,254 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
           {
             to: SUBSCRIPTION_GATEWAY_ADDRESS as `0x${string}`,
             data: txData,
-          }
+          },
         ],
-        false, // sponsorGas
-        "Arc_Testnet" // chainKey
+        false,
+        "Arc_Testnet"
       );
 
       setOpen(false);
       if (onSuccess) onSuccess();
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(err instanceof Error ? err.message : "Failed to update plan");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="h-11 px-6 rounded-lg border-border/80 font-black uppercase tracking-widest text-[10px]">
-          <Edit3 className="mr-2 h-4 w-4" /> Edit & Notify
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="p-6 pb-2 shrink-0">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold tracking-tight">Edit Protocol Data</DialogTitle>
-            <DialogDescription>
-              Update metadata such as brand details and tier features. (Tier prices and labels are permanently recorded on-chain).
-            </DialogDescription>
-          </DialogHeader>
-        </div>
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8.5 text-xs px-3 gap-1.5 font-medium rounded-lg"
+          >
+            <Edit3 className="size-3.5 text-muted-foreground" />
+            <span>Edit Plan</span>
+          </Button>
+        </DialogTrigger>
 
-        <div className="px-6 py-4 overflow-y-auto flex-1 grid gap-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="brandName" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">Protocol Name</label>
-              <Input
-                id="brandName"
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
-                placeholder="e.g. Premium Analytics"
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="duration" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">Cycle Duration (Days)</label>
-              <Input
-                id="duration"
-                type="number"
-                min="1"
-                value={durationDays}
-                onChange={(e) => setDurationDays(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="brandWebsite" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">Website URL</label>
-            <Input
-              id="brandWebsite"
-              value={brandWebsite}
-              onChange={(e) => setBrandWebsite(e.target.value)}
-              placeholder="https://..."
-            />
+        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden flex flex-col max-h-[85vh] rounded-2xl border border-border/40 bg-popover shadow-2xl">
+          {/* Header */}
+          <div className="p-6 pb-4 border-b border-border/20 shrink-0">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold tracking-tight text-foreground">
+                Edit Plan Details
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-1">
+                Update plan name, website, billing cycle, and tier feature lists.
+              </DialogDescription>
+            </DialogHeader>
           </div>
 
-          <Separator />
-
-          <div className="space-y-6">
-            <h3 className="text-sm font-semibold">Tier Features</h3>
-            {tiers.map((tier, tierIdx) => (
-              <div key={tierIdx} className="space-y-4 bg-muted/20 p-4 rounded-xl border border-dashed">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-primary">{tier.label} Tier</h4>
-                  <span className="text-xs text-muted-foreground font-mono uppercase tracking-widest">${tier.price}</span>
-                </div>
-                
-                <div className="space-y-3">
-                  {tier.features?.map((feat, featIdx) => (
-                    <div key={featIdx} className="flex items-start gap-3">
-                      <div className="flex-1 space-y-2">
-                        <Input
-                          placeholder="Feature Title"
-                          value={feat.title}
-                          onChange={(e) => handleFeatureChange(tierIdx, featIdx, "title", e.target.value)}
-                          className="h-8 text-xs font-semibold"
-                        />
-                        <Input
-                          placeholder="Feature Description"
-                          value={feat.description}
-                          onChange={(e) => handleFeatureChange(tierIdx, featIdx, "description", e.target.value)}
-                          className="h-8 text-xs text-muted-foreground"
-                        />
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive shrink-0"
-                        onClick={() => removeFeature(tierIdx, featIdx)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
+          {/* Form Scroll Area */}
+          <div className="p-6 overflow-y-auto flex-1 space-y-6">
+            
+            {/* General Information */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                General Information
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label htmlFor="brandName" className="text-xs font-medium text-foreground">
+                    Plan Name
+                  </label>
+                  <Input
+                    id="brandName"
+                    value={brandName}
+                    onChange={(e) => setBrandName(e.target.value)}
+                    placeholder="e.g. Pro Membership"
+                    className="h-9 text-xs rounded-lg bg-muted/20 border-border/40 font-normal"
+                  />
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs border-dashed"
-                  onClick={() => addFeature(tierIdx)}
-                >
-                  <Plus className="h-3 w-3 mr-2" /> Add Feature
-                </Button>
+                <div className="space-y-1.5">
+                  <label htmlFor="duration" className="text-xs font-medium text-foreground">
+                    Billing Cycle (Days)
+                  </label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    min="1"
+                    value={durationDays}
+                    onChange={(e) => setDurationDays(e.target.value)}
+                    className="h-9 text-xs rounded-lg bg-muted/20 border-border/40 font-normal"
+                  />
+                </div>
               </div>
-            ))}
-            {tiers.length === 0 && (
-              <p className="text-xs text-muted-foreground text-center py-4">No tiers found in metadata.</p>
+
+              <div className="space-y-1.5">
+                <label htmlFor="brandWebsite" className="text-xs font-medium text-foreground">
+                  Website URL
+                </label>
+                <Input
+                  id="brandWebsite"
+                  value={brandWebsite}
+                  onChange={(e) => setBrandWebsite(e.target.value)}
+                  placeholder="https://yourwebsite.com"
+                  className="h-9 text-xs rounded-lg bg-muted/20 border-border/40 font-normal"
+                />
+              </div>
+            </div>
+
+            <Separator className="border-border/20" />
+
+            {/* Pricing Tiers & Features */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Tier Features
+                </h3>
+                <span className="text-[11px] text-muted-foreground">
+                  Prices are locked on-chain
+                </span>
+              </div>
+
+              {tiers.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-4">No tiers found in metadata.</p>
+              ) : (
+                tiers.map((tier, tierIdx) => (
+                  <div
+                    key={tierIdx}
+                    className="rounded-xl bg-muted/20 border border-border/30 p-4 space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-foreground">{tier.label}</span>
+                        <Badge variant="secondary" className="text-[10px] font-mono font-medium">
+                          ${tier.price} USDC
+                        </Badge>
+                      </div>
+                      <span className="text-[11px] text-muted-foreground">
+                        {tier.features?.length || 0} features
+                      </span>
+                    </div>
+
+                    {/* Features list */}
+                    <div className="space-y-2.5 pt-1">
+                      {tier.features?.map((feat, featIdx) => (
+                        <div key={featIdx} className="flex items-center gap-2 bg-card/60 p-2 rounded-lg border border-border/20">
+                          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <Input
+                              placeholder="Feature title"
+                              value={feat.title}
+                              onChange={(e) =>
+                                handleFeatureChange(tierIdx, featIdx, "title", e.target.value)
+                              }
+                              className="h-7.5 text-xs rounded-md bg-muted/30 border-border/30 font-normal"
+                            />
+                            <Input
+                              placeholder="Brief description (optional)"
+                              value={feat.description}
+                              onChange={(e) =>
+                                handleFeatureChange(tierIdx, featIdx, "description", e.target.value)
+                              }
+                              className="h-7.5 text-xs rounded-md bg-muted/30 border-border/30 font-normal text-muted-foreground"
+                            />
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-7 text-muted-foreground hover:text-destructive shrink-0 rounded-md"
+                            onClick={() => removeFeature(tierIdx, featIdx)}
+                            title="Remove feature"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-xs h-8 gap-1.5 rounded-lg font-medium"
+                      onClick={() => addFeature(tierIdx)}
+                    >
+                      <Plus className="size-3.5" /> Add Feature to {tier.label}
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Low Balance Warning */}
+            {!hasMinUsdc && (
+              <div className="flex items-start gap-3 rounded-xl bg-destructive/10 border border-destructive/20 p-3.5 text-xs">
+                <AlertCircle className="size-4 text-destructive shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-semibold text-foreground">Insufficient Gas Balance</p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    You have <span className="font-mono font-semibold text-foreground">{usdcBalance.toFixed(4)} USDC</span>. At least 0.01 USDC is needed to cover transaction gas fees.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <p className="text-xs text-destructive bg-destructive/10 p-3 rounded-xl border border-destructive/20">
+                {error}
+              </p>
             )}
           </div>
 
-          {!hasMinUsdc && (
-            <div className="flex items-start gap-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 text-xs leading-relaxed text-amber-500">
-              <AlertCircle size={15} className="stroke-[2.5px] mt-0.5 shrink-0" />
-              <div className="space-y-1">
-                <p className="font-bold uppercase tracking-wider text-[9px] text-amber-500/80 leading-none">Gas Protection Notice</p>
-                <p className="font-medium text-amber-600/90 dark:text-amber-400/90">
-                  Your USDC balance is too low to process this update. You currently have <span className="font-mono font-bold">{usdcBalance.toFixed(4)} USDC</span>. A minimum of <span className="font-mono font-bold">0.01 USDC</span> is required to cover transaction gas fees on Arc Testnet.
-                </p>
-              </div>
-            </div>
-          )}
+          {/* Footer */}
+          <div className="p-4 px-6 border-t border-border/20 bg-muted/20 shrink-0">
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setOpen(false)}
+                disabled={loading}
+                className="h-8 text-xs font-medium"
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  if (!wallet?.address) {
+                    setError("Active smart account wallet not found");
+                    return;
+                  }
+                  if (usdcBalance < 0.01) {
+                    setError("Insufficient USDC balance. You need at least 0.01 USDC to pay transaction gas fees.");
+                    return;
+                  }
+                  setError(null);
+                  setConfirmSaveOpen(true);
+                }}
+                disabled={loading || !hasMinUsdc}
+                className="h-8 text-xs font-semibold px-4"
+              >
+                {loading ? "Processing…" : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-          {error && <p className="text-sm text-destructive font-medium bg-destructive/10 p-3 rounded-lg">{error}</p>}
-        </div>
-
-        <div className="p-6 pt-4 shrink-0 border-t bg-muted/10">
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                if (!wallet?.address) {
-                  setError("Active smart account wallet not found");
-                  return;
-                }
-                if (usdcBalance < 0.01) {
-                  setError("Insufficient USDC balance. You need at least 0.01 USDC to pay transaction gas fees.");
-                  return;
-                }
-                setError(null);
-                setConfirmSaveOpen(true);
-              }}
-              disabled={loading || !hasMinUsdc}
-            >
-              {loading ? "Processing..." : "Save & Notify Buyers"}
-            </Button>
-          </DialogFooter>
-        </div>
-      </DialogContent>
-
-      {/* Confirmation Alert Before Write Operation */}
+      {/* Confirmation Alert Dialog Before Write Operation */}
       <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Update Plan on Blockchain?</DialogTitle>
+            <DialogTitle>Update Plan Details?</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground pt-1.5 leading-relaxed">
-              This write operation will publish updated metadata to IPFS and submit a transaction to update the plan on Arc Testnet. Do you wish to proceed?
+              This will submit an on-chain transaction to update the plan metadata on Arc Testnet. Do you wish to proceed?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0 mt-4">
-            <Button variant="outline" size="sm" onClick={() => setConfirmSaveOpen(false)} disabled={loading}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setConfirmSaveOpen(false)}
+              disabled={loading}
+              className="h-8 text-xs"
+            >
               Cancel
             </Button>
             <Button
@@ -333,12 +416,13 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
                 setConfirmSaveOpen(false);
                 await handleSave();
               }}
+              className="h-8 text-xs font-semibold px-4"
             >
-              {loading ? "Submitting…" : "Confirm & Submit"}
+              {loading ? "Submitting…" : "Yes, Update Plan"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Dialog>
+    </>
   );
 }
