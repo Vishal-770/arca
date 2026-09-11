@@ -92,8 +92,8 @@ export default function MySubscriptionsPage() {
       if (!wallet?.address || !sessionUserToken) { setLoading(false); return; }
       try {
         const [subRes, notifRes] = await Promise.all([
-          fetch(`/api/subscription/my-subscriptions?subscriber=${wallet.address}&userToken=${sessionUserToken}`, { cache: "no-store" }),
-          fetch(`/api/subscription/notifications?subscriber=${wallet.address}&userToken=${sessionUserToken}`, { cache: "no-store" }),
+          fetch("/api/subscription/my-subscriptions", { cache: "no-store" }),
+          fetch("/api/subscription/notifications", { cache: "no-store" }),
         ]);
         const subJson = await subRes.json();
         const notifJson = await notifRes.json();

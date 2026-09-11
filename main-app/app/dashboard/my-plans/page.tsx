@@ -102,14 +102,9 @@ export default function MyPlansPage() {
         return;
       }
       try {
-        const params = new URLSearchParams({
-          seller: wallet.address,
-          userToken: sessionUserToken,
+        const response = await fetch("/api/subscription/my-plans", {
+          cache: "no-store",
         });
-        const response = await fetch(
-          `/api/subscription/my-plans?${params.toString()}`,
-          { cache: "no-store" }
-        );
         const json = (await response.json()) as MyPlansResponse & { error?: string };
         if (!response.ok) throw new Error(json.error ?? "Failed to load my plans");
         if (mounted) setData(json);

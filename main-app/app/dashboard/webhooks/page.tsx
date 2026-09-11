@@ -110,9 +110,8 @@ export default function WebhooksPage() {
 
   // Fetch all webhooks configured for this user
   const fetchWebhooks = async () => {
-    if (!sessionUserToken) return;
     try {
-      const res = await fetch(`/api/webhooks?userToken=${sessionUserToken}`);
+      const res = await fetch("/api/webhooks");
       const data = await res.json();
       if (data.webhooks) {
         setWebhooks(data.webhooks);
@@ -126,11 +125,10 @@ export default function WebhooksPage() {
 
   // Fetch delivery logs
   const fetchLogs = async (silent = false) => {
-    if (!sessionUserToken) return;
     if (!silent) setLoadingLogs(true);
     else setRefreshingLogs(true);
     try {
-      const res = await fetch(`/api/webhooks/logs?userToken=${sessionUserToken}`);
+      const res = await fetch("/api/webhooks/logs");
       const data = await res.json();
       if (data.logs) {
         setLogs(data.logs);
@@ -145,16 +143,8 @@ export default function WebhooksPage() {
 
   // Fetch user's plans to associate
   const fetchPlans = async () => {
-    if (!wallet?.address || !sessionUserToken) {
-      setLoadingPlans(false);
-      return;
-    }
     try {
-      const params = new URLSearchParams({
-        seller: wallet.address,
-        userToken: sessionUserToken,
-      });
-      const res = await fetch(`/api/subscription/my-plans?${params.toString()}`);
+      const res = await fetch("/api/subscription/my-plans");
       const data = await res.json();
       if (data.plans) {
         setPlans(data.plans);
@@ -231,7 +221,6 @@ export default function WebhooksPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userToken: sessionUserToken,
           url: webhookUrl.trim(),
           planId: selectedPlanId,
           isActive: isActiveToggle,
@@ -286,7 +275,6 @@ export default function WebhooksPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userToken: sessionUserToken,
           id: editWebhookId,
           url: webhookUrl.trim(),
           planId: selectedPlanId,
@@ -314,7 +302,7 @@ export default function WebhooksPage() {
   const handleDeleteWebhook = async () => {
     if (!webhookToDelete) return;
     try {
-      const res = await fetch(`/api/webhooks?userToken=${sessionUserToken}&id=${webhookToDelete.id}`, {
+      const res = await fetch(`/api/webhooks?id=${webhookToDelete.id}`, {
         method: "DELETE",
       });
       if (res.ok) {

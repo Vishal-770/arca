@@ -51,7 +51,7 @@ export default function DeveloperPage() {
 
   const fetchKeys = async () => {
     try {
-      const res = await fetch(`/api/keys?userToken=${sessionUserToken}`);
+      const res = await fetch("/api/keys");
       const data = await res.json();
       if (data.keys) setKeys(data.keys);
     } catch (err) {
@@ -73,7 +73,6 @@ export default function DeveloperPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userToken: sessionUserToken,
           name: newKeyName,
           merchantAddress: wallet?.address,
         }),
@@ -94,7 +93,7 @@ export default function DeveloperPage() {
   const handleDeleteKey = async () => {
     if (!keyToDelete) return;
     try {
-      await fetch(`/api/keys/${keyToDelete}?userToken=${sessionUserToken}`, {
+      await fetch(`/api/keys/${keyToDelete}`, {
         method: "DELETE",
       });
       setKeyToDelete(null);
