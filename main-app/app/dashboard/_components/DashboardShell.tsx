@@ -329,7 +329,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         {/* Sidebar */}
         <aside 
           className={cn(
-            "fixed inset-y-0 left-0 z-[60] w-72 bg-sidebar border-r border-sidebar-border transition-transform duration-300 lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:block overflow-y-auto no-scrollbar shadow-2xl lg:shadow-none",
+            "fixed inset-y-0 left-0 z-[60] w-72 bg-sidebar border-r border-sidebar-border transition-transform duration-300 lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:block overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden no-scrollbar shadow-2xl lg:shadow-none",
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -349,7 +349,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               <span className="text-lg font-serif font-bold uppercase tracking-wider text-foreground">Arca</span>
             </Link>
 
-            <nav className="flex flex-col flex-1 overflow-y-auto no-scrollbar">
+            <nav className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden no-scrollbar">
               {navGroups.map((group, idx) => (
                 <div key={group.label}>
                   {idx !== 0 && <div className="mx-4 my-2 border-t border-border/40" />}
