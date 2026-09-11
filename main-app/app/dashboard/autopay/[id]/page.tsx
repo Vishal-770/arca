@@ -567,27 +567,28 @@ export default function AutoPayDetailPage() {
 
           {/* Form Fields */}
           <div className="space-y-5 border-t border-border/10 pt-5">
-            {/* Active Switch Toggle - ONLY visible when Auto-Pay is already set up */}
+            {/* Active Status Banner - ONLY visible when Auto-Pay is already set up */}
             {isEnabled && (
-              <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-border/30 bg-muted/20">
-                <div className="space-y-1">
+              <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-primary/20 bg-primary/5">
+                <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
                     <span className="size-2 rounded-full bg-primary inline-block" />
-                    <span className="text-xs font-semibold text-foreground">Recurring Auto-Pay Active</span>
+                    <span className="text-xs font-semibold text-foreground">Auto-Pay is Active</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Automatic renewal payments are active using passkey approval.
+                    Automatic renewals are enabled with passkey approval · Nonce: <span className="font-mono">{setting?.nonce}</span>
                   </p>
                 </div>
-                <button
+                <Button
                   type="button"
-                  onClick={() => setShowRevokeModal(true)}
+                  variant="outline"
+                  size="sm"
                   disabled={actionLoading}
-                  className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 focus:outline-none"
-                  title="Turn off Auto-Pay"
+                  onClick={() => setShowRevokeModal(true)}
+                  className="h-8 text-xs font-medium rounded-lg hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 shrink-0"
                 >
-                  <span className="pointer-events-none inline-block h-5 w-5 rounded-full bg-background shadow-xs translate-x-5 transition-transform duration-200" />
-                </button>
+                  Turn Off Auto-Pay
+                </Button>
               </div>
             )}
 
@@ -746,69 +747,48 @@ export default function AutoPayDetailPage() {
             )}
 
             {/* Action Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              {(!isEnabled || isModified) ? (
-                <>
-                  <Button
-                    onClick={handleAuthorizeAutoPay}
-                    disabled={actionLoading}
-                    className="h-8.5 px-4 text-xs font-semibold gap-1.5 rounded-lg flex-1"
-                  >
-                    {actionLoading ? (
-                      <>
-                        <RefreshCw className="h-3.5 w-3.5 animate-spin shrink-0" />
-                        <span>Securing Intent...</span>
-                      </>
-                    ) : isModified ? (
-                      <>
-                        <Play size={12} className="fill-current shrink-0" />
-                        <span>Save & Re-Sign Setup</span>
-                      </>
-                    ) : (
-                      <>
-                        <Play size={12} className="fill-current shrink-0" />
-                        <span>Set Up Auto-Pay</span>
-                      </>
-                    )}
-                  </Button>
-
-                  {isModified && (
-                    <Button
-                      onClick={() => {
-                        if (setting) {
-                          setSelectedTierId(setting.tierId);
-                          setSelectedCycles(setting.maxCycles ?? 10);
-                        }
-                      }}
-                      disabled={actionLoading}
-                      variant="outline"
-                      className="h-8.5 px-3 text-xs rounded-lg"
-                    >
-                      Reset Changes
-                    </Button>
+            {(!isEnabled || isModified) && (
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Button
+                  onClick={handleAuthorizeAutoPay}
+                  disabled={actionLoading}
+                  className="h-8.5 px-4 text-xs font-semibold gap-1.5 rounded-lg flex-1"
+                >
+                  {actionLoading ? (
+                    <>
+                      <RefreshCw className="h-3.5 w-3.5 animate-spin shrink-0" />
+                      <span>Securing Intent...</span>
+                    </>
+                  ) : isModified ? (
+                    <>
+                      <Play size={12} className="fill-current shrink-0" />
+                      <span>Save & Re-Sign Setup</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play size={12} className="fill-current shrink-0" />
+                      <span>Set Up Auto-Pay</span>
+                    </>
                   )}
-                </>
-              ) : (
-                <div className="w-full flex items-center justify-between gap-4 p-3 rounded-xl border border-border/20 bg-muted/20">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                      <CheckCircle2 size={13} className="text-primary" /> Auto-Pay is active
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      Nonce: <span className="font-mono">{setting.nonce}</span> · 5-year expiration deadline
-                    </p>
-                  </div>
+                </Button>
+
+                {isModified && (
                   <Button
-                    onClick={() => setShowRevokeModal(true)}
+                    onClick={() => {
+                      if (setting) {
+                        setSelectedTierId(setting.tierId);
+                        setSelectedCycles(setting.maxCycles ?? 10);
+                      }
+                    }}
+                    disabled={actionLoading}
                     variant="outline"
-                    size="sm"
-                    className="h-8 text-xs font-medium rounded-lg hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                    className="h-8.5 px-3 text-xs rounded-lg"
                   >
-                    Turn Off
+                    Reset Changes
                   </Button>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
