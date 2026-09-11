@@ -49,6 +49,7 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
 
   const usdcBalance = useMemo(() => {
     if (!wallet?.tokenBalances) return 0;
@@ -291,12 +292,53 @@ export function EditPlanDialog({ planId, durationSeconds, metadata, onSuccess }:
             <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
               Cancel
             </Button>
-            <Button onClick={() => void handleSave()} disabled={loading || !hasMinUsdc}>
+            <Button
+              onClick={() => {
+                if (!wallet?.address) {
+                  setError("Active smart account wallet not found");
+                  return;
+                }
+                if (usdcBalance < 0.01) {
+                  setError("Insufficient USDC balance. You need at least 0.01 USDC to pay transaction gas fees.");
+                  return;
+                }
+                setError(null);
+                setConfirmSaveOpen(true);
+              }}
+              disabled={loading || !hasMinUsdc}
+            >
               {loading ? "Processing..." : "Save & Notify Buyers"}
             </Button>
           </DialogFooter>
         </div>
       </DialogContent>
+
+      {/* Confirmation Alert Before Write Operation */}
+      <Dialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Update Plan on Blockchain?</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground pt-1.5 leading-relaxed">
+              This write operation will publish updated metadata to IPFS and submit a transaction to update the plan on Arc Testnet. Do you wish to proceed?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+            <Button variant="outline" size="sm" onClick={() => setConfirmSaveOpen(false)} disabled={loading}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              disabled={loading}
+              onClick={async () => {
+                setConfirmSaveOpen(false);
+                await handleSave();
+              }}
+            >
+              {loading ? "Submitting…" : "Confirm & Submit"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
