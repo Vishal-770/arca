@@ -153,6 +153,8 @@ function averageBigInt(total: bigint, count: number) {
   return total / BigInt(count);
 }
 
+import { getServerSession } from "@/lib/server-auth";
+
 export async function GET(
   req: Request,
   context: { params: Promise<{ planId: string }> },
@@ -161,7 +163,13 @@ export async function GET(
     const { planId } = await context.params;
     const normalizedPlanId = toLowerHex(planId);
     const { searchParams } = new URL(req.url);
-    const viewer = (searchParams.get("viewer") ?? "").toLowerCase();
+    let viewer = (searchParams.get("viewer") ?? "").toLowerCase();
+    if (!viewer) {
+      const session = await getServerSession(req);
+      if (session?.walletAddress) {
+        viewer = session.walletAddress.toLowerCase();
+      }
+    }
     const first = Math.min(Number(searchParams.get("first") ?? "100"), 200);
     const skip = Math.max(Number(searchParams.get("skip") ?? "0"), 0);
     const eventsFirst = Math.min(

@@ -145,7 +145,11 @@ export default function AutoPayDetailPage() {
 
         if (mounted) {
           const allSubs: SubscriptionRow[] = subData.subscriptions ?? [];
-          const foundSub = allSubs.find((s) => s.id.toLowerCase() === id.toLowerCase());
+          const foundSub = allSubs.find(
+            (s) =>
+              s.id.toLowerCase() === id.toLowerCase() ||
+              s.plan?.id?.toLowerCase() === id.toLowerCase()
+          );
 
           if (!foundSub) {
             throw new Error("Subscription not found");
@@ -198,7 +202,7 @@ export default function AutoPayDetailPage() {
   // Handle Save / EIP-712 Sign Authorization
   const handleAuthorizeAutoPay = async () => {
     if (!sub || !wallet?.address || !sessionUserToken || !session) {
-      alert("Active session is required.");
+      setStatusMessage({ type: "error", text: "Active smart account session is required." });
       return;
     }
 

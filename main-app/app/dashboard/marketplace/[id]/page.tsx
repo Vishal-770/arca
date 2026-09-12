@@ -266,7 +266,7 @@ export default function MarketplaceDetailPage() {
   }, [data?.plan?.metadata, selectedTier]);
 
   const handleBuy = async () => {
-    if (!wallet?.address || !userCircleId || !userAddress) {
+    if (!wallet?.address || !userAddress) {
       setError("Wallet connection required before subscribing");
       return;
     }
@@ -295,7 +295,7 @@ export default function MarketplaceDetailPage() {
         body: JSON.stringify({
           subscriber: userAddress,
           planId: data.plan.planId,
-          userToken: userCircleId,
+          userToken: userCircleId || userAddress,
         }),
       });
       const latestEligibility = (await eligRes.json()) as EligibilityResponse;
@@ -346,7 +346,7 @@ export default function MarketplaceDetailPage() {
         args: [
           data.plan.planId as `0x${string}`,
           BigInt(selectedTier.tierId),
-          userCircleId
+          userCircleId || wallet.address
         ],
       });
 

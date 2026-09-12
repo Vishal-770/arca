@@ -257,8 +257,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     return allWallets.find((w) => w.id === selectedChain) || allWallets[0] || null;
   }, [allWallets, selectedChain]);
 
-  const userCircleId = session?.username || null;
-  const sessionUserToken = session?.username || "";
+  const userCircleId = session?.walletAddress || session?.username || null;
+  const sessionUserToken = session?.username || session?.walletAddress || "";
 
   const refreshWallets = useCallback(async () => {
     await refetchBalancesMap();

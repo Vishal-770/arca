@@ -28,6 +28,7 @@ const query = `
 `;
 
 import { validateWalletOwnership } from "@/lib/auth-util";
+import { getServerSession } from "@/lib/server-auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,20 +38,30 @@ export async function POST(req: NextRequest) {
       userToken?: string;
     };
 
-    if (!body.subscriber || !body.planId || !body.userToken) {
+    if (!body.subscriber || !body.planId) {
       return NextResponse.json(
-        { error: "subscriber, planId and userToken are required" },
+        { error: "subscriber and planId are required" },
         { status: 400 },
       );
     }
 
-    // Security: Validate wallet ownership
-    const isValid = await validateWalletOwnership(body.userToken, body.subscriber);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet address does not belong to this user session" },
-        { status: 403 },
-      );
+    // Security: Validate wallet ownership via active session first, then userToken fallback
+    const session = await getServerSession(req);
+    if (session) {
+      if (session.walletAddress.toLowerCase() !== body.subscriber.trim().toLowerCase()) {
+        return NextResponse.json(
+          { error: "Unauthorized: Wallet address does not belong to this user session" },
+          { status: 403 },
+        );
+      }
+    } else if (body.userToken) {
+      const isValid = await validateWalletOwnership(body.userToken, body.subscriber);
+      if (!isValid) {
+        return NextResponse.json(
+          { error: "Unauthorized: Wallet address does not belong to this user session" },
+          { status: 403 },
+        );
+      }
     }
 
     const data = await querySubgraph<{

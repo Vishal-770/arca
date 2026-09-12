@@ -71,6 +71,8 @@ const query = `
   }
 `;
 
+import { getServerSession } from "@/lib/server-auth";
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ planId: string }> }
@@ -78,8 +80,15 @@ export async function GET(
   try {
     const { planId } = await params;
     const { searchParams } = new URL(req.url);
-    const subscriber = searchParams.get("subscriber");
+    let subscriber = searchParams.get("subscriber");
     const userId = searchParams.get("userId");
+
+    if (!subscriber && !userId) {
+      const session = await getServerSession(req);
+      if (session?.walletAddress) {
+        subscriber = session.walletAddress;
+      }
+    }
 
     if (!subscriber && !userId) {
       return NextResponse.json(

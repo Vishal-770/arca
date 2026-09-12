@@ -15,7 +15,13 @@ export async function GET(req: NextRequest) {
     const { db } = await connectToDatabase();
 
     const keys = await db.collection("api_keys")
-      .find({ userId, revokedAt: null })
+      .find({
+        $or: [
+          { userId },
+          { merchantAddress: session.walletAddress },
+        ],
+        revokedAt: null,
+      })
       .sort({ createdAt: -1 })
       .toArray();
 

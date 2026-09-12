@@ -12,6 +12,10 @@ async function verifyPlanOwnership(sellerWallet: string, planId: string): Promis
   if (!sellerWallet || !planId || planId === "all") return false;
 
   try {
+    const normalizedPlanId = planId.toLowerCase().startsWith("0x")
+      ? planId.toLowerCase()
+      : `0x${planId.toLowerCase()}`;
+
     const planQuery = `
       query GetPlan($id: ID!) {
         plan(id: $id) {
@@ -25,7 +29,7 @@ async function verifyPlanOwnership(sellerWallet: string, planId: string): Promis
 
     const data = await querySubgraph<{ plan: { id: string; seller: { id: string } } | null }>(
       planQuery,
-      { id: planId.toLowerCase() }
+      { id: normalizedPlanId }
     );
 
     const plan = data?.plan;
@@ -59,7 +63,10 @@ export async function GET(req: NextRequest) {
       }
       const webhook = await db.collection("webhook_endpoints").findOne({
         _id: new ObjectId(id),
-        userId,
+        $or: [
+          { userId },
+          { sellerAddress: session.walletAddress },
+        ],
       });
       if (!webhook) {
         return NextResponse.json({ error: "Webhook not found" }, { status: 404 });
@@ -81,7 +88,12 @@ export async function GET(req: NextRequest) {
 
     const webhooks = await db
       .collection("webhook_endpoints")
-      .find({ userId })
+      .find({
+        $or: [
+          { userId },
+          { sellerAddress: session.walletAddress },
+        ],
+      })
       .sort({ createdAt: -1 })
       .toArray();
 
@@ -243,7 +255,13 @@ export async function PUT(req: NextRequest) {
     const webhookObjectId = new ObjectId(id);
     const targetWebhook = await db
       .collection("webhook_endpoints")
-      .findOne({ _id: webhookObjectId, userId });
+      .findOne({
+        _id: webhookObjectId,
+        $or: [
+          { userId },
+          { sellerAddress: session.walletAddress },
+        ],
+      });
 
     if (!targetWebhook) {
       return NextResponse.json({ error: "Webhook not found or not owned by user" }, { status: 404 });
@@ -253,7 +271,13 @@ export async function PUT(req: NextRequest) {
     if (targetWebhook.planId !== planId.toLowerCase()) {
       const duplicate = await db
         .collection("webhook_endpoints")
-        .findOne({ userId, planId: planId.toLowerCase() });
+        .findOne({
+          $or: [
+            { userId },
+            { sellerAddress: session.walletAddress },
+          ],
+          planId: planId.toLowerCase(),
+        });
 
       if (duplicate) {
         return NextResponse.json(
@@ -272,7 +296,16 @@ export async function PUT(req: NextRequest) {
       },
     };
 
-    await db.collection("webhook_endpoints").updateOne({ _id: webhookObjectId, userId }, updateDoc);
+    await db.collection("webhook_endpoints").updateOne(
+      {
+        _id: webhookObjectId,
+        $or: [
+          { userId },
+          { sellerAddress: session.walletAddress },
+        ],
+      },
+      updateDoc
+    );
 
     return NextResponse.json({ success: true, message: "Webhook updated successfully" });
   } catch (err) {
@@ -301,7 +334,10 @@ export async function DELETE(req: NextRequest) {
     const { db } = await connectToDatabase();
     const result = await db.collection("webhook_endpoints").deleteOne({
       _id: new ObjectId(id),
-      userId,
+      $or: [
+        { userId },
+        { sellerAddress: session.walletAddress },
+      ],
     });
 
     if (result.deletedCount === 0) {

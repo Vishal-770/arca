@@ -23,7 +23,13 @@ export async function DELETE(
 
     // Soft delete / Revoke by setting revokedAt only if key belongs to this user
     const result = await db.collection("api_keys").updateOne(
-      { _id: new ObjectId(id), userId },
+      {
+        _id: new ObjectId(id),
+        $or: [
+          { userId },
+          { merchantAddress: session.walletAddress },
+        ],
+      },
       { $set: { revokedAt: new Date() } }
     );
 

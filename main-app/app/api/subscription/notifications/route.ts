@@ -92,7 +92,10 @@ export async function GET(req: Request) {
       { subscriber: toLowerHex(subscriber) }
     );
 
-    const planIds = subData.subscriptionStates.map(s => s.plan.id);
+    const planIds = (subData?.subscriptionStates ?? [])
+      .map(s => s?.plan?.id)
+      .filter((id): id is string => Boolean(id));
+
     if (planIds.length === 0) {
       return NextResponse.json({ notifications: [] });
     }
@@ -105,19 +108,16 @@ export async function GET(req: Request) {
 
     // 3. Merge and sort events
     const notifications: NotificationEvent[] = [
-      ...eventsData.planStatusUpdateds.map(e => ({
+      ...(eventsData?.planStatusUpdateds ?? []).map(e => ({
         ...e,
         type: "STATUS_CHANGE" as const,
       })),
-      ...eventsData.planUpdateds.map(e => ({
+      ...(eventsData?.planUpdateds ?? []).map(e => ({
         ...e,
         type: "PLAN_UPDATE" as const,
       })),
     ].sort((a, b) => Number(b.blockTimestamp) - Number(a.blockTimestamp));
 
-    // 4. Optionally fetch metadata names for better UX
-    // (In a real app, we'd cache this or join in subgraph if possible)
-    
     return NextResponse.json({ notifications });
   } catch (err) {
     console.error("[/api/subscription/notifications]", err);
