@@ -29,6 +29,7 @@ type SubscriptionState = {
   status: "ACTIVE" | "EXPIRED";
   lastEndTime: string;
   totalSpent: string;
+  totalFeesPaid?: string;
   plan: { id: string };
   seller: { id: string };
 };
@@ -119,6 +120,7 @@ const buyerStatesQuery = `
       status
       lastEndTime
       totalSpent
+      totalFeesPaid
       plan { id }
       seller { id }
     }
@@ -255,9 +257,10 @@ export async function GET(req: Request) {
       subscriber = session.walletAddress;
     }
 
-    // Default to viewing as seller if neither parameter is explicitly queried
+    // Default to querying both seller and subscriber for the current wallet
     if (!seller && !subscriber) {
       seller = session.walletAddress;
+      subscriber = session.walletAddress;
     }
     const eventsFirst = 1000;
     const now = Math.floor(Date.now() / 1000);
@@ -438,17 +441,90 @@ export async function GET(req: Request) {
         })
         .sort((a, b) => Number(a.monthStartTimestamp) - Number(b.monthStartTimestamp));
 
+    // Aggregate buyer metrics from buyerStates (subscriptionStates)
+    let totalBuyerSpent = 0n;
+    let totalBuyerFees = 0n;
+    let activeBuyerSubs = 0;
+
+    for (const state of buyerStates) {
+      totalBuyerSpent += BigInt(state.totalSpent || "0");
+      totalBuyerFees += BigInt(state.totalFeesPaid || "0");
+      const isExpired =
+        state.status === "EXPIRED" ||
+        (Number(state.lastEndTime) > 0 && Number(state.lastEndTime) < now);
+      if (!isExpired) {
+        activeBuyerSubs++;
+      }
+    }
+
+    // Also check recentSubscriptions for buyer if buyerStates is still updating
+    for (const sub of recentSubscriptions) {
+      if (sub.subscriber.toLowerCase() === (subscriber || "").toLowerCase()) {
+        if (buyerStates.length === 0) {
+          totalBuyerSpent += BigInt(sub.totalAmount || "0");
+          totalBuyerFees += BigInt(sub.feeAmount || "0");
+          activeBuyerSubs = Math.max(activeBuyerSubs, 1);
+        }
+      }
+    }
+
+    const computedBuyerMetrics = {
+      subscriptionCount: Math.max(
+        buyerStates.length,
+        recentSubscriptions.filter((s) => s.subscriber.toLowerCase() === (subscriber || "").toLowerCase()).length
+      ),
+      activeSubscriptionCount: activeBuyerSubs,
+      totalSpent: totalBuyerSpent.toString(),
+      totalFeesPaid: totalBuyerFees.toString(),
+    };
+
+    const finalBuyerMetrics =
+      subscriberData.subscriber && BigInt(subscriberData.subscriber.totalSpent || "0") > 0n
+        ? {
+            subscriptionCount: Math.max(
+              subscriberData.subscriber.subscriptionCount,
+              computedBuyerMetrics.subscriptionCount
+            ),
+            activeSubscriptionCount: Math.max(
+              subscriberData.subscriber.activeSubscriptionCount,
+              computedBuyerMetrics.activeSubscriptionCount
+            ),
+            totalSpent:
+              BigInt(subscriberData.subscriber.totalSpent) > BigInt(computedBuyerMetrics.totalSpent)
+                ? subscriberData.subscriber.totalSpent
+                : computedBuyerMetrics.totalSpent,
+            totalFeesPaid:
+              BigInt(subscriberData.subscriber.totalFeesPaid || "0") > BigInt(computedBuyerMetrics.totalFeesPaid)
+                ? subscriberData.subscriber.totalFeesPaid
+                : computedBuyerMetrics.totalFeesPaid,
+          }
+        : computedBuyerMetrics;
+
+    let finalTransactions = transactionsData.transactions ?? [];
+    if (finalTransactions.length === 0 && recentSubscriptions.length > 0) {
+      finalTransactions = recentSubscriptions.map((sub) => ({
+        id: sub.id,
+        type: "SUBSCRIBE",
+        from: sub.subscriber,
+        to: sub.seller,
+        amount: sub.totalAmount,
+        fee: sub.feeAmount,
+        plan: { id: sub.planId },
+        blockTimestamp: sub.blockTimestamp,
+      }));
+    }
+
     return NextResponse.json({
       globalOverview,
       sellerMetrics: sellerData.seller,
       sellerPlanBreakdown: sellerPlans,
-      buyerMetrics: subscriberData.subscriber,
+      buyerMetrics: finalBuyerMetrics,
       buyerTimeline: buyerStates,
       topPlans: topPlansWithMetadata,
       recentSubscriptions,
       revenueHistory,
       monthlyStats: userMonthlyStats,
-      transactions: transactionsData.transactions ?? [],
+      transactions: finalTransactions,
     });
 
   } catch (err) {
