@@ -17,8 +17,6 @@ import {
   lineaSepolia
 } from "viem/chains";
 
-import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets";
-
 const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID || "";
 
 const Providers = ({
@@ -69,15 +67,13 @@ const Providers = ({
         ],
       }}
     >
-      <SmartWalletsProvider>
-        <QueryClientProvider client={queryClient}>
-          <CircleSDKProvider>
-            <TooltipProvider>
-              {children}
-            </TooltipProvider>
-          </CircleSDKProvider>
-        </QueryClientProvider>
-      </SmartWalletsProvider>
+      <QueryClientProvider client={queryClient}>
+        <CircleSDKProvider>
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
+        </CircleSDKProvider>
+      </QueryClientProvider>
     </PrivyProvider>
   );
 };
